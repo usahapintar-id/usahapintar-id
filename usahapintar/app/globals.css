@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #f1f4ec;
+  color: #1e2a1f;
+}
+
+::selection {
+  background-color: #b8860b;
+  color: #f1f4ec;
+}
+
+/* subtle paper grain */
+.paper-texture {
+  background-image:
+    radial-gradient(rgba(30, 42, 31, 0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+.stamp {
+  transform: rotate(-6deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid #b8860b;
+  outline-offset: 2px;
+}
