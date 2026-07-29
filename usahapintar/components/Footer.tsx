@@ -10,6 +10,19 @@ export default function Footer() {
             UsahaPintar<span className="text-brass">.id</span>
           </span>
         </div>
+
+        <nav className="flex items-center gap-5 font-body text-xs text-muted">
+          <a href="/artikel" className="transition hover:text-forest">
+            Artikel
+          </a>
+          <a href="/tentang" className="transition hover:text-forest">
+            Tentang Kami
+          </a>
+          <a href="/privasi" className="transition hover:text-forest">
+            Kebijakan Privasi
+          </a>
+        </nav>
+
         <p className="font-body text-xs text-muted">
           © {new Date().getFullYear()} UsahaPintar.id — Dibuat untuk pelaku
           UMKM Indonesia.
