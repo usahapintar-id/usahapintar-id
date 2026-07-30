@@ -9,6 +9,51 @@ export type Artikel = {
 
 export const artikelList: Artikel[] = [
   {
+    slug: "harga-bahan-baku-naik-cara-menyesuaikan-hpp",
+    title: "Harga Bahan Baku Naik? Ini Cara Menyesuaikan HPP Tanpa Kehilangan Pelanggan",
+    excerpt:
+      "Saat harga kedelai, tepung, atau bahan pokok lain naik, banyak UMKM bingung antara menaikkan harga atau menahan kerugian. Berikut cara menyikapinya secara terukur.",
+    date: "1 Agustus 2026",
+    readTime: "6 menit baca",
+    content: [
+      "Kenaikan harga bahan baku — baik kedelai, tepung, minyak goreng, atau bahan pokok lainnya — adalah kondisi yang berulang dan sulit dihindari oleh pelaku usaha kecil. Yang membedakan usaha yang bertahan dan yang tergerus keuntungannya biasanya bukan soal bisa menghindari kenaikan harga, tapi soal seberapa cepat dan tepat mereka menyesuaikan HPP.",
+      "## Kesalahan yang sering terjadi",
+      "Reaksi paling umum saat bahan baku naik adalah menahan harga jual lama karena takut kehilangan pelanggan. Sikap ini bisa dipahami, tapi jika dibiarkan terlalu lama, margin keuntungan tergerus pelan-pelan sampai akhirnya usaha berjalan tanpa untung, bahkan merugi tanpa disadari.",
+      "## Langkah 1: Hitung ulang HPP begitu ada kenaikan harga",
+      "Begitu mendengar atau merasakan kenaikan harga bahan baku, langkah pertama bukan panik menaikkan harga jual, tapi menghitung ulang HPP dengan harga baru. Tanpa angka pasti, keputusan menaikkan harga jual hanya berdasarkan perasaan, bukan perhitungan.",
+      "## Langkah 2: Pisahkan kenaikan sementara dan permanen",
+      "Tidak semua kenaikan harga bahan baku bersifat permanen — sebagian hanya fluktuasi musiman yang akan turun kembali dalam beberapa minggu. Untuk kenaikan yang terlihat sementara, opsi memperkecil ukuran porsi atau menyesuaikan komposisi bahan bisa jadi solusi jangka pendek. Untuk kenaikan yang terlihat permanen, penyesuaian harga jual biasanya tidak terhindarkan.",
+      "## Langkah 3: Naikkan harga secara bertahap, bukan sekaligus besar",
+      "Kenaikan harga jual yang besar dan tiba-tiba lebih terasa mengagetkan bagi pelanggan dibanding kenaikan kecil yang dilakukan bertahap. Jika margin memungkinkan, menaikkan harga dalam beberapa tahap kecil biasanya lebih mudah diterima pasar dibanding satu kali lonjakan besar.",
+      "## Langkah 4: Komunikasikan alasan kenaikan, bukan hanya angkanya",
+      "Pelanggan cenderung lebih memahami kenaikan harga ketika tahu alasannya, misalnya harga bahan baku utama sedang naik di pasaran. Komunikasi sederhana lewat media sosial atau papan harga bisa membantu mengurangi keluhan.",
+      "## Langkah 5: Evaluasi ulang komposisi biaya, bukan cuma bahan baku",
+      "Saat menyesuaikan harga karena satu komponen naik, ini juga momen yang tepat untuk meninjau ulang komponen biaya lain — tenaga kerja, overhead, dan margin — apakah semuanya masih realistis dengan kondisi sekarang.",
+      "Kenaikan harga bahan baku memang di luar kendali pelaku usaha, tapi cara meresponsnya sepenuhnya ada di tangan Anda. Usaha yang rutin menghitung ulang HPP setiap kali ada perubahan harga bahan baku cenderung lebih stabil keuntungannya dibanding usaha yang mempertahankan harga jual lama demi menghindari komplain sesaat.",
+    ],
+  },
+  {
+    slug: "dampak-kenaikan-tarif-listrik-biaya-produksi-umkm",
+    title: "Dampak Kenaikan Tarif Listrik ke Biaya Produksi UMKM, dan Cara Menghitungnya",
+    excerpt:
+      "Kenaikan tarif listrik sering dianggap biaya kecil yang tidak perlu dihitung ulang, padahal dampaknya ke HPP bisa lebih besar dari perkiraan.",
+    date: "1 Agustus 2026",
+    readTime: "5 menit baca",
+    content: [
+      "Listrik adalah salah satu komponen biaya overhead yang paling sering diabaikan dalam perhitungan HPP, padahal untuk usaha yang menggunakan peralatan listrik secara intensif — seperti oven, mesin jahit, mesin cetak, atau kulkas pendingin — kenaikan tarif listrik bisa berdampak nyata ke margin keuntungan.",
+      "## Kenapa listrik sering terlewat dari perhitungan",
+      "Tagihan listrik biasanya dibayar sebagai satu angka bulanan untuk seluruh rumah tangga atau tempat usaha, bukan per produk yang dihasilkan. Karena tidak terlihat langsung per unit produksi, banyak pelaku usaha kesulitan memasukkannya ke dalam HPP, dan akhirnya memilih untuk tidak menghitungnya sama sekali.",
+      "## Cara sederhana mengalokasikan biaya listrik ke HPP",
+      "Cara paling praktis adalah memperkirakan proporsi penggunaan listrik untuk usaha dibanding total tagihan bulanan. Misalnya, jika total tagihan listrik bulanan Rp 300.000 dan diperkirakan 60% dipakai untuk kegiatan usaha, maka Rp 180.000 adalah biaya listrik usaha per bulan. Bagi angka ini dengan jumlah produksi dalam sebulan untuk mendapatkan alokasi biaya listrik per unit.",
+      "## Contoh dampaknya ke HPP",
+      "Jika usaha memproduksi 300 unit produk dalam sebulan dengan alokasi biaya listrik Rp 180.000, maka tambahan biaya listrik per unit adalah Rp 600. Angka ini terlihat kecil per unit, tapi jika tarif listrik naik 20%, tambahan biaya per unit ikut naik menjadi Rp 720 — dan jika tidak disesuaikan ke harga jual, margin keuntungan otomatis tergerus di setiap unit yang terjual.",
+      "## Kapan perlu menghitung ulang",
+      "Setiap kali ada pengumuman kenaikan tarif dasar listrik, atau saat penggunaan alat-alat listrik di usaha bertambah (misalnya membeli mesin baru), ini menjadi momen yang tepat untuk menghitung ulang alokasi biaya listrik ke HPP. Kebiasaan meninjau ulang komponen overhead secara berkala membantu memastikan harga jual tetap mencerminkan biaya produksi yang sebenarnya.",
+      "## Bukan hanya listrik",
+      "Prinsip yang sama berlaku untuk biaya overhead lain yang sering terlewat: air, gas, sewa tempat, hingga penyusutan peralatan. Semua komponen ini kecil secara individual, tapi jika diakumulasikan dan tidak pernah dihitung ulang, selisihnya bisa signifikan terhadap keuntungan usaha dalam jangka panjang.",
+    ],
+  },
+  {
     slug: "rumus-menghitung-hpp-dan-harga-jual",
     title: "Rumus Menghitung HPP dan Harga Jual (Lengkap dengan Contoh)",
     excerpt:
