@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { jenisUsahaList, type JenisUsaha } from "@/lib/presets";
 
 type Bahan = {
   id: string;
@@ -18,15 +19,34 @@ function newId() {
   return Math.random().toString(36).slice(2, 9);
 }
 
+function bahanFromPreset(preset: JenisUsaha): Bahan[] {
+  return preset.contohBahan.map((c) => ({ id: newId(), ...c }));
+}
+
 export default function HPPCalculator() {
-  const [bahan, setBahan] = useState<Bahan[]>([
-    { id: newId(), nama: "Tepung terigu", jumlah: 2, harga: 12000 },
-    { id: newId(), nama: "Gula pasir", jumlah: 1, harga: 15000 },
-  ]);
-  const [tenagaKerja, setTenagaKerja] = useState<number>(30000);
-  const [overhead, setOverhead] = useState<number>(10000);
-  const [jumlahProduksi, setJumlahProduksi] = useState<number>(20);
+  const [jenisUsahaId, setJenisUsahaId] = useState<string>("kuliner");
+  const jenisUsaha =
+    jenisUsahaList.find((j) => j.id === jenisUsahaId) ?? jenisUsahaList[0];
+
+  const [bahan, setBahan] = useState<Bahan[]>(() =>
+    bahanFromPreset(jenisUsaha)
+  );
+  const [tenagaKerja, setTenagaKerja] = useState<number>(jenisUsaha.tenagaKerja);
+  const [overhead, setOverhead] = useState<number>(jenisUsaha.overhead);
+  const [jumlahProduksi, setJumlahProduksi] = useState<number>(
+    jenisUsaha.jumlahProduksi
+  );
   const [margin, setMargin] = useState<number>(40);
+
+  function pilihJenisUsaha(id: string) {
+    const preset = jenisUsahaList.find((j) => j.id === id);
+    if (!preset) return;
+    setJenisUsahaId(id);
+    setBahan(bahanFromPreset(preset));
+    setTenagaKerja(preset.tenagaKerja);
+    setOverhead(preset.overhead);
+    setJumlahProduksi(preset.jumlahProduksi);
+  }
 
   const totalBahan = useMemo(
     () => bahan.reduce((sum, b) => sum + b.jumlah * b.harga, 0),
@@ -75,11 +95,32 @@ export default function HPPCalculator() {
           diperbarui otomatis di kolom kanan.
         </p>
 
+        {/* Jenis usaha selector */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          {jenisUsahaList.map((j) => (
+            <button
+              key={j.id}
+              onClick={() => pilihJenisUsaha(j.id)}
+              className={`rounded-full border px-4 py-1.5 font-body text-sm font-medium transition ${
+                jenisUsahaId === j.id
+                  ? "border-forest bg-forest text-paper"
+                  : "border-ink/20 text-ink/70 hover:border-forest hover:text-forest"
+              }`}
+            >
+              {j.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 font-body text-xs text-muted">
+          Pilih jenis usaha untuk contoh komponen biaya yang lebih sesuai.
+          Semua angka tetap bisa diubah bebas.
+        </p>
+
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
           {/* Input side */}
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
             <h3 className="font-display text-base font-semibold text-ink">
-              1. Bahan baku
+              1. {jenisUsaha.bahanLabel}
             </h3>
 
             <div className="mt-4 space-y-3">
@@ -152,7 +193,7 @@ export default function HPPCalculator() {
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
                 <label className="mt-3 block font-body text-xs text-muted">
-                  Overhead (listrik, sewa, gas, dll)
+                  {jenisUsaha.overheadLabel}
                 </label>
                 <input
                   type="number"
@@ -168,7 +209,7 @@ export default function HPPCalculator() {
                   3. Produksi &amp; margin
                 </h3>
                 <label className="mt-3 block font-body text-xs text-muted">
-                  Jumlah unit dihasilkan
+                  Jumlah unit dihasilkan ({jenisUsaha.satuanUnit})
                 </label>
                 <input
                   type="number"
@@ -221,7 +262,7 @@ export default function HPPCalculator() {
                 <span>{rupiah(totalModal)}</span>
               </div>
               <div className="flex justify-between py-1 font-semibold text-forest">
-                <span>HPP per unit</span>
+                <span>HPP per {jenisUsaha.satuanUnit}</span>
                 <span>{rupiah(hppPerUnit)}</span>
               </div>
             </div>
@@ -234,16 +275,16 @@ export default function HPPCalculator() {
                 {rupiah(hargaJualDibulatkan)}
               </p>
               <p className="mt-1 font-body text-xs text-muted">
-                per unit, sudah termasuk margin {margin}%
+                per {jenisUsaha.satuanUnit}, sudah termasuk margin {margin}%
               </p>
 
               <div className="mt-4 flex justify-between border-t border-dashed border-ink/20 pt-4 font-mono text-sm">
-                <span className="text-muted">Untung per unit</span>
+                <span className="text-muted">Untung per {jenisUsaha.satuanUnit}</span>
                 <span className="text-ledger">{rupiah(untungPerUnit)}</span>
               </div>
               <div className="mt-1 flex justify-between font-mono text-sm">
                 <span className="text-muted">
-                  Total untung ({jumlahProduksi} unit)
+                  Total untung ({jumlahProduksi} {jenisUsaha.satuanUnit})
                 </span>
                 <span className="text-ledger">{rupiah(totalUntung)}</span>
               </div>
