@@ -9,6 +9,37 @@ export type Artikel = {
 
 export const artikelList: Artikel[] = [
   {
+    slug: "rumus-menghitung-hpp-dan-harga-jual",
+    title: "Rumus Menghitung HPP dan Harga Jual (Lengkap dengan Contoh)",
+    excerpt:
+      "Kumpulan rumus dasar untuk menghitung Harga Pokok Produksi (HPP) dan harga jual, disertai contoh perhitungan yang mudah diikuti.",
+    date: "1 Agustus 2026",
+    readTime: "7 menit baca",
+    content: [
+      "Salah satu pertanyaan paling sering dicari pelaku usaha kecil adalah bagaimana rumus menghitung HPP dan harga jual yang benar. Artikel ini merangkum rumus-rumus dasarnya secara ringkas, lengkap dengan contoh angka supaya mudah langsung dipraktikkan.",
+      "## Apa itu HPP",
+      "HPP atau Harga Pokok Produksi adalah total biaya yang dikeluarkan untuk menghasilkan satu unit produk. HPP menjadi dasar sebelum menentukan harga jual, karena tanpa mengetahui HPP, harga jual yang ditetapkan bisa jadi tidak menutup biaya produksi sama sekali.",
+      "## Rumus dasar HPP",
+      "Rumus paling sederhana untuk menghitung HPP per unit adalah sebagai berikut:",
+      "HPP per unit = (Biaya bahan baku + Biaya tenaga kerja + Biaya overhead) / Jumlah unit yang dihasilkan",
+      "Ketiga komponen biaya ini perlu dihitung untuk satu kali proses produksi, lalu dibagi dengan jumlah unit yang dihasilkan dari proses tersebut.",
+      "## Contoh perhitungan HPP",
+      "Misalkan sebuah usaha kue rumahan memproduksi 20 potong kue dalam satu kali produksi, dengan rincian biaya sebagai berikut: bahan baku Rp 80.000, tenaga kerja Rp 30.000, dan overhead (gas, listrik, kemasan) Rp 10.000. Total biaya produksi adalah Rp 120.000. Dengan rumus di atas, HPP per potong kue adalah Rp 120.000 dibagi 20, yaitu Rp 6.000 per potong.",
+      "## Rumus menghitung harga jual dari HPP",
+      "Setelah HPP diketahui, harga jual dihitung dengan menambahkan margin keuntungan yang diinginkan. Rumus yang umum dipakai (menggunakan pendekatan markup dari biaya) adalah:",
+      "Harga jual = HPP per unit x (1 + persentase margin)",
+      "Melanjutkan contoh di atas, jika HPP per potong kue adalah Rp 6.000 dan margin keuntungan yang diinginkan 50%, maka harga jualnya adalah Rp 6.000 x 1,5 = Rp 9.000 per potong.",
+      "## Rumus menghitung keuntungan",
+      "Untuk mengetahui keuntungan per unit, gunakan rumus:",
+      "Keuntungan per unit = Harga jual - HPP per unit",
+      "Dari contoh di atas, keuntungan per potong kue adalah Rp 9.000 dikurangi Rp 6.000, yaitu Rp 3.000 per potong. Jika seluruh 20 potong terjual, total keuntungan yang didapat adalah Rp 60.000.",
+      "## Kesalahan umum dalam menghitung HPP",
+      "Kesalahan yang paling sering terjadi adalah melupakan komponen biaya overhead dan tenaga kerja, sehingga HPP yang dihitung lebih rendah dari kenyataan. Akibatnya, harga jual yang ditetapkan pun ikut lebih rendah dari yang seharusnya, dan keuntungan riil menjadi lebih kecil dari yang terlihat di atas kertas.",
+      "## Praktikkan langsung tanpa menghitung manual",
+      "Rumus-rumus di atas bisa dihitung manual dengan kalkulator biasa, tapi akan lebih cepat dan minim kesalahan jika menggunakan kalkulator HPP otomatis. Cukup masukkan bahan baku, tenaga kerja, overhead, jumlah produksi, dan margin yang diinginkan — hasil HPP dan harga jual langsung terlihat tanpa perlu menghitung manual satu per satu.",
+    ],
+  },
+  {
     slug: "cara-menghitung-hpp-usaha-kuliner-rumahan",
     title: "Cara Menghitung HPP untuk Usaha Kuliner Rumahan",
     excerpt:
