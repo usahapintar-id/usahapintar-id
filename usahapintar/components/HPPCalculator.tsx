@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { jenisUsahaList, type JenisUsaha } from "@/lib/presets";
+import RekomendasiAlat from "./RekomendasiAlat";
 
 type Bahan = {
   id: string;
@@ -291,6 +292,8 @@ export default function HPPCalculator() {
             </div>
           </div>
         </div>
+
+        <RekomendasiAlat jenisUsahaId={jenisUsahaId} />
       </div>
     </section>
   );

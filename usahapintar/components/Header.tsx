@@ -27,6 +27,9 @@ export default function Header() {
           <a href="/#kalkulator" className="transition hover:text-forest">
             Kalkulator HPP
           </a>
+          <a href="/alat" className="transition hover:text-forest">
+            Alat Bisnis
+          </a>
           <a href="/artikel" className="transition hover:text-forest">
             Artikel
           </a>

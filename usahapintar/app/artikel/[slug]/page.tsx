@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import RekomendasiAlat from "@/components/RekomendasiAlat";
 import { artikelList, getArtikelBySlug } from "@/lib/artikel";
 
 export function generateStaticParams() {
@@ -84,6 +85,8 @@ export default function ArtikelDetailPage({
               Buka Kalkulator HPP
             </Link>
           </div>
+
+          <RekomendasiAlat jenisUsahaId="umum" />
         </div>
       </article>
       <Footer />
