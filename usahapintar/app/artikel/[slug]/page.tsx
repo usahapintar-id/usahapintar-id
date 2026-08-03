@@ -17,7 +17,7 @@ export function generateMetadata({
   const artikel = getArtikelBySlug(params.slug);
   if (!artikel) return {};
   return {
-    title: `${artikel.title} — UsahaPintar.id`,
+    title: `${artikel.title} — CuanKit`,
     description: artikel.excerpt,
   };
 }

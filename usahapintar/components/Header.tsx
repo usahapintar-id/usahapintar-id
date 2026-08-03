@@ -1,13 +1,19 @@
+import Image from "next/image";
+
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper/90 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-sm border-2 border-forest bg-forest font-mono text-sm font-semibold text-paper">
-            Rp
-          </span>
+          <Image
+            src="/logo-mark.png"
+            alt="CuanKit"
+            width={36}
+            height={36}
+            className="h-9 w-9"
+          />
           <span className="font-display text-lg font-semibold tracking-tight text-ink">
-            UsahaPintar<span className="text-brass">.id</span>
+            Cuan<span className="text-brass">Kit</span>
           </span>
         </a>
 

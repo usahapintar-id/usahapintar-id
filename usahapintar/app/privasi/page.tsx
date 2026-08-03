@@ -3,8 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Kebijakan Privasi — UsahaPintar.id",
-  description: "Kebijakan privasi penggunaan situs UsahaPintar.id.",
+  title: "Kebijakan Privasi — CuanKit",
+  description: "Kebijakan privasi penggunaan situs CuanKit.",
 };
 
 export default function PrivasiPage() {

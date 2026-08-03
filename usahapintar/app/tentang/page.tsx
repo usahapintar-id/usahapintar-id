@@ -3,9 +3,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Tentang Kami — UsahaPintar.id",
+  title: "Tentang Kami — CuanKit",
   description:
-    "UsahaPintar.id adalah platform gratis untuk membantu UMKM Indonesia menghitung HPP dan menentukan harga jual yang tepat.",
+    "CuanKit adalah platform gratis untuk membantu UMKM Indonesia menghitung HPP dan menentukan harga jual yang tepat.",
 };
 
 export default function TentangPage() {
@@ -18,12 +18,12 @@ export default function TentangPage() {
             Tentang kami
           </span>
           <h1 className="mt-3 font-display text-3xl font-semibold text-ink sm:text-4xl">
-            Kenapa kami membuat UsahaPintar.id
+            Kenapa kami membuat CuanKit
           </h1>
 
           <div className="mt-8 space-y-5 font-body text-base leading-relaxed text-ink/90">
             <p>
-              UsahaPintar.id lahir dari pengamatan sederhana: banyak pelaku
+              CuanKit lahir dari pengamatan sederhana: banyak pelaku
               UMKM di Indonesia yang usahanya ramai pembeli, tapi kesulitan
               menjelaskan ke mana perginya keuntungan. Salah satu penyebab
               paling umum adalah harga jual yang ditentukan tanpa perhitungan
@@ -33,7 +33,7 @@ export default function TentangPage() {
               Kami percaya bahwa alat bantu untuk menghitung Harga Pokok
               Produksi (HPP) seharusnya sederhana, gratis, dan bisa dipakai
               siapa saja tanpa latar belakang akuntansi. Karena itu,
-              UsahaPintar.id dibangun sebagai kalkulator yang bisa langsung
+              CuanKit dibangun sebagai kalkulator yang bisa langsung
               dipakai di browser, tanpa perlu instal aplikasi atau membuat
               akun.
             </p>
@@ -44,7 +44,7 @@ export default function TentangPage() {
               menengah.
             </p>
             <p>
-              UsahaPintar.id dikembangkan secara independen dan terus
+              CuanKit dikembangkan secara independen dan terus
               disempurnakan berdasarkan masukan dari pengguna. Jika Anda
               punya saran atau pertanyaan, kami senang mendengarnya.
             </p>

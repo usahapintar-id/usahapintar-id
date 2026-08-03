@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { artikelList } from "@/lib/artikel";
 
 export const metadata: Metadata = {
-  title: "Artikel — UsahaPintar.id",
+  title: "Artikel — CuanKit",
   description:
     "Panduan dan tips seputar HPP, harga jual, dan pengelolaan biaya produksi untuk UMKM Indonesia.",
 };

@@ -14,7 +14,7 @@ export default function Hero() {
           </h1>
 
           <p className="mt-5 max-w-lg font-body text-base leading-relaxed text-muted sm:text-lg">
-            UsahaPintar.id bantu kamu menyusun pembukuan sederhana dan
+            CuanKit bantu kamu menyusun pembukuan sederhana dan
             menghitung Harga Pokok Produksi (HPP) dalam hitungan menit —
             supaya setiap produk yang kamu jual sudah pasti untung, bukan
             kira-kira.

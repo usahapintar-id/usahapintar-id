@@ -147,7 +147,7 @@ export const artikelList: Artikel[] = [
       "Perbedaan ini sering menyebabkan pelaku usaha keliru menghitung, terutama saat berpindah dari satu istilah ke istilah lain tanpa sadar. Selisihnya bisa membuat harga jual jauh lebih rendah dari yang seharusnya, yang berarti keuntungan riil lebih kecil dari yang direncanakan.",
       "## Mana yang sebaiknya dipakai",
       "Tidak ada yang mutlak lebih benar — keduanya valid tergantung kebiasaan industri. Namun untuk usaha kecil yang baru mulai menghitung HPP, markup biasanya lebih mudah dipahami karena perhitungannya langsung dari biaya yang sudah diketahui. Yang terpenting adalah konsisten memakai satu metode dan memahami betul cara kerjanya, supaya tidak salah menetapkan harga akhir.",
-      "Kalkulator HPP di UsahaPintar.id menggunakan pendekatan markup — margin keuntungan dihitung sebagai tambahan persentase dari HPP — karena lebih intuitif untuk pelaku usaha yang baru mulai mencatat biaya produksinya secara rutin.",
+      "Kalkulator HPP di CuanKit menggunakan pendekatan markup — margin keuntungan dihitung sebagai tambahan persentase dari HPP — karena lebih intuitif untuk pelaku usaha yang baru mulai mencatat biaya produksinya secara rutin.",
     ],
   },
 ];

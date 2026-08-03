@@ -22,9 +22,13 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "UsahaPintar.id — Hitung HPP, Tentukan Harga Jual yang Tepat",
+  title: "CuanKit — Tools Cerdas, Usaha Makin Cuan",
   description:
-    "Platform bantu UMKM Indonesia menghitung Harga Pokok Produksi (HPP) dan menentukan harga jual yang untung, bukan sekadar kira-kira.",
+    "CuanKit membantu UMKM Indonesia menghitung HPP, menentukan harga jual, dan mengelola usaha lebih cerdas — dari kalkulator hingga tools bisnis lainnya.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/icon-192.png",
+  },
 };
 
 export default function RootLayout({

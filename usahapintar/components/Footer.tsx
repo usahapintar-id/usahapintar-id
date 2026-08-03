@@ -1,13 +1,19 @@
+import Image from "next/image";
+
 export default function Footer() {
   return (
     <footer className="border-t border-ink/10 px-6 py-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-sm border-2 border-forest bg-forest font-mono text-xs font-semibold text-paper">
-            Rp
-          </span>
+          <Image
+            src="/logo-mark.png"
+            alt="CuanKit"
+            width={28}
+            height={28}
+            className="h-7 w-7"
+          />
           <span className="font-display text-sm font-semibold text-ink">
-            UsahaPintar<span className="text-brass">.id</span>
+            Cuan<span className="text-brass">Kit</span>
           </span>
         </div>
 
@@ -24,8 +30,8 @@ export default function Footer() {
         </nav>
 
         <p className="font-body text-xs text-muted">
-          © {new Date().getFullYear()} UsahaPintar.id — Dibuat untuk pelaku
-          UMKM Indonesia.
+          © {new Date().getFullYear()} CuanKit — Tools Cerdas, Usaha Makin
+          Cuan.
         </p>
       </div>
     </footer>
