@@ -43,6 +43,7 @@ export default function KalkulatorBEP() {
             </p>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={0}
               value={biayaTetap}
               onChange={(e) => setBiayaTetap(Number(e.target.value) || 0)}
@@ -54,6 +55,7 @@ export default function KalkulatorBEP() {
             </label>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={0}
               value={hargaJual}
               onChange={(e) => setHargaJual(Number(e.target.value) || 0)}
@@ -69,6 +71,7 @@ export default function KalkulatorBEP() {
             </p>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={0}
               value={biayaVariabel}
               onChange={(e) => setBiayaVariabel(Number(e.target.value) || 0)}

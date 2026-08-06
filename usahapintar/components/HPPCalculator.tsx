@@ -146,6 +146,7 @@ export default function HPPCalculator() {
                   />
                   <input
                     type="number"
+            onFocus={(e) => e.target.select()}
                     min={0}
                     value={b.jumlah}
                     onChange={(e) => updateBahan(b.id, "jumlah", e.target.value)}
@@ -154,6 +155,7 @@ export default function HPPCalculator() {
                   />
                   <input
                     type="number"
+            onFocus={(e) => e.target.select()}
                     min={0}
                     value={b.harga}
                     onChange={(e) => updateBahan(b.id, "harga", e.target.value)}
@@ -188,6 +190,7 @@ export default function HPPCalculator() {
                 </label>
                 <input
                   type="number"
+            onFocus={(e) => e.target.select()}
                   min={0}
                   value={tenagaKerja}
                   onChange={(e) => setTenagaKerja(Number(e.target.value) || 0)}
@@ -198,6 +201,7 @@ export default function HPPCalculator() {
                 </label>
                 <input
                   type="number"
+            onFocus={(e) => e.target.select()}
                   min={0}
                   value={overhead}
                   onChange={(e) => setOverhead(Number(e.target.value) || 0)}
@@ -214,6 +218,7 @@ export default function HPPCalculator() {
                 </label>
                 <input
                   type="number"
+            onFocus={(e) => e.target.select()}
                   min={1}
                   value={jumlahProduksi}
                   onChange={(e) =>

@@ -38,6 +38,7 @@ export default function KalkulatorPinjaman() {
             </label>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={0}
               value={pokok}
               onChange={(e) => setPokok(Number(e.target.value) || 0)}
@@ -63,6 +64,7 @@ export default function KalkulatorPinjaman() {
             </label>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={1}
               value={tenor}
               onChange={(e) =>

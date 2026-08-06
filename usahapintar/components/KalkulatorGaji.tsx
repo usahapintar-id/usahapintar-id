@@ -39,6 +39,7 @@ export default function KalkulatorGaji() {
             </label>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={0}
               value={gajiPokok}
               onChange={(e) => setGajiPokok(Number(e.target.value) || 0)}
@@ -52,6 +53,7 @@ export default function KalkulatorGaji() {
                 </label>
                 <input
                   type="number"
+            onFocus={(e) => e.target.select()}
                   min={0}
                   value={jamLembur}
                   onChange={(e) =>
@@ -66,6 +68,7 @@ export default function KalkulatorGaji() {
                 </label>
                 <input
                   type="number"
+            onFocus={(e) => e.target.select()}
                   min={0}
                   value={tarifLembur}
                   onChange={(e) =>
@@ -81,6 +84,7 @@ export default function KalkulatorGaji() {
             </label>
             <input
               type="number"
+            onFocus={(e) => e.target.select()}
               min={0}
               value={potongan}
               onChange={(e) => setPotongan(Number(e.target.value) || 0)}
