@@ -41,7 +41,7 @@ export default function KalkulatorGaji() {
               type="number"
             onFocus={(e) => e.target.select()}
               min={0}
-              value={gajiPokok}
+              value={gajiPokok === 0 ? "" : gajiPokok}
               onChange={(e) => setGajiPokok(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
@@ -55,7 +55,7 @@ export default function KalkulatorGaji() {
                   type="number"
             onFocus={(e) => e.target.select()}
                   min={0}
-                  value={jamLembur}
+                  value={jamLembur === 0 ? "" : jamLembur}
                   onChange={(e) =>
                     setJamLembur(Number(e.target.value) || 0)
                   }
@@ -70,7 +70,7 @@ export default function KalkulatorGaji() {
                   type="number"
             onFocus={(e) => e.target.select()}
                   min={0}
-                  value={tarifLembur}
+                  value={tarifLembur === 0 ? "" : tarifLembur}
                   onChange={(e) =>
                     setTarifLembur(Number(e.target.value) || 0)
                   }
@@ -86,7 +86,7 @@ export default function KalkulatorGaji() {
               type="number"
             onFocus={(e) => e.target.select()}
               min={0}
-              value={potongan}
+              value={potongan === 0 ? "" : potongan}
               onChange={(e) => setPotongan(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />

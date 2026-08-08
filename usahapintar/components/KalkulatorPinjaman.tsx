@@ -40,7 +40,7 @@ export default function KalkulatorPinjaman() {
               type="number"
             onFocus={(e) => e.target.select()}
               min={0}
-              value={pokok}
+              value={pokok === 0 ? "" : pokok}
               onChange={(e) => setPokok(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
@@ -66,7 +66,7 @@ export default function KalkulatorPinjaman() {
               type="number"
             onFocus={(e) => e.target.select()}
               min={1}
-              value={tenor}
+              value={tenor === 0 ? "" : tenor}
               onChange={(e) =>
                 setTenor(Math.max(1, Number(e.target.value) || 1))
               }
