@@ -8,6 +8,7 @@ const navLinks = [
   { href: "/#cara-kerja", label: "Cara Kerja" },
   { href: "/#kalkulator", label: "Kalkulator HPP" },
   { href: "/alat", label: "Alat Bisnis" },
+  { href: "/peta-musiman", label: "Peta Musiman" },
   { href: "/artikel", label: "Artikel" },
 ];
 

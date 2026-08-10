@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "", priority: 1 },
     { path: "/alat", priority: 0.8 },
     { path: "/artikel", priority: 0.8 },
+    { path: "/peta-musiman", priority: 0.7 },
     { path: "/kalkulator-bep", priority: 0.7 },
     { path: "/kalkulator-pinjaman", priority: 0.7 },
     { path: "/kalkulator-gaji", priority: 0.7 },
