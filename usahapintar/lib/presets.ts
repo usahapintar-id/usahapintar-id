@@ -71,6 +71,20 @@ export const jenisUsahaList: JenisUsaha[] = [
     jumlahProduksi: 1,
   },
   {
+    id: "digital",
+    label: "Jasa Digital",
+    bahanLabel: "Biaya operasional bulanan",
+    overheadLabel: "Overhead (software, cloud storage, langganan tools)",
+    satuanUnit: "proyek",
+    contohBahan: [
+      { nama: "Kuota internet/WiFi (bulanan)", jumlah: 1, harga: 300000 },
+      { nama: "Listrik (alokasi kerja, bulanan)", jumlah: 1, harga: 150000 },
+    ],
+    tenagaKerja: 500000,
+    overhead: 100000,
+    jumlahProduksi: 4,
+  },
+  {
     id: "umum",
     label: "Lainnya",
     bahanLabel: "Bahan baku",
