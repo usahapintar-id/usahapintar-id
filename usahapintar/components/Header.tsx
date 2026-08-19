@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/#kalkulator", label: "Kalkulator HPP" },
   { href: "/alat", label: "Alat Bisnis" },
   { href: "/peta-musiman", label: "Peta Musiman" },
+  { href: "/analisis-usaha", label: "Analisis Usaha" },
   { href: "/artikel", label: "Artikel" },
 ];
 
@@ -31,7 +32,7 @@ export default function Header() {
           </span>
         </a>
 
-        <nav className="hidden items-center gap-8 font-body text-sm font-medium text-ink/80 md:flex">
+        <nav className="hidden items-center gap-6 font-body text-sm font-medium text-ink/80 lg:flex">
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -51,13 +52,12 @@ export default function Header() {
             Coba Kalkulator
           </a>
 
-          {/* Hamburger button, only visible below md breakpoint */}
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Tutup menu" : "Buka menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-sm border border-ink/20 text-ink md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-sm border border-ink/20 text-ink lg:hidden"
           >
             {open ? (
               <svg
@@ -93,9 +93,8 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile menu panel */}
       {open && (
-        <nav className="border-t border-ink/10 bg-paper px-6 py-4 md:hidden">
+        <nav className="border-t border-ink/10 bg-paper px-6 py-4 lg:hidden">
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <a

@@ -1,0 +1,411 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  hitungKecocokan,
+  type JawabanKuesioner,
+} from "@/lib/matchingUsaha";
+import type {
+  ModalRange,
+  Waktu,
+  Keterampilan,
+  SumberDaya,
+  Preferensi,
+} from "@/lib/ideUsaha";
+
+function rupiah(n: number) {
+  return "Rp " + Math.round(n).toLocaleString("id-ID");
+}
+
+const modalOptions: { value: ModalRange; label: string }[] = [
+  { value: "kecil", label: "Di bawah Rp 500.000" },
+  { value: "sedang", label: "Rp 500.000 – Rp 2.000.000" },
+  { value: "besar", label: "Rp 2.000.000 – Rp 5.000.000" },
+  { value: "sangatBesar", label: "Di atas Rp 5.000.000" },
+];
+
+const waktuOptions: { value: Waktu; label: string; desc: string }[] = [
+  { value: "sampingan", label: "Sampingan", desc: "Beberapa jam seminggu, di luar kesibukan utama" },
+  { value: "paruhWaktu", label: "Paruh waktu", desc: "Beberapa jam per hari" },
+  { value: "penuhWaktu", label: "Penuh waktu", desc: "Fokus penuh ke usaha ini" },
+];
+
+const keterampilanOptions: { value: Keterampilan; label: string }[] = [
+  { value: "memasak", label: "Memasak / mengolah makanan" },
+  { value: "menjahit", label: "Menjahit / kerajinan tangan" },
+  { value: "desain", label: "Desain grafis / visual" },
+  { value: "menulis", label: "Menulis / membuat konten" },
+  { value: "jualan", label: "Jualan & negosiasi" },
+  { value: "mengajar", label: "Mengajar / menjelaskan ke orang lain" },
+  { value: "teknis", label: "Teknis / reparasi" },
+  { value: "belumAda", label: "Belum ada keterampilan khusus, masih mau belajar" },
+];
+
+const sumberDayaOptions: { value: SumberDaya; label: string }[] = [
+  { value: "lokasiStrategis", label: "Lokasi strategis (rumah/toko ramai)" },
+  { value: "kendaraan", label: "Kendaraan (motor/mobil)" },
+  { value: "alatMasak", label: "Alat masak/dapur memadai" },
+  { value: "jaringanLuas", label: "Jaringan/relasi luas" },
+  { value: "medsosBesar", label: "Media sosial dengan pengikut lumayan" },
+  { value: "tidakAda", label: "Belum ada yang spesifik" },
+];
+
+const preferensiOptions: { value: Preferensi; label: string }[] = [
+  { value: "interaksiLangsung", label: "Suka ketemu & interaksi langsung dengan orang" },
+  { value: "kerjaMandiri", label: "Suka kerja mandiri / di belakang layar" },
+  { value: "buatSendiri", label: "Suka bikin produk sendiri" },
+  { value: "jualBarangOrang", label: "Suka jual produk orang lain (reseller/dagang)" },
+];
+
+const totalSteps = 5;
+
+export default function AnalisisUsahaKuesioner() {
+  const [step, setStep] = useState(1);
+  const [modal, setModal] = useState<ModalRange | null>(null);
+  const [waktu, setWaktu] = useState<Waktu | null>(null);
+  const [keterampilan, setKeterampilan] = useState<Keterampilan[]>([]);
+  const [sumberDaya, setSumberDaya] = useState<SumberDaya[]>([]);
+  const [preferensi, setPreferensi] = useState<Preferensi[]>([]);
+  const [selesai, setSelesai] = useState(false);
+
+  function toggle<T>(list: T[], value: T, setter: (v: T[]) => void) {
+    if (list.includes(value)) {
+      setter(list.filter((v) => v !== value));
+    } else {
+      setter([...list, value]);
+    }
+  }
+
+  function bisaLanjut() {
+    if (step === 1) return modal !== null;
+    if (step === 2) return waktu !== null;
+    if (step === 3) return keterampilan.length > 0;
+    if (step === 4) return sumberDaya.length > 0;
+    if (step === 5) return preferensi.length > 0;
+    return false;
+  }
+
+  function submit() {
+    setSelesai(true);
+  }
+
+  function ulangi() {
+    setStep(1);
+    setModal(null);
+    setWaktu(null);
+    setKeterampilan([]);
+    setSumberDaya([]);
+    setPreferensi([]);
+    setSelesai(false);
+  }
+
+  if (selesai && modal && waktu) {
+    const jawaban: JawabanKuesioner = {
+      modal,
+      waktu,
+      keterampilan,
+      sumberDaya,
+      preferensi,
+    };
+    const hasil = hitungKecocokan(jawaban).slice(0, 3);
+
+    return (
+      <div className="mt-10">
+        <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
+          <span className="font-mono text-xs uppercase tracking-widest text-brass">
+            Hasil Analisis Anda
+          </span>
+          <h2 className="mt-2 font-display text-2xl font-semibold text-ink">
+            3 Ide Usaha Paling Cocok
+          </h2>
+          <p className="mt-2 font-body text-sm text-muted">
+            Berdasarkan modal, waktu, keterampilan, sumber daya, dan
+            preferensi kerja yang Anda pilih.
+          </p>
+        </div>
+
+        <div className="mt-6 space-y-6">
+          {hasil.map((h, i) => (
+            <div
+              key={h.ide.id}
+              className="rounded-md border-2 border-ink bg-paper shadow-[5px_5px_0_0_#1E2A1F]"
+            >
+              <div className="flex items-center justify-between border-b-2 border-ink px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <span className="font-display text-2xl">
+                    {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
+                  </span>
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                      {h.ide.kategori}
+                    </p>
+                    <h3 className="font-display text-lg font-semibold text-ink">
+                      {h.ide.nama}
+                    </h3>
+                  </div>
+                </div>
+                <span className="rounded-full bg-forest/10 px-3 py-1 font-mono text-xs font-semibold text-forest">
+                  {h.skor}% cocok
+                </span>
+              </div>
+
+              <div className="px-6 py-5">
+                <p className="font-body text-sm leading-relaxed text-ink/90">
+                  {h.ide.alasanTemplate}
+                </p>
+
+                <div className="mt-4 rounded-sm bg-ledger-lines px-4 py-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                    Perkiraan modal awal
+                  </p>
+                  <p className="font-display text-lg font-semibold text-forest">
+                    {rupiah(h.ide.modalMin)} – {rupiah(h.ide.modalMax)}
+                  </p>
+                  <p className="mt-1 font-body text-xs text-muted">
+                    {h.ide.rincianModal}
+                  </p>
+                </div>
+
+                <div className="mt-4">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                    Langkah pertama minggu ini
+                  </p>
+                  <ol className="mt-2 space-y-1.5">
+                    {h.ide.langkahAwal.map((l, idx) => (
+                      <li
+                        key={idx}
+                        className="flex gap-2 font-body text-sm text-ink/90"
+                      >
+                        <span className="font-mono text-forest">{idx + 1}.</span>
+                        {l}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+
+                <div className="mt-4 border-t border-dashed border-ink/20 pt-4">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                    Potensi tantangan
+                  </p>
+                  <p className="mt-1 font-body text-sm text-ink/80">
+                    {h.ide.tantangan}
+                  </p>
+                </div>
+
+                {h.ide.kombinasi && (
+                  <div className="mt-3">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                      Cocok dikombinasikan dengan
+                    </p>
+                    <p className="mt-1 font-body text-sm text-ink/80">
+                      {h.ide.kombinasi}
+                    </p>
+                  </div>
+                )}
+
+                <Link
+                  href="/#kalkulator"
+                  className="mt-5 inline-block rounded-sm bg-forest px-5 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
+                >
+                  Hitung HPP untuk ide ini &rarr;
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <button
+            onClick={ulangi}
+            className="font-body text-sm font-semibold text-forest underline decoration-brass decoration-2 underline-offset-4"
+          >
+            Ulangi kuesioner dengan jawaban berbeda
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10">
+      {/* Progress bar */}
+      <div className="flex items-center gap-2">
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-1.5 flex-1 rounded-full ${
+              i < step ? "bg-forest" : "bg-ink/10"
+            }`}
+          />
+        ))}
+      </div>
+      <p className="mt-2 font-mono text-xs text-muted">
+        Langkah {step} dari {totalSteps}
+      </p>
+
+      <div className="mt-6 rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
+        {step === 1 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Berapa modal yang tersedia untuk memulai usaha?
+            </h2>
+            <div className="mt-5 space-y-2">
+              {modalOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => setModal(o.value)}
+                  className={`w-full rounded-sm border-2 px-4 py-3 text-left font-body text-sm transition ${
+                    modal === o.value
+                      ? "border-forest bg-forest/10 text-forest font-semibold"
+                      : "border-ink/15 text-ink/80 hover:border-forest/40"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Berapa waktu yang bisa Anda alokasikan?
+            </h2>
+            <div className="mt-5 space-y-2">
+              {waktuOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => setWaktu(o.value)}
+                  className={`w-full rounded-sm border-2 px-4 py-3 text-left transition ${
+                    waktu === o.value
+                      ? "border-forest bg-forest/10"
+                      : "border-ink/15 hover:border-forest/40"
+                  }`}
+                >
+                  <p
+                    className={`font-body text-sm font-semibold ${
+                      waktu === o.value ? "text-forest" : "text-ink"
+                    }`}
+                  >
+                    {o.label}
+                  </p>
+                  <p className="mt-0.5 font-body text-xs text-muted">
+                    {o.desc}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Keterampilan apa yang sudah Anda miliki?
+            </h2>
+            <p className="mt-1 font-body text-xs text-muted">
+              Boleh pilih lebih dari satu.
+            </p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              {keterampilanOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => toggle(keterampilan, o.value, setKeterampilan)}
+                  className={`rounded-sm border-2 px-4 py-3 text-left font-body text-sm transition ${
+                    keterampilan.includes(o.value)
+                      ? "border-forest bg-forest/10 text-forest font-semibold"
+                      : "border-ink/15 text-ink/80 hover:border-forest/40"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Sumber daya apa yang sudah Anda miliki?
+            </h2>
+            <p className="mt-1 font-body text-xs text-muted">
+              Boleh pilih lebih dari satu.
+            </p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              {sumberDayaOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => toggle(sumberDaya, o.value, setSumberDaya)}
+                  className={`rounded-sm border-2 px-4 py-3 text-left font-body text-sm transition ${
+                    sumberDaya.includes(o.value)
+                      ? "border-forest bg-forest/10 text-forest font-semibold"
+                      : "border-ink/15 text-ink/80 hover:border-forest/40"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 5 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Bagaimana cara kerja yang Anda sukai?
+            </h2>
+            <p className="mt-1 font-body text-xs text-muted">
+              Boleh pilih lebih dari satu.
+            </p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              {preferensiOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => toggle(preferensi, o.value, setPreferensi)}
+                  className={`rounded-sm border-2 px-4 py-3 text-left font-body text-sm transition ${
+                    preferensi.includes(o.value)
+                      ? "border-forest bg-forest/10 text-forest font-semibold"
+                      : "border-ink/15 text-ink/80 hover:border-forest/40"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="mt-6 flex items-center justify-between border-t border-dashed border-ink/20 pt-4">
+          <button
+            onClick={() => setStep((s) => Math.max(1, s - 1))}
+            disabled={step === 1}
+            className="font-body text-sm font-semibold text-ink/60 transition hover:text-ink disabled:opacity-0"
+          >
+            &larr; Kembali
+          </button>
+
+          {step < totalSteps ? (
+            <button
+              onClick={() => setStep((s) => s + 1)}
+              disabled={!bisaLanjut()}
+              className="rounded-sm bg-forest px-6 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Lanjut &rarr;
+            </button>
+          ) : (
+            <button
+              onClick={submit}
+              disabled={!bisaLanjut()}
+              className="rounded-sm bg-forest px-6 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Lihat Hasil &rarr;
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
