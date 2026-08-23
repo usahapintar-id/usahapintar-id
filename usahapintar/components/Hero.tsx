@@ -5,7 +5,7 @@ export default function Hero() {
         {/* Left: copy */}
         <div>
           <span className="inline-block rounded-full border border-brass/40 bg-brass/10 px-3 py-1 font-mono text-xs uppercase tracking-widest text-brass">
-            Untuk pelaku UMKM Indonesia
+            Kalkulator HPP UMKM Gratis
           </span>
 
           <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] text-ink sm:text-5xl">
@@ -14,8 +14,8 @@ export default function Hero() {
           </h1>
 
           <p className="mt-5 max-w-lg font-body text-base leading-relaxed text-muted sm:text-lg">
-            CuanKit bantu kamu menyusun pembukuan sederhana dan
-            menghitung Harga Pokok Produksi (HPP) dalam hitungan menit —
+            Hitung HPP, harga jual, margin keuntungan, biaya tenaga kerja,
+            dan overhead usaha Anda secara gratis — dalam hitungan menit,
             supaya setiap produk yang kamu jual sudah pasti untung, bukan
             kira-kira.
           </p>
