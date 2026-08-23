@@ -163,13 +163,25 @@ export default function AnalisisUsahaKuesioner() {
                         {h.ide.nama}
                       </h3>
                     </div>
-                  </div>
-                  <span
-                    className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${badgeStyle}`}
-                  >
-                    {h.skor}% cocok
-                  </span>
-                </div>
+<div className="flex flex-col items-end gap-1">
+  <span
+    className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${badgeStyle}`}
+  >
+    {h.skor}/100
+  </span>
+
+  <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+    {h.tingkat === "sangat-cocok"
+      ? "Sangat cocok"
+      : h.tingkat === "cocok"
+      ? "Cocok"
+      : h.tingkat === "cukup-cocok"
+      ? "Cukup cocok"
+      : h.tingkat === "perlu-dipertimbangkan"
+      ? "Perlu dipertimbangkan"
+      : "Kurang cocok"}
+  </span>
+</div>
 
               <div className="px-6 py-5">
                 <p className="font-body text-sm leading-relaxed text-ink/90">
