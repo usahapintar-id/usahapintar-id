@@ -43,9 +43,8 @@ export default function KalkulatorBEP() {
             </p>
             <input
               type="number"
-            onFocus={(e) => e.target.select()}
               min={0}
-              value={biayaTetap === 0 ? "" : biayaTetap}
+              value={biayaTetap}
               onChange={(e) => setBiayaTetap(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
@@ -55,9 +54,8 @@ export default function KalkulatorBEP() {
             </label>
             <input
               type="number"
-            onFocus={(e) => e.target.select()}
               min={0}
-              value={hargaJual === 0 ? "" : hargaJual}
+              value={hargaJual}
               onChange={(e) => setHargaJual(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
@@ -71,9 +69,8 @@ export default function KalkulatorBEP() {
             </p>
             <input
               type="number"
-            onFocus={(e) => e.target.select()}
               min={0}
-              value={biayaVariabel === 0 ? "" : biayaVariabel}
+              value={biayaVariabel}
               onChange={(e) => setBiayaVariabel(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />

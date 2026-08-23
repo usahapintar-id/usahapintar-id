@@ -146,18 +146,16 @@ export default function HPPCalculator() {
                   />
                   <input
                     type="number"
-            onFocus={(e) => e.target.select()}
                     min={0}
-                    value={b.jumlah === 0 ? "" : b.jumlah}
+                    value={b.jumlah}
                     onChange={(e) => updateBahan(b.id, "jumlah", e.target.value)}
                     aria-label="Jumlah"
                     className="rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                   />
                   <input
                     type="number"
-            onFocus={(e) => e.target.select()}
                     min={0}
-                    value={b.harga === 0 ? "" : b.harga}
+                    value={b.harga}
                     onChange={(e) => updateBahan(b.id, "harga", e.target.value)}
                     aria-label="Harga satuan"
                     className="rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
@@ -190,9 +188,8 @@ export default function HPPCalculator() {
                 </label>
                 <input
                   type="number"
-            onFocus={(e) => e.target.select()}
                   min={0}
-                  value={tenagaKerja === 0 ? "" : tenagaKerja}
+                  value={tenagaKerja}
                   onChange={(e) => setTenagaKerja(Number(e.target.value) || 0)}
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
@@ -201,9 +198,8 @@ export default function HPPCalculator() {
                 </label>
                 <input
                   type="number"
-            onFocus={(e) => e.target.select()}
                   min={0}
-                  value={overhead === 0 ? "" : overhead}
+                  value={overhead}
                   onChange={(e) => setOverhead(Number(e.target.value) || 0)}
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
@@ -218,7 +214,6 @@ export default function HPPCalculator() {
                 </label>
                 <input
                   type="number"
-            onFocus={(e) => e.target.select()}
                   min={1}
                   value={jumlahProduksi}
                   onChange={(e) =>

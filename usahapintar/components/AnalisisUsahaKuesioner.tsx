@@ -39,6 +39,9 @@ const keterampilanOptions: { value: Keterampilan; label: string }[] = [
   { value: "jualan", label: "Jualan & negosiasi" },
   { value: "mengajar", label: "Mengajar / menjelaskan ke orang lain" },
   { value: "teknis", label: "Teknis / reparasi" },
+  { value: "fotografi", label: "Fotografi / videografi" },
+  { value: "berkebun", label: "Berkebun / bertani" },
+  { value: "kecantikan", label: "Merias / kecantikan" },
   { value: "belumAda", label: "Belum ada keterampilan khusus, masih mau belajar" },
 ];
 
@@ -109,6 +112,7 @@ export default function AnalisisUsahaKuesioner() {
       preferensi,
     };
     const hasil = hitungKecocokan(jawaban).slice(0, 3);
+    const semuaLemah = hasil.every((h) => h.tingkat === "lemah");
 
     return (
       <div className="mt-10">
@@ -123,32 +127,49 @@ export default function AnalisisUsahaKuesioner() {
             Berdasarkan modal, waktu, keterampilan, sumber daya, dan
             preferensi kerja yang Anda pilih.
           </p>
+          {semuaLemah && (
+            <p className="mt-3 rounded-sm border border-brass/30 bg-brass/10 px-3 py-2 font-body text-xs leading-relaxed text-ink/80">
+              Belum ada ide usaha yang sangat cocok dengan kombinasi jawaban
+              Anda di basis data kami saat ini — ini 3 yang paling
+              mendekati. Coba ulangi dengan memilih lebih banyak
+              keterampilan atau sumber daya untuk hasil yang lebih tajam.
+            </p>
+          )}
         </div>
 
         <div className="mt-6 space-y-6">
-          {hasil.map((h, i) => (
-            <div
-              key={h.ide.id}
-              className="rounded-md border-2 border-ink bg-paper shadow-[5px_5px_0_0_#1E2A1F]"
-            >
-              <div className="flex items-center justify-between border-b-2 border-ink px-6 py-4">
-                <div className="flex items-center gap-3">
-                  <span className="font-display text-2xl">
-                    {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
-                  </span>
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                      {h.ide.kategori}
-                    </p>
-                    <h3 className="font-display text-lg font-semibold text-ink">
-                      {h.ide.nama}
-                    </h3>
+          {hasil.map((h, i) => {
+            const badgeStyle =
+              h.tingkat === "kuat"
+                ? "bg-forest/10 text-forest"
+                : h.tingkat === "sedang"
+                ? "bg-brass/15 text-ink/70"
+                : "bg-ink/5 text-muted";
+            const medali =
+              h.tingkat === "lemah" ? "•" : i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉";
+            return (
+              <div
+                key={h.ide.id}
+                className="rounded-md border-2 border-ink bg-paper shadow-[5px_5px_0_0_#1E2A1F]"
+              >
+                <div className="flex items-center justify-between border-b-2 border-ink px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-display text-2xl">{medali}</span>
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                        {h.ide.kategori}
+                      </p>
+                      <h3 className="font-display text-lg font-semibold text-ink">
+                        {h.ide.nama}
+                      </h3>
+                    </div>
                   </div>
+                  <span
+                    className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${badgeStyle}`}
+                  >
+                    {h.skor}% cocok
+                  </span>
                 </div>
-                <span className="rounded-full bg-forest/10 px-3 py-1 font-mono text-xs font-semibold text-forest">
-                  {h.skor}% cocok
-                </span>
-              </div>
 
               <div className="px-6 py-5">
                 <p className="font-body text-sm leading-relaxed text-ink/90">
@@ -212,7 +233,8 @@ export default function AnalisisUsahaKuesioner() {
                 </Link>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-8 text-center">

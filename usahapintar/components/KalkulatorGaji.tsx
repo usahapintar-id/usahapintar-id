@@ -39,9 +39,8 @@ export default function KalkulatorGaji() {
             </label>
             <input
               type="number"
-            onFocus={(e) => e.target.select()}
               min={0}
-              value={gajiPokok === 0 ? "" : gajiPokok}
+              value={gajiPokok}
               onChange={(e) => setGajiPokok(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
@@ -53,9 +52,8 @@ export default function KalkulatorGaji() {
                 </label>
                 <input
                   type="number"
-            onFocus={(e) => e.target.select()}
                   min={0}
-                  value={jamLembur === 0 ? "" : jamLembur}
+                  value={jamLembur}
                   onChange={(e) =>
                     setJamLembur(Number(e.target.value) || 0)
                   }
@@ -68,9 +66,8 @@ export default function KalkulatorGaji() {
                 </label>
                 <input
                   type="number"
-            onFocus={(e) => e.target.select()}
                   min={0}
-                  value={tarifLembur === 0 ? "" : tarifLembur}
+                  value={tarifLembur}
                   onChange={(e) =>
                     setTarifLembur(Number(e.target.value) || 0)
                   }
@@ -84,9 +81,8 @@ export default function KalkulatorGaji() {
             </label>
             <input
               type="number"
-            onFocus={(e) => e.target.select()}
               min={0}
-              value={potongan === 0 ? "" : potongan}
+              value={potongan}
               onChange={(e) => setPotongan(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
