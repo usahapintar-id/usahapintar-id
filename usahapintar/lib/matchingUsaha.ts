@@ -369,12 +369,6 @@ export function hitungKecocokan(
   );
 }
 
-export function getTop3(
-  jawaban: JawabanKuesioner
-): HasilPencocokan[] {
-  return hitungKecocokan(jawaban).slice(0, 3);
-}
-}
 
 export function getTop3(jawaban: JawabanKuesioner): HasilPencocokan[] {
   return hitungKecocokan(jawaban).slice(0, 3);
