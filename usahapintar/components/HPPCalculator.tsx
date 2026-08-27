@@ -1,300 +1,247 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { jenisUsahaList, type JenisUsaha } from "@/lib/presets";
-import RekomendasiAlat from "./RekomendasiAlat";
+import React, { useState, useEffect } from "react";
+// Import html2pdf secara dinamis untuk menghindari error SSR di Next.js
+import dynamic from "next/dynamic";
 
-type Bahan = {
-  id: string;
+interface Bahan {
   nama: string;
-  jumlah: number;
-  harga: number;
-};
-
-function rupiah(n: number) {
-  if (!isFinite(n) || isNaN(n)) return "Rp 0";
-  return "Rp " + Math.round(n).toLocaleString("id-ID");
-}
-
-function newId() {
-  return Math.random().toString(36).slice(2, 9);
-}
-
-function bahanFromPreset(preset: JenisUsaha): Bahan[] {
-  return preset.contohBahan.map((c) => ({ id: newId(), ...c }));
+  jumlah: number | "";
+  harga: number | "";
 }
 
 export default function HPPCalculator() {
-  const [jenisUsahaId, setJenisUsahaId] = useState<string>("kuliner");
-  const jenisUsaha =
-    jenisUsahaList.find((j) => j.id === jenisUsahaId) ?? jenisUsahaList[0];
-
-  const [bahan, setBahan] = useState<Bahan[]>(() =>
-    bahanFromPreset(jenisUsaha)
-  );
-  const [tenagaKerja, setTenagaKerja] = useState<number>(jenisUsaha.tenagaKerja);
-  const [overhead, setOverhead] = useState<number>(jenisUsaha.overhead);
-  const [jumlahProduksi, setJumlahProduksi] = useState<number>(
-    jenisUsaha.jumlahProduksi
-  );
+  // 1. State dengan inisialisasi dari localStorage (jika ada)
+  const [bahanBaku, setBahanBaku] = useState<Bahan[]>([
+    { nama: "", jumlah: "", harga: "" },
+  ]);
+  const [tenagaKerja, setTenagaKerja] = useState<number | "">(0);
+  const [overhead, setOverhead] = useState<number | "">(0);
+  const [jumlahUnit, setJumlahUnit] = useState<number | "">(1);
   const [margin, setMargin] = useState<number>(40);
 
-  function pilihJenisUsaha(id: string) {
-    const preset = jenisUsahaList.find((j) => j.id === id);
-    if (!preset) return;
-    setJenisUsahaId(id);
-    setBahan(bahanFromPreset(preset));
-    setTenagaKerja(preset.tenagaKerja);
-    setOverhead(preset.overhead);
-    setJumlahProduksi(preset.jumlahProduksi);
-  }
+  // Muat data dari localStorage saat komponen pertama kali dibuka
+  useEffect(() => {
+    const savedData = localStorage.getItem("cuankit_hpp_data");
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        if (parsed.bahanBaku) setBahanBaku(parsed.bahanBaku);
+        if (parsed.tenagaKerja !== undefined) setTenagaKerja(parsed.tenagaKerja);
+        if (parsed.overhead !== undefined) setOverhead(parsed.overhead);
+        if (parsed.jumlahUnit !== undefined) setJumlahUnit(parsed.jumlahUnit);
+        if (parsed.margin !== undefined) setMargin(parsed.margin);
+      } catch (e) {
+        console.error("Gagal memuat data lokal", e);
+      }
+    }
+  }, []);
 
-  const totalBahan = useMemo(
-    () => bahan.reduce((sum, b) => sum + b.jumlah * b.harga, 0),
-    [bahan]
-  );
+  // Simpan otomatis ke localStorage setiap ada perubahan state
+  useEffect(() => {
+    const dataToSave = {
+      bahanBaku,
+      tenagaKerja,
+      overhead,
+      jumlahUnit,
+      margin,
+    };
+    localStorage.setItem("cuankit_hpp_data", JSON.stringify(dataToSave));
+  }, [bahanBaku, tenagaKerja, overhead, jumlahUnit, margin]);
 
-  const totalModal = totalBahan + tenagaKerja + overhead;
-  const hppPerUnit = jumlahProduksi > 0 ? totalModal / jumlahProduksi : 0;
-  const hargaJual = hppPerUnit * (1 + margin / 100);
-  const hargaJualDibulatkan = Math.ceil(hargaJual / 100) * 100;
-  const untungPerUnit = hargaJualDibulatkan - hppPerUnit;
-  const totalUntung = untungPerUnit * jumlahProduksi;
+  // Fungsi tambah/hapus baris bahan baku
+  const tambahBahan = () => {
+    setBahanBaku([...bahanBaku, { nama: "", jumlah: "", harga: "" }]);
+  };
 
-  function updateBahan(id: string, field: keyof Bahan, value: string) {
-    setBahan((prev) =>
-      prev.map((b) =>
-        b.id === id
-          ? {
-              ...b,
-              [field]: field === "nama" ? value : Number(value) || 0,
-            }
-          : b
-      )
-    );
-  }
+  const hapusBahan = (index: number) => {
+    const list = [...bahanBaku];
+    list.splice(index, 1);
+    setBahanBaku(list);
+  };
 
-  function tambahBahan() {
-    setBahan((prev) => [...prev, { id: newId(), nama: "", jumlah: 1, harga: 0 }]);
-  }
+  const updateBahan = (index: number, field: keyof Bahan, value: any) => {
+    const list = [...bahanBaku];
+    list[index][field] = value;
+    setBahanBaku(list);
+  };
 
-  function hapusBahan(id: string) {
-    setBahan((prev) => prev.filter((b) => b.id !== id));
-  }
+  // Perhitungan HPP
+  const totalBahanBaku = bahanBaku.reduce((acc, curr) => {
+    const jml = Number(curr.jumlah) || 0;
+    const hrg = Number(curr.harga) || 0;
+    return acc + jml * hrg;
+  }, 0);
+
+  const tKerja = Number(tenagaKerja) || 0;
+  const tOverhead = Number(overhead) || 0;
+  const tUnit = Number(jumlahUnit) || 1;
+
+  const totalModal = totalBahanBaku + tKerja + tOverhead;
+  const hppPerUnit = tUnit > 0 ? totalModal / tUnit : 0;
+  const hargaJualSaran = hppPerUnit / (1 - margin / 100);
+  const untungPerUnit = hargaJualSaran - hppPerUnit;
+  const totalUntung = untungPerUnit * tUnit;
+
+  // 2. Fungsi Unduh / Ekspor ke PDF
+  const handleDownloadPDF = () => {
+    const element = document.getElementById("area-ringkasan-hpp");
+    if (!element) return;
+
+    // Panggil library html2pdf secara dinamis
+    import("html2pdf.js").then((html2pdf) => {
+      const options = {
+        margin: 10,
+        filename: "Rincian-HPP-CuanKit.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+      html2pdf.default().from(element).set(options).save();
+    });
+  };
 
   return (
-    <section id="kalkulator" className="px-6 py-20">
-      <div className="mx-auto max-w-6xl">
-        <span className="font-mono text-xs uppercase tracking-widest text-brass">
-          Kalkulator HPP
-        </span>
-        <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold text-ink">
-          Hitung biaya produksi dan harga jual, langsung di sini.
-        </h2>
-        <p className="mt-3 max-w-xl font-body text-sm text-muted">
-          Isi komponen biaya di bawah. Total dan harga jual yang disarankan
-          diperbarui otomatis di kolom kanan.
-        </p>
+    <div className="max-w-4xl mx-auto p-4 bg-white rounded-xl shadow-md space-y-6">
+      <h2 className="text-2xl font-bold text-gray-800 text-center">
+        Kalkulator HPP UMKM CuanKit
+      </h2>
 
-        {/* Jenis usaha selector */}
-        <div className="mt-6 flex flex-wrap gap-2">
-          {jenisUsahaList.map((j) => (
-            <button
-              key={j.id}
-              onClick={() => pilihJenisUsaha(j.id)}
-              className={`rounded-full border px-4 py-1.5 font-body text-sm font-medium transition ${
-                jenisUsahaId === j.id
-                  ? "border-forest bg-forest text-paper"
-                  : "border-ink/20 text-ink/70 hover:border-forest hover:text-forest"
-              }`}
-            >
-              {j.label}
-            </button>
-          ))}
-        </div>
-        <p className="mt-2 font-body text-xs text-muted">
-          Pilih jenis usaha untuk contoh komponen biaya yang lebih sesuai.
-          Semua angka tetap bisa diubah bebas.
-        </p>
-
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-          {/* Input side */}
-          <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
-            <h3 className="font-display text-base font-semibold text-ink">
-              1. {jenisUsaha.bahanLabel}
-            </h3>
-
-            <div className="mt-4 space-y-3">
-              <div className="hidden grid-cols-[1fr_80px_120px_32px] gap-2 px-1 font-mono text-[11px] uppercase tracking-wide text-muted sm:grid">
-                <span>Nama bahan</span>
-                <span>Jumlah</span>
-                <span>Harga satuan</span>
-                <span></span>
-              </div>
-
-              {bahan.map((b) => (
-                <div
-                  key={b.id}
-                  className="grid grid-cols-2 gap-2 border-b border-ink/10 pb-3 sm:grid-cols-[1fr_80px_120px_32px] sm:items-center sm:border-none sm:pb-0"
-                >
-                  <input
-                    type="text"
-                    value={b.nama}
-                    onChange={(e) => updateBahan(b.id, "nama", e.target.value)}
-                    placeholder="Nama bahan"
-                    className="col-span-2 rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-body text-sm text-ink outline-none focus:border-forest sm:col-span-1"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    value={b.jumlah}
-                    onChange={(e) => updateBahan(b.id, "jumlah", e.target.value)}
-                    aria-label="Jumlah"
-                    className="rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    value={b.harga}
-                    onChange={(e) => updateBahan(b.id, "harga", e.target.value)}
-                    aria-label="Harga satuan"
-                    className="rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
-                  />
-                  <button
-                    onClick={() => hapusBahan(b.id)}
-                    aria-label={`Hapus ${b.nama || "bahan"}`}
-                    className="justify-self-end rounded-sm border border-ledger/40 px-2 py-1.5 font-mono text-xs text-ledger transition hover:bg-ledger/10 sm:justify-self-center"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={tambahBahan}
-              className="mt-4 rounded-sm border border-forest px-3 py-1.5 font-body text-xs font-semibold text-forest transition hover:bg-forest/10"
-            >
-              + Tambah bahan
-            </button>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div>
-                <h3 className="font-display text-base font-semibold text-ink">
-                  2. Biaya lain
-                </h3>
-                <label className="mt-3 block font-body text-xs text-muted">
-                  Tenaga kerja (per produksi)
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  value={tenagaKerja}
-                  onChange={(e) => setTenagaKerja(Number(e.target.value) || 0)}
-                  className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
-                />
-                <label className="mt-3 block font-body text-xs text-muted">
-                  {jenisUsaha.overheadLabel}
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  value={overhead}
-                  onChange={(e) => setOverhead(Number(e.target.value) || 0)}
-                  className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
-                />
-              </div>
-
-              <div>
-                <h3 className="font-display text-base font-semibold text-ink">
-                  3. Produksi &amp; margin
-                </h3>
-                <label className="mt-3 block font-body text-xs text-muted">
-                  Jumlah unit dihasilkan ({jenisUsaha.satuanUnit})
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  value={jumlahProduksi}
-                  onChange={(e) =>
-                    setJumlahProduksi(Math.max(1, Number(e.target.value) || 1))
-                  }
-                  className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
-                />
-                <label className="mt-3 flex items-center justify-between font-body text-xs text-muted">
-                  <span>Margin keuntungan</span>
-                  <span className="font-mono text-forest">{margin}%</span>
-                </label>
-                <input
-                  type="range"
-                  min={0}
-                  max={200}
-                  value={margin}
-                  onChange={(e) => setMargin(Number(e.target.value))}
-                  className="mt-2 w-full accent-forest"
-                />
-              </div>
-            </div>
+      {/* Bagian Input Bahan Baku */}
+      <div className="space-y-4">
+        <h3 className="font-semibold text-lg text-gray-700">1. Bahan Baku</h3>
+        {bahanBaku.map((bahan, index) => (
+          <div key={index} className="flex gap-2 items-center">
+            <input
+              type="text"
+              placeholder="Nama bahan (contoh: Tepung)"
+              value={bahan.nama}
+              onChange={(e) => updateBahan(index, "nama", e.target.value)}
+              className="border p-2 rounded flex-1"
+            />
+            <input
+              type="number"
+              placeholder="Jumlah"
+              value={bahan.jumlah}
+              onChange={(e) => updateBahan(index, "jumlah", e.target.value)}
+              className="border p-2 rounded w-24"
+            />
+            <input
+              type="number"
+              placeholder="Harga Satuan"
+              value={bahan.harga}
+              onChange={(e) => updateBahan(index, "harga", e.target.value)}
+              className="border p-2 rounded w-32"
+            />
+            {bahanBaku.length > 1 && (
+              <button
+                onClick={() => hapusBahan(index)}
+                className="bg-red-500 text-white px-3 py-2 rounded"
+              >
+                X
+              </button>
+            )}
           </div>
-
-          {/* Result side */}
-          <div className="h-fit rounded-md border-2 border-ink bg-paper shadow-[6px_6px_0_0_#1E2A1F]">
-            <div className="border-b-2 border-ink px-6 py-3">
-              <span className="font-display text-sm italic text-ink">
-                Ringkasan
-              </span>
-            </div>
-
-            <div className="bg-ledger-lines px-6 py-4 font-mono text-sm text-ink">
-              <div className="flex justify-between py-1">
-                <span className="text-muted">Total bahan baku</span>
-                <span>{rupiah(totalBahan)}</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-muted">Tenaga kerja</span>
-                <span>{rupiah(tenagaKerja)}</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-muted">Overhead</span>
-                <span>{rupiah(overhead)}</span>
-              </div>
-              <div className="flex justify-between py-1 font-semibold">
-                <span>Total modal produksi</span>
-                <span>{rupiah(totalModal)}</span>
-              </div>
-              <div className="flex justify-between py-1 font-semibold text-forest">
-                <span>HPP per {jenisUsaha.satuanUnit}</span>
-                <span>{rupiah(hppPerUnit)}</span>
-              </div>
-            </div>
-
-            <div className="border-t-2 border-ink px-6 py-5">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
-                Harga jual disarankan
-              </p>
-              <p className="mt-1 font-display text-3xl font-semibold text-forest">
-                {rupiah(hargaJualDibulatkan)}
-              </p>
-              <p className="mt-1 font-body text-xs text-muted">
-                per {jenisUsaha.satuanUnit}, sudah termasuk margin {margin}%
-              </p>
-
-              <div className="mt-4 flex justify-between border-t border-dashed border-ink/20 pt-4 font-mono text-sm">
-                <span className="text-muted">Untung per {jenisUsaha.satuanUnit}</span>
-                <span className="text-ledger">{rupiah(untungPerUnit)}</span>
-              </div>
-              <div className="mt-1 flex justify-between font-mono text-sm">
-                <span className="text-muted">
-                  Total untung ({jumlahProduksi} {jenisUsaha.satuanUnit})
-                </span>
-                <span className="text-ledger">{rupiah(totalUntung)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <RekomendasiAlat jenisUsahaId={jenisUsahaId} />
+        ))}
+        <button
+          onClick={tambahBahan}
+          className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium"
+        >
+          + Tambah Bahan
+        </button>
       </div>
-    </section>
+
+      {/* Bagian Biaya Lain & Produksi */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="font-semibold text-sm text-gray-700">
+            Biaya Tenaga Kerja (per produksi)
+          </label>
+          <input
+            type="number"
+            value={tenagaKerja}
+            onChange={(e) => setTenagaKerja(e.target.value === "" ? "" : Number(e.target.value))}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="font-semibold text-sm text-gray-700">
+            Biaya Overhead (Listrik, Gas, Kemasan)
+          </label>
+          <input
+            type="number"
+            value={overhead}
+            onChange={(e) => setOverhead(e.target.value === "" ? "" : Number(e.target.value))}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="font-semibold text-sm text-gray-700">
+            Jumlah Unit Dihasilkan (Porsi/Pcs)
+          </label>
+          <input
+            type="number"
+            value={jumlahUnit}
+            onChange={(e) => setJumlahUnit(e.target.value === "" ? "" : Number(e.target.value))}
+            className="border p-2 rounded w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="font-semibold text-sm text-gray-700">
+            Margin Keuntungan (%) : {margin}%
+          </label>
+          <input
+            type="range"
+            min="5"
+            max="90"
+            value={margin}
+            onChange={(e) => setMargin(Number(e.target.value))}
+            className="w-full accent-blue-600"
+          />
+        </div>
+      </div>
+
+      {/* Area Ringkasan Hasil (Bagian yang akan diekspor ke PDF) */}
+      <div
+        id="area-ringkasan-hpp"
+        className="bg-gray-50 p-6 rounded-xl border border-gray-200 space-y-3"
+      >
+        <h3 className="font-bold text-lg text-gray-800 border-b pb-2">
+          Ringkasan Hasil Perhitungan HPP
+        </h3>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>Total Bahan Baku:</span>
+          <span className="font-medium">Rp {totalBahanBaku.toLocaleString("id-ID")}</span>
+        </div>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>Total Modal Produksi:</span>
+          <span className="font-medium">Rp {totalModal.toLocaleString("id-ID")}</span>
+        </div>
+        <div className="flex justify-between text-base font-semibold text-gray-800 border-t pt-2">
+          <span>HPP per Unit:</span>
+          <span className="text-blue-600">
+            Rp {Math.round(hppPerUnit).toLocaleString("id-ID")}
+          </span>
+        </div>
+        <div className="flex justify-between text-lg font-bold text-green-700 bg-green-50 p-3 rounded-lg">
+          <span>Harga Jual Disarankan:</span>
+          <span>Rp {Math.round(hargaJualSaran).toLocaleString("id-ID")}</span>
+        </div>
+        <div className="flex justify-between text-sm text-gray-600">
+          <span>Estimasi Total Untung ({tUnit} unit):</span>
+          <span className="font-semibold text-gray-800">
+            Rp {Math.round(totalUntung).toLocaleString("id-ID")}
+          </span>
+        </div>
+      </div>
+
+      {/* Tombol Unduh PDF */}
+      <button
+        onClick={handleDownloadPDF}
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow"
+      >
+        Unduh Hasil (PDF)
+      </button>
+    </div>
   );
 }
