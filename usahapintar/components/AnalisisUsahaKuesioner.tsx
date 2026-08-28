@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import TombolUnduh from "./TombolUnduh";
 import {
   hitungKecocokan,
   type JawabanKuesioner,
@@ -234,7 +235,7 @@ export default function AnalisisUsahaKuesioner() {
       );
 
     return (
-      <div className="mt-10">
+      <div className="mt-10" id="hasil-analisis-usaha">
         {/* HEADER HASIL */}
         <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
           <span className="font-mono text-xs uppercase tracking-widest text-brass">
@@ -492,6 +493,13 @@ export default function AnalisisUsahaKuesioner() {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <TombolUnduh
+            elementId="hasil-analisis-usaha"
+            namaFile="Analisis-Ide-Usaha-CuanKit"
+          />
         </div>
 
         {/* ULANGI */}

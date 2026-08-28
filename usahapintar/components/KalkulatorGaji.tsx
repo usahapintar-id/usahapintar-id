@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import TombolUnduh from "./TombolUnduh";
 
 function rupiah(n: number) {
   if (!isFinite(n) || isNaN(n)) return "Rp 0";
@@ -89,7 +90,8 @@ export default function KalkulatorGaji() {
           </div>
 
           {/* Result side */}
-          <div className="h-fit rounded-md border-2 border-ink bg-paper shadow-[6px_6px_0_0_#1E2A1F]">
+          <div>
+            <div id="ringkasan-gaji" className="h-fit rounded-md border-2 border-ink bg-paper shadow-[6px_6px_0_0_#1E2A1F]">
             <div className="border-b-2 border-ink px-6 py-3">
               <span className="font-display text-sm italic text-ink">
                 Ringkasan
@@ -121,6 +123,8 @@ export default function KalkulatorGaji() {
                 {rupiah(gajiBersih)}
               </p>
             </div>
+            </div>
+            <TombolUnduh elementId="ringkasan-gaji" namaFile="Ringkasan-Gaji-CuanKit" />
           </div>
         </div>
       </div>
