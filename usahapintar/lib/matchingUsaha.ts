@@ -339,7 +339,7 @@ export function hitungKecocokan(
         ),
       };
 
-      const skor = Math.min(
+      const skorMentah = Math.min(
         100,
         breakdown.modal +
           breakdown.keterampilan +
@@ -348,7 +348,24 @@ export function hitungKecocokan(
           breakdown.preferensi
       );
 
-      const tingkat = getTingkat(skor);
+      // Pengaman: kalau modal jarak jauh (2+ tingkat dari kebutuhan usaha),
+      // jangan biarkan skor akhir terlihat meyakinkan meski kategori lain
+      // (misal keterampilan) kebetulan sangat cocok. Gap modal besar itu
+      // penghalang nyata, bukan sekadar satu dari lima faktor yang setara.
+      const gapModalBesar = modalRaw <= 35;
+      const skor = gapModalBesar
+        ? Math.max(0, skorMentah - 20)
+        : skorMentah;
+
+      let tingkat = getTingkat(skor);
+      if (
+        gapModalBesar &&
+        (tingkat === "sangat-cocok" ||
+          tingkat === "cocok" ||
+          tingkat === "cukup-cocok")
+      ) {
+        tingkat = "perlu-dipertimbangkan";
+      }
 
       return {
         ide,
