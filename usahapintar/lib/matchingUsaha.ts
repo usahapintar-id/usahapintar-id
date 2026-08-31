@@ -23,6 +23,8 @@ export type TingkatKecocokan =
   | "perlu-dipertimbangkan"
   | "kurang-cocok";
 
+export type KelayakanUsaha = "layak" | "perlu-persiapan" | "tidak-layak";
+
 export type BreakdownSkor = {
   modal: number;
   keterampilan: number;
@@ -35,9 +37,14 @@ export type HasilPencocokan = {
   ide: IdeUsaha;
   skor: number;
   tingkat: TingkatKecocokan;
+  status: KelayakanUsaha;
   breakdown: BreakdownSkor;
   alasanPersonal: string[];
+  alasanFilter: string[];
 };
+
+const MODAL_ORDER: ModalRange[] = ["kecil", "sedang", "besar", "sangatBesar"];
+const WAKTU_ORDER: Waktu[] = ["sampingan", "paruhWaktu", "penuhWaktu"];
 
 function getTingkat(skor: number): TingkatKecocokan {
   if (skor >= 90) return "sangat-cocok";
@@ -47,88 +54,58 @@ function getTingkat(skor: number): TingkatKecocokan {
   return "kurang-cocok";
 }
 
-/**
- * Mengubah skor 0-100 menjadi skor berbobot.
- */
-function weightedScore(
-  score: number,
-  weight: number
-): number {
+function weightedScore(score: number, weight: number): number {
   return (score / 100) * weight;
 }
 
-/**
- * Skor kecocokan modal.
- * Tidak lagi hanya cocok/tidak cocok.
- */
-function scoreModal(
-  ide: IdeUsaha,
-  modal: ModalRange
-): number {
+function getUserModalNominal(modal: ModalRange): number {
+  return {
+    kecil: 500000,
+    sedang: 2000000,
+    besar: 5000000,
+    sangatBesar: 10000000,
+  }[modal];
+}
+
+function getUserWaktuIndex(waktu: Waktu): number {
+  return WAKTU_ORDER.indexOf(waktu);
+}
+
+function getMinimalWaktu(ide: IdeUsaha): Waktu {
+  if (ide.waktuCocok.includes("penuhWaktu")) return "penuhWaktu";
+  if (ide.waktuCocok.includes("paruhWaktu")) return "paruhWaktu";
+  return "sampingan";
+}
+
+function scoreModal(ide: IdeUsaha, modal: ModalRange): number {
   if (ide.modalCocok.includes(modal)) return 100;
 
-  const urutan: ModalRange[] = [
-    "kecil",
-    "sedang",
-    "besar",
-    "sangatBesar",
-  ];
-
-  const target = urutan.indexOf(modal);
-
-  if (target === -1) return 0;
-
+  const target = MODAL_ORDER.indexOf(modal);
   const jarak = Math.min(
-    ...ide.modalCocok.map((m) =>
-      Math.abs(urutan.indexOf(m) - target)
-    )
+    ...ide.modalCocok.map((m) => Math.abs(MODAL_ORDER.indexOf(m) - target))
   );
 
   if (jarak === 1) return 65;
   if (jarak === 2) return 35;
-
   return 15;
 }
 
-/**
- * Skor waktu.
- */
-function scoreWaktu(
-  ide: IdeUsaha,
-  waktu: Waktu
-): number {
+function scoreWaktu(ide: IdeUsaha, waktu: Waktu): number {
   if (ide.waktuCocok.includes(waktu)) return 100;
 
-  const urutan: Waktu[] = [
-    "sampingan",
-    "paruhWaktu",
-    "penuhWaktu",
-  ];
-
-  const target = urutan.indexOf(waktu);
-
+  const target = getUserWaktuIndex(waktu);
   const jarak = Math.min(
-    ...ide.waktuCocok.map((w) =>
-      Math.abs(urutan.indexOf(w) - target)
-    )
+    ...ide.waktuCocok.map((w) => Math.abs(WAKTU_ORDER.indexOf(w) - target))
   );
 
   if (jarak === 1) return 60;
   if (jarak === 2) return 30;
-
   return 10;
 }
 
-/**
- * Skor keterampilan.
- */
-function scoreKeterampilan(
-  ide: IdeUsaha,
-  keterampilan: Keterampilan[]
-): number {
+function scoreKeterampilan(ide: IdeUsaha, keterampilan: Keterampilan[]): number {
   const pilihBelumAdaSaja =
-    keterampilan.length === 1 &&
-    keterampilan[0] === "belumAda";
+    keterampilan.length === 1 && keterampilan[0] === "belumAda";
 
   if (pilihBelumAdaSaja) {
     return ide.cocokPemula ? 100 : 35;
@@ -138,80 +115,91 @@ function scoreKeterampilan(
     return 70;
   }
 
-  const overlap = ide.keterampilanKunci.filter((k) =>
-    keterampilan.includes(k)
-  ).length;
-
+  const overlap = ide.keterampilanKunci.filter((k) => keterampilan.includes(k)).length;
   if (overlap === 0) return 20;
 
-  return Math.min(
-    100,
-    Math.round(
-      (overlap / ide.keterampilanKunci.length) * 100
-    )
-  );
+  return Math.min(100, Math.round((overlap / ide.keterampilanKunci.length) * 100));
 }
 
-/**
- * Skor sumber daya.
- */
-function scoreSumberDaya(
-  ide: IdeUsaha,
-  sumberDaya: SumberDaya[]
-): number {
+function scoreSumberDaya(ide: IdeUsaha, sumberDaya: SumberDaya[]): number {
   if (sumberDaya.includes("tidakAda")) {
-    return ide.sumberDayaPendukung.length === 0
-      ? 100
-      : 60;
+    return ide.sumberDayaPendukung.length === 0 ? 100 : 60;
   }
 
   if (ide.sumberDayaPendukung.length === 0) {
     return 80;
   }
 
-  const overlap = ide.sumberDayaPendukung.filter((s) =>
-    sumberDaya.includes(s)
-  ).length;
-
+  const overlap = ide.sumberDayaPendukung.filter((s) => sumberDaya.includes(s)).length;
   if (overlap === 0) return 25;
 
-  return Math.min(
-    100,
-    Math.round(
-      (overlap / ide.sumberDayaPendukung.length) * 100
-    )
-  );
+  return Math.min(100, Math.round((overlap / ide.sumberDayaPendukung.length) * 100));
 }
 
-/**
- * Skor preferensi.
- */
-function scorePreferensi(
-  ide: IdeUsaha,
-  preferensi: Preferensi[]
-): number {
+function scorePreferensi(ide: IdeUsaha, preferensi: Preferensi[]): number {
   if (ide.preferensiCocok.length === 0) {
     return 70;
   }
 
-  const overlap = ide.preferensiCocok.filter((p) =>
-    preferensi.includes(p)
-  ).length;
-
+  const overlap = ide.preferensiCocok.filter((p) => preferensi.includes(p)).length;
   if (overlap === 0) return 25;
 
-  return Math.min(
-    100,
-    Math.round(
-      (overlap / ide.preferensiCocok.length) * 100
-    )
-  );
+  return Math.min(100, Math.round((overlap / ide.preferensiCocok.length) * 100));
 }
 
-/**
- * Membuat alasan yang benar-benar berdasarkan
- * jawaban pengguna.
- */
+function cekKelayakan(
+  ide: IdeUsaha,
+  jawaban: JawabanKuesioner
+): { status: KelayakanUsaha; alasan: string[] } {
+  const alasan: string[] = [];
+  const modalUser = getUserModalNominal(jawaban.modal);
+  const waktuUser = getUserWaktuIndex(jawaban.waktu);
+  const waktuMin = getUserWaktuIndex(getMinimalWaktu(ide));
+
+  const modalIsi = modalUser >= ide.modalMin;
+  if (!modalIsi) {
+    alasan.push("Modal Anda belum cukup untuk memulai usaha ini di skala realistis.");
+  }
+
+  const waktuIsi = waktuUser >= waktuMin;
+  if (!waktuIsi) {
+    alasan.push("Waktu yang Anda punya belum cukup untuk menjalankan usaha ini secara konsisten.");
+  }
+
+  const keterampilanWajib = ide.keterampilanWajib ?? [];
+  const keterampilanIsi =
+    keterampilanWajib.length === 0 ||
+    keterampilanWajib.every((k) => jawaban.keterampilan.includes(k) || jawaban.keterampilan.includes("belumAda"));
+
+  if (!keterampilanIsi) {
+    alasan.push("Keterampilan utama usaha ini belum sepenuhnya tersedia, sehingga perlu persiapan belajar.");
+  }
+
+  const sumberDayaWajib = ide.sumberDayaWajib ?? [];
+  const sumberDayaIsi =
+    sumberDayaWajib.length === 0 ||
+    sumberDayaWajib.every((s) => jawaban.sumberDaya.includes(s));
+
+  if (!sumberDayaIsi) {
+    alasan.push("Beberapa aset atau fasilitas yang dibutuhkan usaha ini belum dimiliki.");
+  }
+
+  if (alasan.length === 0) {
+    return { status: "layak", alasan: ["Semua syarat dasar usaha ini sudah sesuai dengan kondisi Anda."] };
+  }
+
+  const adaRintanganPotensial =
+    (!modalIsi && modalUser >= ide.modalMin * 0.8) ||
+    (!waktuIsi && waktuUser >= waktuMin - 1) ||
+    (!keterampilanIsi && ide.cocokPemula) ||
+    (!sumberDayaIsi && ide.sumberDayaPendukung.length <= 2);
+
+  return {
+    status: adaRintanganPotensial ? "perlu-persiapan" : "tidak-layak",
+    alasan,
+  };
+}
+
 function buatAlasanPersonal(
   ide: IdeUsaha,
   breakdown: BreakdownSkor,
@@ -220,172 +208,88 @@ function buatAlasanPersonal(
   const alasan: string[] = [];
 
   if (breakdown.modal >= 90) {
-    alasan.push(
-      "Modal Anda sangat sesuai dengan kebutuhan awal usaha ini."
-    );
+    alasan.push("Modal Anda sesuai dengan kebutuhan awal usaha ini.");
   } else if (breakdown.modal >= 60) {
-    alasan.push(
-      "Modal Anda masih cukup dekat dengan kebutuhan usaha ini."
-    );
+    alasan.push("Modal Anda masih cukup dekat dengan kebutuhan usaha ini.");
   } else {
-    alasan.push(
-      "Modal perlu disesuaikan atau usaha dimulai dalam skala lebih kecil."
-    );
+    alasan.push("Modal perlu disesuaikan agar usaha dimulai lebih realistis.");
   }
 
   if (breakdown.keterampilan >= 90) {
-    alasan.push(
-      "Keterampilan yang Anda miliki sangat mendukung usaha ini."
-    );
+    alasan.push("Keterampilan yang Anda miliki sangat cocok dengan usaha ini.");
   } else if (breakdown.keterampilan >= 60) {
-    alasan.push(
-      "Sebagian keterampilan Anda sudah sesuai dengan kebutuhan usaha ini."
-    );
+    alasan.push("Sebagian keterampilan Anda sudah mendukung usaha ini.");
   } else {
-    alasan.push(
-      "Anda mungkin perlu belajar keterampilan tambahan sebelum memulai."
-    );
+    alasan.push("Anda mungkin perlu belajar keterampilan tambahan sebelum memulai.");
   }
 
   if (breakdown.waktu >= 90) {
-    alasan.push(
-      "Waktu yang tersedia sangat sesuai dengan kebutuhan operasional usaha."
-    );
+    alasan.push("Waktu yang Anda miliki cukup untuk menjalankan usaha ini.");
   } else if (breakdown.waktu >= 60) {
-    alasan.push(
-      "Waktu yang Anda miliki masih cukup memungkinkan usaha ini dijalankan."
-    );
+    alasan.push("Waktu Anda masih cukup memungkinkan usaha ini berjalan.");
   } else {
-    alasan.push(
-      "Ketersediaan waktu perlu diperhatikan karena usaha ini membutuhkan pengelolaan yang lebih konsisten."
-    );
+    alasan.push("Ketersediaan waktu perlu dikelola agar usaha tidak terlalu berat.");
   }
 
   if (breakdown.sumberDaya >= 90) {
-    alasan.push(
-      "Sumber daya yang sudah Anda miliki dapat langsung mendukung usaha ini."
-    );
+    alasan.push("Sumber daya yang Anda punya sangat mendukung operasional awal.");
   } else if (breakdown.sumberDaya >= 60) {
-    alasan.push(
-      "Sebagian sumber daya yang Anda miliki dapat dimanfaatkan untuk memulai usaha."
-    );
+    alasan.push("Sebagian sumber daya Anda sudah cukup untuk memulai.");
   }
 
   if (breakdown.preferensi >= 90) {
-    alasan.push(
-      "Model kerja usaha ini sangat sesuai dengan cara kerja yang Anda sukai."
-    );
+    alasan.push("Model kerja usaha ini sesuai dengan gaya Anda.");
   } else if (breakdown.preferensi >= 60) {
-    alasan.push(
-      "Cara kerja usaha ini cukup sesuai dengan preferensi Anda."
-    );
+    alasan.push("Cara kerja usaha ini cukup sesuai dengan preferensi Anda.");
   }
 
   return alasan.slice(0, 5);
 }
 
-export function hitungKecocokan(
-  jawaban: JawabanKuesioner
-): HasilPencocokan[] {
-  const hasil: HasilPencocokan[] =
-    ideUsahaList.map((ide) => {
-      const modalRaw = scoreModal(
-        ide,
-        jawaban.modal
-      );
+export function hitungKecocokan(jawaban: JawabanKuesioner): HasilPencocokan[] {
+  const hasil = ideUsahaList.map((ide) => {
+    const modalRaw = scoreModal(ide, jawaban.modal);
+    const keterampilanRaw = scoreKeterampilan(ide, jawaban.keterampilan);
+    const waktuRaw = scoreWaktu(ide, jawaban.waktu);
+    const sumberDayaRaw = scoreSumberDaya(ide, jawaban.sumberDaya);
+    const preferensiRaw = scorePreferensi(ide, jawaban.preferensi);
 
-      const keterampilanRaw =
-        scoreKeterampilan(
-          ide,
-          jawaban.keterampilan
-        );
+    const breakdown: BreakdownSkor = {
+      modal: Math.round(weightedScore(modalRaw, 20)),
+      keterampilan: Math.round(weightedScore(keterampilanRaw, 25)),
+      waktu: Math.round(weightedScore(waktuRaw, 15)),
+      sumberDaya: Math.round(weightedScore(sumberDayaRaw, 20)),
+      preferensi: Math.round(weightedScore(preferensiRaw, 10)),
+    };
 
-      const waktuRaw = scoreWaktu(
-        ide,
-        jawaban.waktu
-      );
+    const skorMentah =
+      breakdown.modal +
+      breakdown.keterampilan +
+      breakdown.waktu +
+      breakdown.sumberDaya +
+      breakdown.preferensi;
 
-      const sumberDayaRaw =
-        scoreSumberDaya(
-          ide,
-          jawaban.sumberDaya
-        );
+    const { status, alasan } = cekKelayakan(ide, jawaban);
+    const gapModalBesar = modalRaw <= 35;
+    const skor = gapModalBesar ? Math.max(0, skorMentah - 20) : skorMentah;
 
-      const preferensiRaw =
-        scorePreferensi(
-          ide,
-          jawaban.preferensi
-        );
+    return {
+      ide,
+      skor: Math.min(100, skor),
+      tingkat: getTingkat(Math.min(100, skor)),
+      status,
+      breakdown,
+      alasanPersonal: buatAlasanPersonal(ide, breakdown, jawaban),
+      alasanFilter: alasan,
+    };
+  });
 
-      const breakdown: BreakdownSkor = {
-        modal: Math.round(
-          weightedScore(modalRaw, 25)
-        ),
+  const layak = hasil.filter((item) => item.status === "layak");
+  const perluPersiapan = hasil.filter((item) => item.status === "perlu-persiapan");
+  const sisa = [...layak, ...perluPersiapan].sort((a, b) => b.skor - a.skor);
 
-        keterampilan: Math.round(
-          weightedScore(keterampilanRaw, 30)
-        ),
-
-        waktu: Math.round(
-          weightedScore(waktuRaw, 15)
-        ),
-
-        sumberDaya: Math.round(
-          weightedScore(sumberDayaRaw, 15)
-        ),
-
-        preferensi: Math.round(
-          weightedScore(preferensiRaw, 15)
-        ),
-      };
-
-      const skorMentah = Math.min(
-        100,
-        breakdown.modal +
-          breakdown.keterampilan +
-          breakdown.waktu +
-          breakdown.sumberDaya +
-          breakdown.preferensi
-      );
-
-      // Pengaman: kalau modal jarak jauh (2+ tingkat dari kebutuhan usaha),
-      // jangan biarkan skor akhir terlihat meyakinkan meski kategori lain
-      // (misal keterampilan) kebetulan sangat cocok. Gap modal besar itu
-      // penghalang nyata, bukan sekadar satu dari lima faktor yang setara.
-      const gapModalBesar = modalRaw <= 35;
-      const skor = gapModalBesar
-        ? Math.max(0, skorMentah - 20)
-        : skorMentah;
-
-      let tingkat = getTingkat(skor);
-      if (
-        gapModalBesar &&
-        (tingkat === "sangat-cocok" ||
-          tingkat === "cocok" ||
-          tingkat === "cukup-cocok")
-      ) {
-        tingkat = "perlu-dipertimbangkan";
-      }
-
-      return {
-        ide,
-        skor,
-        tingkat,
-        breakdown,
-        alasanPersonal:
-          buatAlasanPersonal(
-            ide,
-            breakdown,
-            jawaban
-          ),
-      };
-    });
-
-  return hasil.sort(
-    (a, b) => b.skor - a.skor
-  );
+  return sisa.length > 0 ? sisa : hasil.sort((a, b) => b.skor - a.skor);
 }
-
 
 export function getTop3(jawaban: JawabanKuesioner): HasilPencocokan[] {
   return hitungKecocokan(jawaban).slice(0, 3);

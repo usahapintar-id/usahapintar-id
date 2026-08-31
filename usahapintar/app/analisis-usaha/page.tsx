@@ -19,13 +19,13 @@ export default function Page() {
             Analisis Ide Usaha
           </span>
           <h1 className="mt-3 font-display text-3xl font-semibold text-ink sm:text-4xl">
-            Ide Usaha Apa yang Cocok untuk Anda?
+            3 Usaha Paling Realistis untuk Anda Mulai
           </h1>
           <p className="mt-3 font-body text-sm leading-relaxed text-muted">
-            Jawab 5 pertanyaan singkat tentang modal, waktu, keterampilan,
-            dan sumber daya yang Anda miliki — dapatkan rekomendasi ide
-            usaha yang benar-benar sesuai, lengkap dengan perkiraan modal
-            dan langkah pertama yang bisa langsung dicoba.
+            Berdasarkan modal, waktu, kemampuan, aset, minat, dan tujuan
+            Anda, CuanKit menampilkan rekomendasi usaha yang paling realistis
+            untuk dimulai, lengkap dengan alasan, tantangan, estimasi modal,
+            potensi pengembangan, dan langkah pertama yang masuk akal.
           </p>
 
           <AnalisisUsahaKuesioner />

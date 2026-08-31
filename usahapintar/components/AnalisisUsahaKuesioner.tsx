@@ -23,7 +23,7 @@ const modalOptions: { value: ModalRange; label: string }[] = [
   { value: "kecil", label: "Di bawah Rp 500.000" },
   { value: "sedang", label: "Rp 500.000 – Rp 2.000.000" },
   { value: "besar", label: "Rp 2.000.000 – Rp 5.000.000" },
-  { value: "sangatBesar", label: "Di atas Rp 5.000.000" },
+  { value: "sangatBesar", label: "Di atas Rp 10.000.000" },
 ];
 
 const waktuOptions: {
@@ -243,13 +243,15 @@ export default function AnalisisUsahaKuesioner() {
           </span>
 
           <h2 className="mt-2 font-display text-2xl font-semibold text-ink">
-            3 Ide Usaha Paling Cocok
+            3 Usaha Paling Realistis untuk Anda Mulai
           </h2>
 
           <p className="mt-2 font-body text-sm text-muted">
             Berdasarkan modal, waktu,
-            keterampilan, sumber daya, dan
-            preferensi kerja yang Anda pilih.
+            keterampilan, sumber daya, tujuan,
+            dan cara kerja yang Anda pilih.
+            Hasil ini memprioritaskan kelayakan
+            realistis sebelum peringkat akhir.
           </p>
 
           {semuaLemah && (
@@ -326,7 +328,7 @@ export default function AnalisisUsahaKuesioner() {
                     <span
                       className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${badgeStyle}`}
                     >
-                      {h.skor}/100
+                      {h.skor}%
                     </span>
 
                     <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
@@ -341,10 +343,19 @@ export default function AnalisisUsahaKuesioner() {
                     {h.ide.alasanTemplate}
                   </p>
 
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="rounded-full border border-forest/30 bg-forest/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-forest">
+                      {h.ide.tingkatKesulitan ?? "Menengah"}
+                    </span>
+                    <span className="rounded-full border border-brass/30 bg-brass/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-ink/70">
+                      Potensi pasar {h.ide.potensiPasar ?? "Sedang"}
+                    </span>
+                  </div>
+
                   {/* BREAKDOWN SKOR */}
                   <div className="mt-4 rounded-sm border border-ink/10 bg-ink/5 p-4">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                      Kenapa usaha ini cocok?
+                      Mengapa usaha ini cocok?
                     </p>
 
                     <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-5">
@@ -421,12 +432,11 @@ export default function AnalisisUsahaKuesioner() {
                   {/* MODAL */}
                   <div className="mt-4 rounded-sm bg-ledger-lines px-4 py-3">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                      Perkiraan modal awal
+                      Estimasi modal awal
                     </p>
 
                     <p className="font-display text-lg font-semibold text-forest">
-                      {rupiah(h.ide.modalMin)} –{" "}
-                      {rupiah(h.ide.modalMax)}
+                      {rupiah(h.ide.modalMin)} – {rupiah(h.ide.modalMax)}
                     </p>
 
                     <p className="mt-1 font-body text-xs text-muted">
@@ -434,10 +444,26 @@ export default function AnalisisUsahaKuesioner() {
                     </p>
                   </div>
 
+                  {/* POTENSI PENGEMBANGAN */}
+                  {Array.isArray(h.ide.potensiPengembangan) && h.ide.potensiPengembangan.length > 0 && (
+                    <div className="mt-4">
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                        Potensi pengembangan
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {h.ide.potensiPengembangan.map((item, idx) => (
+                          <span key={idx} className="rounded-full bg-ink/5 px-2.5 py-1 font-body text-xs text-ink/80">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* LANGKAH AWAL */}
                   <div className="mt-4">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                      Langkah pertama minggu ini
+                      Langkah pertama yang realistis
                     </p>
 
                     <ol className="mt-2 space-y-1.5">
@@ -461,7 +487,7 @@ export default function AnalisisUsahaKuesioner() {
                   {/* TANTANGAN */}
                   <div className="mt-4 border-t border-dashed border-ink/20 pt-4">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                      Potensi tantangan
+                      Yang perlu diperhatikan
                     </p>
 
                     <p className="mt-1 font-body text-sm text-ink/80">
@@ -483,12 +509,20 @@ export default function AnalisisUsahaKuesioner() {
                   )}
 
                   {/* CTA */}
-                  <Link
-                    href="/#kalkulator"
-                    className="mt-5 inline-block rounded-sm bg-forest px-5 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
-                  >
-                    Hitung HPP untuk ide ini →
-                  </Link>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <Link
+                      href="/#kalkulator"
+                      className="inline-block rounded-sm bg-forest px-4 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
+                    >
+                      Hitung Modal & HPP →
+                    </Link>
+                    <Link
+                      href="/#kalkulator"
+                      className="inline-block rounded-sm border border-ink/20 px-4 py-2.5 font-body text-sm font-semibold text-ink transition hover:border-forest hover:text-forest"
+                    >
+                      Hitung Harga Jual →
+                    </Link>
+                  </div>
                 </div>
               </div>
             );
