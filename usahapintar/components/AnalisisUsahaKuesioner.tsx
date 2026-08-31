@@ -291,6 +291,13 @@ export default function AnalisisUsahaKuesioner() {
                 ? "Perlu dipertimbangkan"
                 : "Kurang cocok";
 
+            const statusLabel =
+              h.status === "layak"
+                ? "Layak mulai"
+                : h.status === "perlu-persiapan"
+                ? "Perlu persiapan"
+                : "Tidak layak saat ini";
+
             const medali =
               h.tingkat === "kurang-cocok"
                 ? "•"
@@ -339,9 +346,22 @@ export default function AnalisisUsahaKuesioner() {
 
                 {/* ISI */}
                 <div className="px-6 py-5">
-                  <p className="font-body text-sm leading-relaxed text-ink/90">
-                    {h.ide.alasanTemplate}
-                  </p>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-body text-sm leading-relaxed text-ink/90">
+                      {h.ide.alasanTemplate}
+                    </p>
+                    <span
+                      className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest ${
+                        h.status === "layak"
+                          ? "border-forest/30 bg-forest/10 text-forest"
+                          : h.status === "perlu-persiapan"
+                          ? "border-brass/40 bg-brass/10 text-ink/80"
+                          : "border-red-200 bg-red-50 text-red-700"
+                      }`}
+                    >
+                      {statusLabel}
+                    </span>
+                  </div>
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     <span className="rounded-full border border-forest/30 bg-forest/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-forest">
@@ -428,6 +448,22 @@ export default function AnalisisUsahaKuesioner() {
                       )}
                     </div>
                   </div>
+
+                  {h.alasanFilter.length > 0 && (
+                    <div className="mt-4 rounded-sm border border-amber-200 bg-amber-50 px-4 py-3">
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-amber-700">
+                        Peringatan bahaya
+                      </p>
+                      <ul className="mt-2 space-y-1.5 font-body text-xs leading-relaxed text-ink/80">
+                        {h.alasanFilter.map((item, idx) => (
+                          <li key={idx} className="flex gap-2">
+                            <span className="font-semibold text-amber-700">!</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {/* MODAL */}
                   <div className="mt-4 rounded-sm bg-ledger-lines px-4 py-3">
