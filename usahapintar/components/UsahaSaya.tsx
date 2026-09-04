@@ -29,7 +29,7 @@ export default function UsahaSaya() {
   function simpan() {
     if (!nama.trim()) return;
     const berikutnya = [...usaha, { nama: nama.trim(), namaUsaha: namaUsaha.trim() || "Usaha saya", hpp, hargaJual, targetPenjualan, targetLaba, modalAwal, bep: hargaJual > hpp ? Math.ceil(modalAwal / (hargaJual - hpp)) : 0 }];
-    setUsaha(berikutnya); localStorage.setItem(STORAGE_KEY, JSON.stringify(berikutnya)); setNama("");
+    setUsaha(berikutnya); localStorage.setItem(STORAGE_KEY, JSON.stringify(berikutnya)); setNama(""); setNamaUsaha("");
   }
   function hapus(index: number) { const berikutnya = usaha.filter((_, i) => i !== index); setUsaha(berikutnya); localStorage.setItem(STORAGE_KEY, JSON.stringify(berikutnya)); }
   return <section className="px-6 py-16"><div className="mx-auto max-w-6xl"><span className="font-mono text-xs uppercase tracking-widest text-brass">Usaha saya</span><h1 className="mt-3 max-w-xl font-display text-3xl font-semibold text-ink sm:text-4xl">Simpan angka penting usaha Anda</h1><p className="mt-3 max-w-xl font-body text-sm text-muted">Data tersimpan hanya di perangkat ini, tanpa login. Tambahkan produk untuk memantau HPP, laba, dan target penjualan.</p>
