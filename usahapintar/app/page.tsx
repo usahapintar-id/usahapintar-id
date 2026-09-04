@@ -15,6 +15,10 @@ function rupiah(value: number) {
   return "Rp " + Math.round(value).toLocaleString("id-ID");
 }
 
+const featuredUsaha = ["es-teh-jumbo", "jasa-desain", "konveksi-rumahan", "reseller-fashion"]
+  .map((id) => databaseUsaha.find((usaha) => usaha.id === id))
+  .filter((usaha): usaha is (typeof databaseUsaha)[number] => Boolean(usaha));
+
 export default function Home() {
   return (
     <main>
@@ -50,7 +54,7 @@ export default function Home() {
             <Link href="/template-usaha" className="hidden font-body text-sm font-semibold text-forest underline decoration-brass decoration-2 underline-offset-4 sm:block">Lihat semua template →</Link>
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {databaseUsaha.slice(0, 4).map((usaha) => (
+            {featuredUsaha.map((usaha) => (
               <Link key={usaha.id} href={`/simulasi?usaha=${encodeURIComponent(usaha.id)}`} className="rounded-sm border border-ink/15 bg-paper p-4 transition hover:border-forest">
                 <p className="font-mono text-[10px] uppercase tracking-widest text-muted">{usaha.kategori}</p>
                 <h3 className="mt-1 font-display text-lg font-semibold text-ink">{usaha.nama}</h3>

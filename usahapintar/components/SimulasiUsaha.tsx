@@ -83,6 +83,28 @@ export default function SimulasiUsaha() {
   const hargaAgarUntungTetap = Math.ceil((hasil.hpp + laba) / 100) * 100;
   const bepUnit = laba > 0 && biayaTetap > 0 ? Math.ceil(biayaTetap / laba) : 0;
 
+  function simpanSimulasi() {
+    let tersimpan: unknown[] = [];
+    try {
+      const data = JSON.parse(localStorage.getItem("cuankit_usaha_saya") ?? "[]");
+      if (Array.isArray(data)) tersimpan = data;
+    } catch {
+      tersimpan = [];
+    }
+    const berikutnya = [...tersimpan, {
+      nama: namaUsaha,
+      namaUsaha,
+      hpp: Math.round(hpp),
+      hargaJual: Math.round(harga),
+      targetPenjualan: penjualan,
+      targetLaba: Math.round(laba * penjualan * 30),
+      modalAwal,
+      bep: bepUnit,
+    }];
+    localStorage.setItem("cuankit_usaha_saya", JSON.stringify(berikutnya));
+    window.alert("Simulasi tersimpan di Usaha Saya.");
+  }
+
   return (
     <section className="px-6 py-16">
       <div className="mx-auto max-w-6xl">
@@ -139,6 +161,7 @@ export default function SimulasiUsaha() {
           <Link href={usahaId ? (kategoriId === "kuliner" ? `/?usaha=${encodeURIComponent(usahaId)}#kalkulator` : `/?jenis=${encodeURIComponent(kategoriId)}#kalkulator`) : "/#kalkulator"} className="rounded-sm bg-forest px-3 py-2 font-body text-xs font-semibold text-paper hover:bg-forest-dark">Hitung HPP Saya →</Link>
           <Link href={`/kalkulator-bep?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}&biayaTetap=${Math.round(biayaTetap)}`} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Lihat BEP →</Link>
           <Link href={`/target-cuan?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Hitung Target Cuan →</Link>
+          <button onClick={simpanSimulasi} className="rounded-sm border border-brass bg-brass/10 px-3 py-2 font-body text-xs font-semibold text-ink hover:bg-brass/20">Simpan Simulasi</button>
           <Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Analisis Usaha Saya →</Link>
         </div>
       </div>

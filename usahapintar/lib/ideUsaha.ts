@@ -539,10 +539,10 @@ export const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
   kategori: usaha.kategori,
   deskripsi: usaha.deskripsi,
   modalCocok: usaha.modalAwal <= 1000000 ? ["kecil", "sedang"] : ["sedang", "besar"],
-  waktuCocok: ["sampingan", "paruhWaktu"],
-  keterampilanKunci: ["memasak"],
-  sumberDayaPendukung: ["alatMasak", "lokasiStrategis"],
-  preferensiCocok: ["buatSendiri", "interaksiLangsung"],
+  waktuCocok: usaha.kategori === "Produksi" ? ["paruhWaktu", "penuhWaktu"] : ["sampingan", "paruhWaktu"],
+  keterampilanKunci: usaha.kategori === "Kuliner" ? ["memasak"] : usaha.kategori === "Produksi" ? ["menjahit"] : ["jualan"],
+  sumberDayaPendukung: usaha.kategori === "Kuliner" ? ["alatMasak", "lokasiStrategis"] : usaha.kategori === "Produksi" ? ["lokasiStrategis"] : ["medsosBesar", "jaringanLuas"],
+  preferensiCocok: usaha.kategori === "Dagang Online" ? ["jualBarangOrang", "kerjaMandiri"] : usaha.kategori === "Jasa Digital" ? ["kerjaMandiri", "buatSendiri"] : ["buatSendiri", "interaksiLangsung"],
   modalMin: usaha.modalAwal,
   modalMax: Math.round(usaha.modalAwal * 1.5),
   modalIdeal: usaha.modalAwal,
@@ -554,11 +554,13 @@ export const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
   alasanTemplate: usaha.alasan,
   langkahAwal: ["Pilih 1 menu utama untuk diuji", "Hitung ulang HPP dengan harga bahan di daerah Anda", "Uji jual ke pelanggan terdekat"],
   tantangan: "Menjaga rasa, ukuran porsi, dan biaya bahan tetap konsisten.",
-  jenisUsahaKalkulator: "kuliner",
+  jenisUsahaKalkulator: usaha.kategori === "Kuliner" ? "kuliner" : usaha.kategori === "Produksi" ? "konveksi" : usaha.kategori === "Jasa Digital" ? "digital" : "umum",
   cocokPemula: usaha.tingkatKesulitan === "Mudah",
 }));
 
-export const ideUsahaList: IdeUsaha[] = [...ideUsahaKuliner, ...ideUsahaLama];
+export const ideUsahaList: IdeUsaha[] = Array.from(
+  new Map([...ideUsahaKuliner, ...ideUsahaLama].map((ide) => [ide.id, ide])).values()
+);
 
 export function getIdeById(id: string | null | undefined) {
   return ideUsahaList.find((ide) => ide.id === id);

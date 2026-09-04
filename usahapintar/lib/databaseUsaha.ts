@@ -1,7 +1,7 @@
 export type DataUsaha = {
   id: string;
   nama: string;
-  kategori: "Kuliner";
+  kategori: "Kuliner" | "Dagang Online" | "Jasa Digital" | "Produksi";
   deskripsi: string;
   modalAwal: number;
   biayaTetapBulanan: number;
@@ -38,7 +38,7 @@ const dataAwalUsaha: [string, string, number, number, number, DataUsaha["tingkat
   ["kopi-minuman-sederhana", "Kopi / Minuman Sederhana", 1500000, 5000, 12000, "Mudah"],
 ];
 
-export const databaseUsaha: DataUsaha[] = dataAwalUsaha.map(([id, nama, modalAwal, hpp, hargaJual, tingkatKesulitan]) => ({
+const databaseKuliner: DataUsaha[] = dataAwalUsaha.map(([id, nama, modalAwal, hpp, hargaJual, tingkatKesulitan]) => ({
   id,
   nama,
   kategori: "Kuliner",
@@ -62,6 +62,74 @@ export const databaseUsaha: DataUsaha[] = dataAwalUsaha.map(([id, nama, modalAwa
   jumlahProduksi: 1,
   satuan: "porsi/pcs",
 }));
+
+const databaseTambahan: DataUsaha[] = [
+  {
+    id: "jasa-desain",
+    nama: "Jasa Desain UMKM",
+    kategori: "Jasa Digital",
+    deskripsi: "Template jasa desain sederhana untuk kebutuhan promosi UMKM.",
+    modalAwal: 500000,
+    biayaTetapBulanan: 150000,
+    hpp: 50000,
+    hargaJual: 250000,
+    penjualanHarian: 1,
+    kebutuhanAlat: ["Laptop atau ponsel", "Aplikasi desain", "Internet"],
+    kebutuhanWaktu: "Sampingan atau paruh waktu",
+    kebutuhanKeterampilan: ["Desain grafis", "Komunikasi dengan klien"],
+    tingkatKesulitan: "Menengah",
+    alasan: "Cocok untuk pemilik keterampilan desain yang ingin mulai dari proyek kecil.",
+    bahan: [{ nama: "Kuota dan aset desain", jumlah: 1, harga: 50000 }],
+    tenagaKerja: 0,
+    overhead: 0,
+    jumlahProduksi: 1,
+    satuan: "proyek",
+  },
+  {
+    id: "konveksi-rumahan",
+    nama: "Konveksi Rumahan",
+    kategori: "Produksi",
+    deskripsi: "Template produksi pakaian skala kecil dari rumah.",
+    modalAwal: 3500000,
+    biayaTetapBulanan: 750000,
+    hpp: 75000,
+    hargaJual: 125000,
+    penjualanHarian: 5,
+    kebutuhanAlat: ["Mesin jahit", "Meja kerja", "Alat potong"],
+    kebutuhanWaktu: "Paruh waktu atau penuh waktu",
+    kebutuhanKeterampilan: ["Menjahit", "Mengatur ukuran dan kualitas"],
+    tingkatKesulitan: "Menengah",
+    alasan: "Bisa dimulai dari pesanan kecil dan dikembangkan setelah kualitas stabil.",
+    bahan: [{ nama: "Kain dan aksesoris", jumlah: 1, harga: 60000 }],
+    tenagaKerja: 10000,
+    overhead: 5000,
+    jumlahProduksi: 1,
+    satuan: "potong",
+  },
+  {
+    id: "reseller-fashion",
+    nama: "Reseller Fashion Online",
+    kategori: "Dagang Online",
+    deskripsi: "Template jualan fashion dengan stok terbatas atau pre-order.",
+    modalAwal: 800000,
+    biayaTetapBulanan: 200000,
+    hpp: 70000,
+    hargaJual: 100000,
+    penjualanHarian: 3,
+    kebutuhanAlat: ["Ponsel", "Internet", "Kemasan"],
+    kebutuhanWaktu: "Sampingan",
+    kebutuhanKeterampilan: ["Jualan", "Membuat konten produk"],
+    tingkatKesulitan: "Mudah",
+    alasan: "Modal dapat dikendalikan melalui pre-order dan promosi ke jaringan terdekat.",
+    bahan: [{ nama: "Stok atau modal talangan", jumlah: 1, harga: 70000 }],
+    tenagaKerja: 0,
+    overhead: 0,
+    jumlahProduksi: 1,
+    satuan: "produk",
+  },
+];
+
+export const databaseUsaha: DataUsaha[] = [...databaseKuliner, ...databaseTambahan];
 
 export function getUsahaById(id: string | null | undefined) {
   return databaseUsaha.find((usaha) => usaha.id === id);
