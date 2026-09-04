@@ -5,33 +5,32 @@ export default function Hero() {
         {/* Left: copy */}
         <div>
           <span className="inline-block rounded-full border border-brass/40 bg-brass/10 px-3 py-1 font-mono text-xs uppercase tracking-widest text-brass">
-            Kalkulator HPP UMKM Gratis
+            Dari ide usaha sampai angka yang masuk akal
           </span>
 
           <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] text-ink sm:text-5xl">
-            Berhenti tebak-tebak harga jual.{" "}
-            <span className="italic text-forest">Hitung, lalu untung.</span>
+            Bingung mau usaha apa?{" "}
+            <span className="italic text-forest">Mulai dari yang cocok.</span>
           </h1>
 
           <p className="mt-5 max-w-lg font-body text-base leading-relaxed text-muted sm:text-lg">
-            Hitung HPP, harga jual, margin keuntungan, biaya tenaga kerja,
-            dan overhead usaha Anda secara gratis — dalam hitungan menit,
-            supaya setiap produk yang kamu jual sudah pasti untung, bukan
-            kira-kira.
+            CuanKit membantu mencari usaha yang cocok, melihat simulasi modal,
+            menghitung HPP dan harga jual, mengecek BEP, lalu menyusun target
+            keuntungan berdasarkan angka Anda sendiri.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <a
-              href="#kalkulator"
+              href="/analisis-usaha"
               className="rounded-sm bg-forest px-6 py-3 font-body text-sm font-semibold text-paper shadow-sm transition hover:bg-forest-dark"
             >
-              Hitung HPP Sekarang
+              Cari Usaha yang Cocok
             </a>
             <a
-              href="#cara-kerja"
+              href="/template-usaha"
               className="font-body text-sm font-semibold text-ink underline decoration-brass decoration-2 underline-offset-4 transition hover:text-forest"
             >
-              Lihat cara kerjanya
+              Lihat Template Usaha
             </a>
           </div>
 
