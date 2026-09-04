@@ -20,9 +20,10 @@ export default function KalkulatorBEP() {
     const ringkasan = bacaRingkasanHPP();
     const hpp = Number(params.get("hpp")) || ringkasan?.hpp;
     const harga = Number(params.get("harga")) || ringkasan?.hargaJual;
+    const biayaTetapParam = Number(params.get("biayaTetap"));
     if (hpp !== undefined) setBiayaVariabel(hpp);
     if (harga !== undefined) setHargaJual(harga);
-    if (ringkasan?.biayaProduksi) setBiayaTetap(ringkasan.biayaProduksi);
+    if (biayaTetapParam > 0) setBiayaTetap(biayaTetapParam);
   }, []);
 
   const marginKontribusi = hargaJual - biayaVariabel;

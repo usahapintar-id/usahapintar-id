@@ -8,6 +8,9 @@ export type DataUsaha = {
   hpp: number;
   hargaJual: number;
   penjualanHarian: number;
+  kebutuhanAlat: string[];
+  kebutuhanWaktu: string;
+  kebutuhanKeterampilan: string[];
   tingkatKesulitan: "Mudah" | "Menengah" | "Sulit";
   alasan: string;
   bahan: { nama: string; jumlah: number; harga: number }[];
@@ -45,6 +48,9 @@ export const databaseUsaha: DataUsaha[] = dataAwalUsaha.map(([id, nama, modalAwa
   hpp,
   hargaJual,
   penjualanHarian: 20,
+  kebutuhanAlat: ["Kompor atau alat produksi utama", "Wadah dan kemasan", "Alat ukur sederhana"],
+  kebutuhanWaktu: "Sampingan atau paruh waktu",
+  kebutuhanKeterampilan: ["Mengolah produk", "Menjaga rasa dan ukuran tetap konsisten"],
   tingkatKesulitan,
   alasan: `Cocok diuji dari skala kecil. HPP dan harga jual ${nama.toLowerCase()} di bawah adalah estimasi awal, bukan patokan harga pasar.`,
   bahan: [

@@ -1,11 +1,12 @@
 import {
-  ideUsahaList,
+  ideUsahaKuliner,
   type IdeUsaha,
   type ModalRange,
   type Waktu,
   type Keterampilan,
   type SumberDaya,
   type Preferensi,
+  type Pengalaman,
 } from "./ideUsaha";
 
 export type JawabanKuesioner = {
@@ -14,6 +15,8 @@ export type JawabanKuesioner = {
   keterampilan: Keterampilan[];
   sumberDaya: SumberDaya[];
   preferensi: Preferensi[];
+  pengalaman: Pengalaman;
+  targetLabaBulanan: number;
 };
 
 export type TingkatKecocokan =
@@ -31,6 +34,8 @@ export type BreakdownSkor = {
   waktu: number;
   sumberDaya: number;
   preferensi: number;
+  pengalaman: number;
+  target: number;
 };
 
 export type HasilPencocokan = {
@@ -147,6 +152,20 @@ function scorePreferensi(ide: IdeUsaha, preferensi: Preferensi[]): number {
   return Math.min(100, Math.round((overlap / ide.preferensiCocok.length) * 100));
 }
 
+function scorePengalaman(ide: IdeUsaha, pengalaman: Pengalaman): number {
+  if (pengalaman === "belumPernah") return ide.cocokPemula ? 100 : 45;
+  if (pengalaman === "pernahSedikit") return ide.cocokPemula ? 100 : 75;
+  return 100;
+}
+
+function scoreTarget(ide: IdeUsaha, target: number): number {
+  const estimasi = ide.targetLabaBulanan ?? 1000000;
+  if (target <= estimasi) return 100;
+  if (target <= estimasi * 2) return 75;
+  if (target <= estimasi * 4) return 45;
+  return 20;
+}
+
 function cekKelayakan(
   ide: IdeUsaha,
   jawaban: JawabanKuesioner
@@ -243,23 +262,41 @@ function buatAlasanPersonal(
     alasan.push("Cara kerja usaha ini cukup sesuai dengan preferensi Anda.");
   }
 
+  if (breakdown.pengalaman >= 90) {
+    alasan.push("Tingkat pengalaman Anda sesuai dengan titik mulai usaha ini.");
+  } else if (breakdown.pengalaman >= 60) {
+    alasan.push("Pengalaman Anda cukup untuk mulai menguji usaha ini secara bertahap.");
+  } else {
+    alasan.push("Mulai dari uji kecil agar pengalaman dapat dibangun dengan risiko terukur.");
+  }
+
+  if (breakdown.target >= 90) {
+    alasan.push("Potensi usaha ini sejalan dengan target laba bulanan Anda.");
+  } else if (breakdown.target >= 60) {
+    alasan.push("Target laba Anda mungkin perlu dicapai bertahap dari skala awal usaha ini.");
+  }
+
   return alasan.slice(0, 5);
 }
 
 export function hitungKecocokan(jawaban: JawabanKuesioner): HasilPencocokan[] {
-  const hasil = ideUsahaList.map((ide) => {
+  const hasil = ideUsahaKuliner.map((ide) => {
     const modalRaw = scoreModal(ide, jawaban.modal);
     const keterampilanRaw = scoreKeterampilan(ide, jawaban.keterampilan);
     const waktuRaw = scoreWaktu(ide, jawaban.waktu);
     const sumberDayaRaw = scoreSumberDaya(ide, jawaban.sumberDaya);
     const preferensiRaw = scorePreferensi(ide, jawaban.preferensi);
+    const pengalamanRaw = scorePengalaman(ide, jawaban.pengalaman);
+    const targetRaw = scoreTarget(ide, jawaban.targetLabaBulanan);
 
     const breakdown: BreakdownSkor = {
       modal: Math.round(weightedScore(modalRaw, 20)),
-      keterampilan: Math.round(weightedScore(keterampilanRaw, 25)),
+      keterampilan: Math.round(weightedScore(keterampilanRaw, 20)),
       waktu: Math.round(weightedScore(waktuRaw, 15)),
-      sumberDaya: Math.round(weightedScore(sumberDayaRaw, 20)),
+      sumberDaya: Math.round(weightedScore(sumberDayaRaw, 15)),
       preferensi: Math.round(weightedScore(preferensiRaw, 10)),
+      pengalaman: Math.round(weightedScore(pengalamanRaw, 10)),
+      target: Math.round(weightedScore(targetRaw, 10)),
     };
 
     const skorMentah =
@@ -267,7 +304,9 @@ export function hitungKecocokan(jawaban: JawabanKuesioner): HasilPencocokan[] {
       breakdown.keterampilan +
       breakdown.waktu +
       breakdown.sumberDaya +
-      breakdown.preferensi;
+      breakdown.preferensi +
+      breakdown.pengalaman +
+      breakdown.target;
 
     const { status, alasan } = cekKelayakan(ide, jawaban);
     const gapModalBesar = modalRaw <= 35;

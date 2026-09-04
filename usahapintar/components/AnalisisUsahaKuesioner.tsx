@@ -13,6 +13,7 @@ import type {
   Keterampilan,
   SumberDaya,
   Preferensi,
+  Pengalaman,
 } from "@/lib/ideUsaha";
 
 function rupiah(n: number) {
@@ -154,7 +155,20 @@ const preferensiOptions: {
   },
 ];
 
-const totalSteps = 5;
+const pengalamanOptions: { value: Pengalaman; label: string; desc: string }[] = [
+  { value: "belumPernah", label: "Belum pernah usaha", desc: "Saya baru mulai belajar." },
+  { value: "pernahSedikit", label: "Pernah mencoba", desc: "Saya pernah berjualan atau menjalankan usaha kecil." },
+  { value: "sudahBerpengalaman", label: "Sudah berpengalaman", desc: "Saya sudah pernah menjalankan usaha secara rutin." },
+];
+
+const targetOptions = [
+  { value: 1000000, label: "Sekitar Rp 1 juta / bulan" },
+  { value: 3000000, label: "Sekitar Rp 3 juta / bulan" },
+  { value: 5000000, label: "Sekitar Rp 5 juta / bulan" },
+  { value: 10000000, label: "Di atas Rp 10 juta / bulan" },
+];
+
+const totalSteps = 7;
 
 export default function AnalisisUsahaKuesioner() {
   const [step, setStep] = useState(1);
@@ -173,6 +187,8 @@ export default function AnalisisUsahaKuesioner() {
 
   const [preferensi, setPreferensi] =
     useState<Preferensi[]>([]);
+  const [pengalaman, setPengalaman] = useState<Pengalaman | null>(null);
+  const [targetLabaBulanan, setTargetLabaBulanan] = useState(3000000);
 
   const [selesai, setSelesai] = useState(false);
 
@@ -197,7 +213,10 @@ export default function AnalisisUsahaKuesioner() {
       return sumberDaya.length > 0;
     if (step === 5)
       return preferensi.length > 0;
+    if (step === 6)
+      return pengalaman !== null;
 
+    if (step === 7) return targetLabaBulanan > 0;
     return false;
   }
 
@@ -212,16 +231,20 @@ export default function AnalisisUsahaKuesioner() {
     setKeterampilan([]);
     setSumberDaya([]);
     setPreferensi([]);
+    setPengalaman(null);
+    setTargetLabaBulanan(3000000);
     setSelesai(false);
   }
 
-  if (selesai && modal && waktu) {
+  if (selesai && modal && waktu && pengalaman) {
     const jawaban: JawabanKuesioner = {
       modal,
       waktu,
       keterampilan,
       sumberDaya,
       preferensi,
+      pengalaman,
+      targetLabaBulanan,
     };
 
     const hasil = hitungKecocokan(
@@ -552,7 +575,7 @@ export default function AnalisisUsahaKuesioner() {
                   {/* CTA */}
                   <div className="mt-5 flex flex-wrap gap-2">
                     <Link
-                      href={`/?usaha=${encodeURIComponent(h.ide.id)}#kalkulator`}
+                      href={`/simulasi?usaha=${encodeURIComponent(h.ide.id)}`}
                       className="inline-block rounded-sm bg-forest px-4 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
                     >
                       Simulasikan Usaha Ini →
@@ -799,6 +822,58 @@ export default function AnalisisUsahaKuesioner() {
                   </button>
                 )
               )}
+            </div>
+          </>
+        )}
+
+        {step === 6 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Seberapa jauh pengalaman usaha Anda?
+            </h2>
+            <div className="mt-5 space-y-2">
+              {pengalamanOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => setPengalaman(o.value)}
+                  className={`w-full rounded-sm border-2 px-4 py-3 text-left transition ${
+                    pengalaman === o.value
+                      ? "border-forest bg-forest/10"
+                      : "border-ink/15 hover:border-forest/40"
+                  }`}
+                >
+                  <p className={`font-body text-sm font-semibold ${pengalaman === o.value ? "text-forest" : "text-ink"}`}>
+                    {o.label}
+                  </p>
+                  <p className="mt-0.5 font-body text-xs text-muted">{o.desc}</p>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 7 && (
+          <>
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Berapa target laba per bulan Anda?
+            </h2>
+            <p className="mt-1 font-body text-xs text-muted">
+              Target ini membantu memprioritaskan usaha yang potensinya paling mendekati tujuan Anda.
+            </p>
+            <div className="mt-5 space-y-2">
+              {targetOptions.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => setTargetLabaBulanan(o.value)}
+                  className={`w-full rounded-sm border-2 px-4 py-3 text-left font-body text-sm transition ${
+                    targetLabaBulanan === o.value
+                      ? "border-forest bg-forest/10 font-semibold text-forest"
+                      : "border-ink/15 text-ink/80 hover:border-forest/40"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
             </div>
           </>
         )}

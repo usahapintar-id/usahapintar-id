@@ -22,6 +22,7 @@ export type SumberDaya =
   | "medsosBesar"
   | "tidakAda";
 export type Preferensi = "interaksiLangsung" | "kerjaMandiri" | "buatSendiri" | "jualBarangOrang";
+export type Pengalaman = "belumPernah" | "pernahSedikit" | "sudahBerpengalaman";
 
 export type IdeUsaha = {
   id: string;
@@ -35,6 +36,7 @@ export type IdeUsaha = {
   sumberDayaPendukung: SumberDaya[];
   sumberDayaWajib?: SumberDaya[];
   preferensiCocok: Preferensi[];
+  targetLabaBulanan?: number;
   tujuanUsaha?: string[];
   modalMin: number;
   modalIdeal?: number;
@@ -531,7 +533,7 @@ const ideUsahaLama: IdeUsaha[] = [
   },
 ];
 
-const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
+export const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
   id: usaha.id,
   nama: usaha.nama,
   kategori: usaha.kategori,
@@ -548,6 +550,7 @@ const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
   tingkatKesulitan: usaha.tingkatKesulitan,
   potensiPasar: "Tinggi",
   potensiKeuntungan: `${(usaha.hargaJual - usaha.hpp).toLocaleString("id-ID")} per unit sebelum biaya tetap`,
+  targetLabaBulanan: (usaha.hargaJual - usaha.hpp) * usaha.penjualanHarian * 30,
   alasanTemplate: usaha.alasan,
   langkahAwal: ["Pilih 1 menu utama untuk diuji", "Hitung ulang HPP dengan harga bahan di daerah Anda", "Uji jual ke pelanggan terdekat"],
   tantangan: "Menjaga rasa, ukuran porsi, dan biaya bahan tetap konsisten.",
