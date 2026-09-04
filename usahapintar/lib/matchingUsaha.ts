@@ -77,9 +77,9 @@ function getUserWaktuIndex(waktu: Waktu): number {
 }
 
 function getMinimalWaktu(ide: IdeUsaha): Waktu {
-  if (ide.waktuCocok.includes("penuhWaktu")) return "penuhWaktu";
+  if (ide.waktuCocok.includes("sampingan")) return "sampingan";
   if (ide.waktuCocok.includes("paruhWaktu")) return "paruhWaktu";
-  return "sampingan";
+  return "penuhWaktu";
 }
 
 function scoreModal(ide: IdeUsaha, modal: ModalRange): number {
@@ -226,53 +226,53 @@ function buatAlasanPersonal(
 ): string[] {
   const alasan: string[] = [];
 
-  if (breakdown.modal >= 90) {
+  if (breakdown.modal >= 18) {
     alasan.push("Modal Anda sesuai dengan kebutuhan awal usaha ini.");
-  } else if (breakdown.modal >= 60) {
+  } else if (breakdown.modal >= 12) {
     alasan.push("Modal Anda masih cukup dekat dengan kebutuhan usaha ini.");
   } else {
     alasan.push("Modal perlu disesuaikan agar usaha dimulai lebih realistis.");
   }
 
-  if (breakdown.keterampilan >= 90) {
+  if (breakdown.keterampilan >= 18) {
     alasan.push("Keterampilan yang Anda miliki sangat cocok dengan usaha ini.");
-  } else if (breakdown.keterampilan >= 60) {
+  } else if (breakdown.keterampilan >= 12) {
     alasan.push("Sebagian keterampilan Anda sudah mendukung usaha ini.");
   } else {
     alasan.push("Anda mungkin perlu belajar keterampilan tambahan sebelum memulai.");
   }
 
-  if (breakdown.waktu >= 90) {
+  if (breakdown.waktu >= 14) {
     alasan.push("Waktu yang Anda miliki cukup untuk menjalankan usaha ini.");
-  } else if (breakdown.waktu >= 60) {
+  } else if (breakdown.waktu >= 9) {
     alasan.push("Waktu Anda masih cukup memungkinkan usaha ini berjalan.");
   } else {
     alasan.push("Ketersediaan waktu perlu dikelola agar usaha tidak terlalu berat.");
   }
 
-  if (breakdown.sumberDaya >= 90) {
+  if (breakdown.sumberDaya >= 14) {
     alasan.push("Sumber daya yang Anda punya sangat mendukung operasional awal.");
-  } else if (breakdown.sumberDaya >= 60) {
+  } else if (breakdown.sumberDaya >= 9) {
     alasan.push("Sebagian sumber daya Anda sudah cukup untuk memulai.");
   }
 
-  if (breakdown.preferensi >= 90) {
+  if (breakdown.preferensi >= 9) {
     alasan.push("Model kerja usaha ini sesuai dengan gaya Anda.");
-  } else if (breakdown.preferensi >= 60) {
+  } else if (breakdown.preferensi >= 6) {
     alasan.push("Cara kerja usaha ini cukup sesuai dengan preferensi Anda.");
   }
 
-  if (breakdown.pengalaman >= 90) {
+  if (breakdown.pengalaman >= 9) {
     alasan.push("Tingkat pengalaman Anda sesuai dengan titik mulai usaha ini.");
-  } else if (breakdown.pengalaman >= 60) {
+  } else if (breakdown.pengalaman >= 6) {
     alasan.push("Pengalaman Anda cukup untuk mulai menguji usaha ini secara bertahap.");
   } else {
     alasan.push("Mulai dari uji kecil agar pengalaman dapat dibangun dengan risiko terukur.");
   }
 
-  if (breakdown.target >= 90) {
+  if (breakdown.target >= 9) {
     alasan.push("Potensi usaha ini sejalan dengan target laba bulanan Anda.");
-  } else if (breakdown.target >= 60) {
+  } else if (breakdown.target >= 6) {
     alasan.push("Target laba Anda mungkin perlu dicapai bertahap dari skala awal usaha ini.");
   }
 

@@ -401,7 +401,7 @@ export default function AnalisisUsahaKuesioner() {
                       Mengapa usaha ini cocok?
                     </p>
 
-                    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-5">
+                    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
                       <div>
                         <p className="font-mono text-[10px] text-muted">
                           Modal
@@ -449,6 +449,24 @@ export default function AnalisisUsahaKuesioner() {
 
                         <p className="font-display text-lg font-semibold text-forest">
                           {h.breakdown.preferensi}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="font-mono text-[10px] text-muted">
+                          Pengalaman
+                        </p>
+                        <p className="font-display text-lg font-semibold text-forest">
+                          {h.breakdown.pengalaman}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="font-mono text-[10px] text-muted">
+                          Target laba
+                        </p>
+                        <p className="font-display text-lg font-semibold text-forest">
+                          {h.breakdown.target}
                         </p>
                       </div>
                     </div>

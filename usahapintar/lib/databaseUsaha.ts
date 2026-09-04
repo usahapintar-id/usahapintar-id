@@ -4,7 +4,7 @@ export type DataUsaha = {
   kategori: "Kuliner";
   deskripsi: string;
   modalAwal: number;
-  biayaTetap: number;
+  biayaTetapBulanan: number;
   hpp: number;
   hargaJual: number;
   penjualanHarian: number;
@@ -44,7 +44,7 @@ export const databaseUsaha: DataUsaha[] = dataAwalUsaha.map(([id, nama, modalAwa
   kategori: "Kuliner",
   deskripsi: `Template awal ${nama.toLowerCase()} untuk simulasi skala rumahan.`,
   modalAwal,
-  biayaTetap: Math.round(modalAwal * 0.35),
+  biayaTetapBulanan: Math.round(modalAwal * 0.35),
   hpp,
   hargaJual,
   penjualanHarian: 20,

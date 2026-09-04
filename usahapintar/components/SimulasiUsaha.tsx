@@ -19,6 +19,7 @@ type Scenario = {
 export default function SimulasiUsaha() {
   const [usahaId, setUsahaId] = useState<string | null>(null);
   const [kategoriId, setKategoriId] = useState("kuliner");
+  const [sumberData, setSumberData] = useState("database usaha");
   const [namaUsaha, setNamaUsaha] = useState("Simulasi usaha");
   const [modalAwal, setModalAwal] = useState(0);
   const [biayaTetap, setBiayaTetap] = useState(0);
@@ -33,11 +34,12 @@ export default function SimulasiUsaha() {
     const usaha = getUsahaById(usahaIdParam);
 
     if (usaha) {
+      setSumberData("database usaha");
       setUsahaId(usaha.id);
       setKategoriId("kuliner");
       setNamaUsaha(usaha.nama);
       setModalAwal(usaha.modalAwal);
-      setBiayaTetap(usaha.biayaTetap);
+      setBiayaTetap(usaha.biayaTetapBulanan);
       setHpp(usaha.hpp);
       setHarga(usaha.hargaJual);
       setPenjualan(usaha.penjualanHarian);
@@ -46,6 +48,7 @@ export default function SimulasiUsaha() {
 
     const ide = getIdeById(usahaIdParam);
     if (ide) {
+      setSumberData("estimasi awal");
       const hppEstimasi = Math.max(1000, Math.round(ide.modalMin / 20 / 100) * 100);
       setUsahaId(ide.id);
       setKategoriId(ide.jenisUsahaKalkulator);
@@ -100,7 +103,7 @@ export default function SimulasiUsaha() {
           ))}
         </div>
         <div className="mt-3 rounded-sm border border-brass/40 bg-brass/10 px-4 py-3 font-body text-sm text-ink">
-          <strong>Estimasi awal:</strong> {bepUnit > 0 ? `BEP sekitar ${bepUnit} produk dan target ${penjualan} produk/hari menghasilkan potensi laba ${rupiah(laba * penjualan)} per hari.` : "Harga jual perlu lebih tinggi dari HPP untuk menghitung BEP."}
+          <strong>{sumberData}:</strong> {bepUnit > 0 ? `BEP sekitar ${bepUnit} produk dan target ${penjualan} produk/hari menghasilkan potensi laba ${rupiah(laba * penjualan)} per hari.` : "Harga jual perlu lebih tinggi dari HPP untuk menghitung BEP."} Angka dapat diedit berdasarkan kondisi sebenarnya.
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
