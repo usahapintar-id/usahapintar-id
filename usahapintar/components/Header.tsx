@@ -4,13 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 
 const navLinks = [
-  { href: "/#fitur", label: "Fitur" },
-  { href: "/#cara-kerja", label: "Cara Kerja" },
-  { href: "/#kalkulator", label: "Kalkulator HPP" },
-  { href: "/alat", label: "Alat Bisnis" },
-  { href: "/peta-musiman", label: "Peta Musiman" },
   { href: "/analisis-usaha", label: "Analisis Usaha" },
   { href: "/template-usaha", label: "Template Usaha" },
+  { href: "/alat", label: "Alat Bisnis" },
   { href: "/target-cuan", label: "Target Cuan" },
   { href: "/usaha-saya", label: "Usaha Saya" },
   { href: "/artikel", label: "Artikel" },
@@ -49,10 +45,10 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <a
-            href="/#kalkulator"
+            href="/analisis-usaha"
             className="hidden rounded-sm bg-forest px-4 py-2 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark sm:inline-block"
           >
-            Coba Kalkulator
+            Mulai Sekarang
           </a>
 
           <button
@@ -110,11 +106,11 @@ export default function Header() {
               </a>
             ))}
             <a
-              href="/#kalkulator"
+              href="/analisis-usaha"
               onClick={() => setOpen(false)}
               className="mt-2 rounded-sm bg-forest px-4 py-2.5 text-center font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
             >
-              Coba Kalkulator
+              Mulai Sekarang
             </a>
           </div>
         </nav>

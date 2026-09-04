@@ -7,8 +7,11 @@ html {
 }
 
 body {
-  background-color: #f1f4ec;
+  background:
+    radial-gradient(circle at 85% 0%, rgba(184, 134, 11, 0.09), transparent 26rem),
+    linear-gradient(135deg, #f7f8f2 0%, #f1f4ec 48%, #e8eee2 100%);
   color: #1e2a1f;
+  min-height: 100vh;
 }
 
 ::selection {
@@ -25,6 +28,16 @@ body {
 
 .stamp {
   transform: rotate(-6deg);
+}
+
+@layer components {
+  .section-kicker {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-brass;
+  }
+
+  .premium-panel {
+    @apply rounded-lg border border-ink/10 bg-paper/80 shadow-[0_18px_45px_rgba(30,42,31,0.08)] backdrop-blur-sm;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

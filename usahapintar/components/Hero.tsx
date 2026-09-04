@@ -1,14 +1,14 @@
 export default function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden px-6 pb-20 pt-16 md:pt-24">
+    <section id="top" className="relative overflow-hidden px-6 pb-20 pt-16 md:pb-28 md:pt-24">
       <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-2">
         {/* Left: copy */}
         <div>
           <span className="inline-block rounded-full border border-brass/40 bg-brass/10 px-3 py-1 font-mono text-xs uppercase tracking-widest text-brass">
-            Dari ide usaha sampai angka yang masuk akal
+            Alat bantu usaha untuk pemula
           </span>
 
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.1] text-ink sm:text-5xl">
+          <h1 className="mt-5 max-w-xl font-display text-4xl font-semibold leading-[1.06] text-ink sm:text-6xl">
             Bingung mau usaha apa?{" "}
             <span className="italic text-forest">Mulai dari yang cocok.</span>
           </h1>
@@ -19,10 +19,10 @@ export default function Hero() {
             keuntungan berdasarkan angka Anda sendiri.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href="/analisis-usaha"
-              className="rounded-sm bg-forest px-6 py-3 font-body text-sm font-semibold text-paper shadow-sm transition hover:bg-forest-dark"
+              className="rounded-sm bg-forest px-6 py-3 font-body text-sm font-semibold text-paper shadow-[0_8px_18px_rgba(47,82,51,0.18)] transition hover:bg-forest-dark"
             >
               Cari Usaha yang Cocok
             </a>
@@ -65,7 +65,7 @@ export default function Hero() {
         {/* Right: ledger card, the signature visual */}
         <div className="relative">
           <div className="absolute -inset-3 -rotate-1 rounded-md border-2 border-ink/10" />
-          <div className="relative rounded-md border-2 border-ink bg-paper shadow-[6px_6px_0_0_#1E2A1F]">
+          <div className="relative rounded-lg border border-ink/15 bg-paper/90 shadow-[0_24px_55px_rgba(30,42,31,0.13)] backdrop-blur-sm">
             <div className="flex items-center justify-between border-b-2 border-ink px-5 py-3">
               <span className="font-display text-sm italic text-ink">
                 Buku Kas — Kue Lapis Ibu Sari
