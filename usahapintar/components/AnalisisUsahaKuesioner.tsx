@@ -575,7 +575,7 @@ export default function AnalisisUsahaKuesioner() {
                   {/* CTA */}
                   <div className="mt-5 flex flex-wrap gap-2">
                     <Link
-                      href={`/simulasi?usaha=${encodeURIComponent(h.ide.id)}`}
+                      href={`/simulasi?usaha=${encodeURIComponent(h.ide.id)}&jenis=${encodeURIComponent(h.ide.jenisUsahaKalkulator)}`}
                       className="inline-block rounded-sm bg-forest px-4 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
                     >
                       Simulasikan Usaha Ini →

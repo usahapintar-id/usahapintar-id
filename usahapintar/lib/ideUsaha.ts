@@ -559,3 +559,7 @@ export const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
 }));
 
 export const ideUsahaList: IdeUsaha[] = [...ideUsahaKuliner, ...ideUsahaLama];
+
+export function getIdeById(id: string | null | undefined) {
+  return ideUsahaList.find((ide) => ide.id === id);
+}

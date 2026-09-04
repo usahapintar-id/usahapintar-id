@@ -1,5 +1,5 @@
 import {
-  ideUsahaKuliner,
+  ideUsahaList,
   type IdeUsaha,
   type ModalRange,
   type Waktu,
@@ -280,7 +280,7 @@ function buatAlasanPersonal(
 }
 
 export function hitungKecocokan(jawaban: JawabanKuesioner): HasilPencocokan[] {
-  const hasil = ideUsahaKuliner.map((ide) => {
+  const hasil = ideUsahaList.map((ide) => {
     const modalRaw = scoreModal(ide, jawaban.modal);
     const keterampilanRaw = scoreKeterampilan(ide, jawaban.keterampilan);
     const waktuRaw = scoreWaktu(ide, jawaban.waktu);

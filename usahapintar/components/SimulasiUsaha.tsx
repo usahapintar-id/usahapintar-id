@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getUsahaById } from "@/lib/databaseUsaha";
+import { getIdeById } from "@/lib/ideUsaha";
 
 function rupiah(value: number) {
   return "Rp " + Math.round(value).toLocaleString("id-ID");
@@ -17,6 +18,7 @@ type Scenario = {
 
 export default function SimulasiUsaha() {
   const [usahaId, setUsahaId] = useState<string | null>(null);
+  const [kategoriId, setKategoriId] = useState("kuliner");
   const [namaUsaha, setNamaUsaha] = useState("Simulasi usaha");
   const [modalAwal, setModalAwal] = useState(0);
   const [biayaTetap, setBiayaTetap] = useState(0);
@@ -27,10 +29,12 @@ export default function SimulasiUsaha() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const usaha = getUsahaById(params.get("usaha"));
+    const usahaIdParam = params.get("usaha");
+    const usaha = getUsahaById(usahaIdParam);
 
     if (usaha) {
       setUsahaId(usaha.id);
+      setKategoriId("kuliner");
       setNamaUsaha(usaha.nama);
       setModalAwal(usaha.modalAwal);
       setBiayaTetap(usaha.biayaTetap);
@@ -40,8 +44,23 @@ export default function SimulasiUsaha() {
       return;
     }
 
+    const ide = getIdeById(usahaIdParam);
+    if (ide) {
+      const hppEstimasi = Math.max(1000, Math.round(ide.modalMin / 20 / 100) * 100);
+      setUsahaId(ide.id);
+      setKategoriId(ide.jenisUsahaKalkulator);
+      setNamaUsaha(ide.nama);
+      setModalAwal(ide.modalMin);
+      setBiayaTetap(0);
+      setHpp(hppEstimasi);
+      setHarga(Math.ceil((hppEstimasi * 1.5) / 100) * 100);
+      setPenjualan(10);
+      return;
+    }
+
     setHpp(Number(params.get("hpp")) || 8000);
     setHarga(Number(params.get("harga")) || 15000);
+    setKategoriId(params.get("jenis") || "kuliner");
   }, []);
 
   const laba = harga - hpp;
@@ -114,7 +133,7 @@ export default function SimulasiUsaha() {
           </div>
         </div>
         <div className="mt-6 flex flex-wrap gap-2">
-          <Link href={usahaId ? `/?usaha=${encodeURIComponent(usahaId)}#kalkulator` : "/#kalkulator"} className="rounded-sm bg-forest px-3 py-2 font-body text-xs font-semibold text-paper hover:bg-forest-dark">Hitung HPP Saya →</Link>
+          <Link href={usahaId ? (kategoriId === "kuliner" ? `/?usaha=${encodeURIComponent(usahaId)}#kalkulator` : `/?jenis=${encodeURIComponent(kategoriId)}#kalkulator`) : "/#kalkulator"} className="rounded-sm bg-forest px-3 py-2 font-body text-xs font-semibold text-paper hover:bg-forest-dark">Hitung HPP Saya →</Link>
           <Link href={`/kalkulator-bep?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}&biayaTetap=${Math.round(biayaTetap)}`} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Lihat BEP →</Link>
           <Link href={`/target-cuan?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Hitung Target Cuan →</Link>
           <Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Analisis Usaha Saya →</Link>

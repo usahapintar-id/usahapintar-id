@@ -77,6 +77,18 @@ export default function HPPCalculator() {
         setOverhead(usaha.overhead);
         setJumlahProduksi(usaha.jumlahProduksi);
         setMargin(usaha.hpp > 0 ? Math.round(((usaha.hargaJual - usaha.hpp) / usaha.hpp) * 100) : 40);
+      } else {
+        const jenisParam = new URLSearchParams(window.location.search).get("jenis");
+        if (jenisParam && jenisUsahaList.some((preset) => preset.id === jenisParam)) {
+          const preset = jenisUsahaList.find((item) => item.id === jenisParam);
+          if (preset) {
+            setJenisUsahaId(preset.id);
+            setBahan(bahanFromPreset(preset));
+            setTenagaKerja(preset.tenagaKerja);
+            setOverhead(preset.overhead);
+            setJumlahProduksi(preset.jumlahProduksi);
+          }
+        }
       }
     } catch (e) {
       console.error("Gagal memuat data tersimpan", e);
