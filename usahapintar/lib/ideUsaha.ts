@@ -1,3 +1,5 @@
+import { databaseUsaha } from "./databaseUsaha";
+
 export type ModalRange = "kecil" | "sedang" | "besar" | "sangatBesar";
 export type Waktu = "sampingan" | "paruhWaktu" | "penuhWaktu";
 export type Keterampilan =
@@ -49,9 +51,10 @@ export type IdeUsaha = {
   kombinasi?: string;
   jenisUsahaKalkulator: string; // untuk link ke preset kalkulator HPP
   cocokPemula?: boolean; // true jika ide ini ramah untuk yang belum punya keterampilan khusus
+  potensiKeuntungan?: string;
 };
 
-export const ideUsahaList: IdeUsaha[] = [
+const ideUsahaLama: IdeUsaha[] = [
   {
     id: "katering-rumahan",
     nama: "Katering Rumahan Skala Kecil",
@@ -527,3 +530,29 @@ export const ideUsahaList: IdeUsaha[] = [
     jenisUsahaKalkulator: "digital",
   },
 ];
+
+const ideUsahaKuliner: IdeUsaha[] = databaseUsaha.map((usaha) => ({
+  id: usaha.id,
+  nama: usaha.nama,
+  kategori: usaha.kategori,
+  deskripsi: usaha.deskripsi,
+  modalCocok: usaha.modalAwal <= 1000000 ? ["kecil", "sedang"] : ["sedang", "besar"],
+  waktuCocok: ["sampingan", "paruhWaktu"],
+  keterampilanKunci: ["memasak"],
+  sumberDayaPendukung: ["alatMasak", "lokasiStrategis"],
+  preferensiCocok: ["buatSendiri", "interaksiLangsung"],
+  modalMin: usaha.modalAwal,
+  modalMax: Math.round(usaha.modalAwal * 1.5),
+  modalIdeal: usaha.modalAwal,
+  rincianModal: `Peralatan dan bahan awal sekitar ${usaha.modalAwal.toLocaleString("id-ID")}.`,
+  tingkatKesulitan: usaha.tingkatKesulitan,
+  potensiPasar: "Tinggi",
+  potensiKeuntungan: `${(usaha.hargaJual - usaha.hpp).toLocaleString("id-ID")} per unit sebelum biaya tetap`,
+  alasanTemplate: usaha.alasan,
+  langkahAwal: ["Pilih 1 menu utama untuk diuji", "Hitung ulang HPP dengan harga bahan di daerah Anda", "Uji jual ke pelanggan terdekat"],
+  tantangan: "Menjaga rasa, ukuran porsi, dan biaya bahan tetap konsisten.",
+  jenisUsahaKalkulator: "kuliner",
+  cocokPemula: usaha.tingkatKesulitan === "Mudah",
+}));
+
+export const ideUsahaList: IdeUsaha[] = [...ideUsahaKuliner, ...ideUsahaLama];

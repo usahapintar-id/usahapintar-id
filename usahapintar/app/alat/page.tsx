@@ -34,6 +34,18 @@ const alat = [
     deskripsi:
       "Hitung gaji bersih karyawan, termasuk lembur dan potongan.",
   },
+  {
+    href: "/target-cuan",
+    nama: "Target Cuan",
+    deskripsi:
+      "Hitung jumlah produk yang perlu dijual untuk mencapai target laba bulanan.",
+  },
+  {
+    href: "/usaha-saya",
+    nama: "Usaha Saya",
+    deskripsi:
+      "Simpan HPP, harga jual, laba, dan target produk Anda di perangkat ini.",
+  },
 ];
 
 export default function AlatPage() {

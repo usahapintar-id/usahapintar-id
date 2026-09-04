@@ -30,6 +30,9 @@ export default function ArtikelDetailPage({
 }) {
   const artikel = getArtikelBySlug(params.slug);
   if (!artikel) notFound();
+  const hrefKalkulator = artikel.slug === "cara-menghitung-hpp-usaha-kuliner-rumahan"
+    ? "/?usaha=nasi-goreng#kalkulator"
+    : "/#kalkulator";
 
   return (
     <main>
@@ -79,7 +82,7 @@ export default function ArtikelDetailPage({
               perlu daftar.
             </p>
             <Link
-              href="/#kalkulator"
+              href={hrefKalkulator}
               className="mt-4 inline-block rounded-sm bg-forest px-5 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
             >
               Buka Kalkulator HPP

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { jenisUsahaList, type JenisUsaha } from "@/lib/presets";
+import { getUsahaById } from "@/lib/databaseUsaha";
+import { RINGKASAN_HPP_KEY } from "@/lib/simulasi";
 import RekomendasiAlat from "./RekomendasiAlat";
 import TombolUnduh from "./TombolUnduh";
 
@@ -66,6 +68,16 @@ export default function HPPCalculator() {
           setJumlahProduksi(parsed.jumlahProduksi);
         if (parsed.margin !== undefined) setMargin(parsed.margin);
       }
+      const usahaId = new URLSearchParams(window.location.search).get("usaha");
+      const usaha = getUsahaById(usahaId);
+      if (usaha) {
+        setJenisUsahaId("kuliner");
+        setBahan(usaha.bahan.map((bahan, index) => ({ ...bahan, id: `${usaha.id}-${index}` })));
+        setTenagaKerja(usaha.tenagaKerja);
+        setOverhead(usaha.overhead);
+        setJumlahProduksi(usaha.jumlahProduksi);
+        setMargin(usaha.hpp > 0 ? Math.round(((usaha.hargaJual - usaha.hpp) / usaha.hpp) * 100) : 40);
+      }
     } catch (e) {
       console.error("Gagal memuat data tersimpan", e);
     }
@@ -108,6 +120,25 @@ export default function HPPCalculator() {
   const hargaJualDibulatkan = Math.ceil(hargaJual / 100) * 100;
   const untungPerUnit = hargaJualDibulatkan - hppPerUnit;
   const totalUntung = untungPerUnit * jumlahProduksi;
+  const marginNyata = hargaJualDibulatkan > 0 ? (untungPerUnit / hargaJualDibulatkan) * 100 : 0;
+  const hargaMinimum = Math.ceil((hppPerUnit * 1.2) / 100) * 100;
+  const hargaAman = Math.ceil((hppPerUnit * 1.5) / 100) * 100;
+  const bepUnit = hargaJualDibulatkan > hppPerUnit && overhead > 0
+    ? Math.ceil(overhead / (hargaJualDibulatkan - hppPerUnit))
+    : 0;
+  const statusHarga = marginNyata >= 30 ? "Harga jual cukup sehat." : marginNyata > 0 ? "Harga jual masih menghasilkan untung, tetapi ruang amannya tipis." : "Harga jual belum menutup HPP.";
+
+  useEffect(() => {
+    if (!sudahMuatData) return;
+    localStorage.setItem(RINGKASAN_HPP_KEY, JSON.stringify({
+      nama: jenisUsaha.label,
+      hpp: hppPerUnit,
+      hargaJual: hargaJualDibulatkan,
+      labaPerUnit: untungPerUnit,
+      biayaProduksi: totalModal,
+      jenisUsahaId,
+    }));
+  }, [jenisUsaha.label, jenisUsahaId, hppPerUnit, hargaJualDibulatkan, untungPerUnit, totalModal, sudahMuatData]);
 
   function updateBahan(id: string, field: keyof Bahan, value: string) {
     setBahan((prev) =>
@@ -350,10 +381,54 @@ export default function HPPCalculator() {
                   </span>
                   <span className="text-ledger">{rupiah(totalUntung)}</span>
                 </div>
+                <div className="mt-1 flex justify-between font-mono text-sm">
+                  <span className="text-muted">Margin keuntungan</span>
+                  <span className="text-ledger">{marginNyata.toFixed(1)}%</span>
+                </div>
+                {bepUnit > 0 && (
+                  <div className="mt-1 flex justify-between font-mono text-sm">
+                    <span className="text-muted">BEP sederhana</span>
+                    <span className="text-ledger">{bepUnit} unit</span>
+                  </div>
+                )}
               </div>
             </div>
 
+            <div className="mt-6 rounded-md border-2 border-ink bg-paper p-6 shadow-[4px_4px_0_0_#1E2A1F]">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brass">Rekomendasi harga</p>
+              <div className="mt-4 grid grid-cols-2 gap-3 font-mono text-sm sm:grid-cols-4">
+                <div><p className="text-xs text-muted">HPP</p><p className="mt-1 font-semibold text-ink">{rupiah(hppPerUnit)}</p></div>
+                <div><p className="text-xs text-muted">Minimum</p><p className="mt-1 font-semibold text-ink">{rupiah(hargaMinimum)}</p></div>
+                <div><p className="text-xs text-muted">Aman</p><p className="mt-1 font-semibold text-forest">{rupiah(hargaAman)}</p></div>
+                <div><p className="text-xs text-muted">Rekomendasi</p><p className="mt-1 font-semibold text-forest">{rupiah(hargaJualDibulatkan)}</p></div>
+              </div>
+              <p className="mt-4 font-body text-xs leading-relaxed text-muted">Minimum memberi ruang untung tipis, harga aman memberi napas untuk biaya tak terduga, dan rekomendasi mengikuti margin {margin}% yang Anda pilih.</p>
+            </div>
+
+            <div className="mt-6 rounded-md border-2 border-ink bg-paper p-6 shadow-[4px_4px_0_0_#1E2A1F]">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-brass">Apa artinya?</p>
+              <p className="mt-3 font-display text-xl font-semibold text-forest">● {statusHarga}</p>
+              <p className="mt-2 font-body text-sm leading-relaxed text-muted">Setiap produk yang terjual menghasilkan sekitar {rupiah(Math.max(0, untungPerUnit))} sebelum biaya lain yang belum dimasukkan. {bepUnit > 0 ? `Setelah menjual sekitar ${bepUnit} unit, biaya tetap yang Anda masukkan mulai tertutup.` : "Masukkan overhead dan pastikan harga jual lebih tinggi dari HPP untuk melihat BEP."}</p>
+            </div>
+
             <TombolUnduh elementId="ringkasan-hpp" namaFile="Ringkasan-HPP-CuanKit" />
+            <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+              <a href={`/kalkulator-bep?hpp=${Math.round(hppPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">
+                Lanjut ke BEP →
+              </a>
+              <a href={`/target-cuan?hpp=${Math.round(hppPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
+                Hitung Target Cuan →
+              </a>
+              <a href={`/simulasi?hpp=${Math.round(hppPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-brass bg-brass/10 px-3 py-2 font-body text-xs font-semibold text-ink hover:bg-brass/20">
+                Simulasikan Usaha →
+              </a>
+              <a href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
+                Analisis Usaha Saya →
+              </a>
+              <a href="/usaha-saya" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
+                Simpan ke Usaha Saya →
+              </a>
+            </div>
           </div>
         </div>
 

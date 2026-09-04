@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { bacaRingkasanHPP } from "@/lib/simulasi";
 import TombolUnduh from "./TombolUnduh";
 
 function rupiah(n: number) {
@@ -12,11 +13,23 @@ export default function KalkulatorBEP() {
   const [biayaTetap, setBiayaTetap] = useState<number>(2000000);
   const [hargaJual, setHargaJual] = useState<number>(9000);
   const [biayaVariabel, setBiayaVariabel] = useState<number>(6000);
+  const [penjualanHarian, setPenjualanHarian] = useState<number>(20);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ringkasan = bacaRingkasanHPP();
+    const hpp = Number(params.get("hpp")) || ringkasan?.hpp;
+    const harga = Number(params.get("harga")) || ringkasan?.hargaJual;
+    if (hpp !== undefined) setBiayaVariabel(hpp);
+    if (harga !== undefined) setHargaJual(harga);
+    if (ringkasan?.biayaProduksi) setBiayaTetap(ringkasan.biayaProduksi);
+  }, []);
 
   const marginKontribusi = hargaJual - biayaVariabel;
   const bepUnit =
     marginKontribusi > 0 ? biayaTetap / marginKontribusi : 0;
   const bepRupiah = bepUnit * hargaJual;
+  const hariMenujuBep = bepUnit > 0 && penjualanHarian > 0 ? Math.ceil(bepUnit / penjualanHarian) : 0;
 
   return (
     <section className="px-6 py-16">
@@ -47,6 +60,16 @@ export default function KalkulatorBEP() {
               min={0}
               value={biayaTetap}
               onChange={(e) => setBiayaTetap(Number(e.target.value) || 0)}
+              className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
+            />
+            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+              Estimasi penjualan per hari
+            </label>
+            <input
+              type="number"
+              min={0}
+              value={penjualanHarian}
+              onChange={(e) => setPenjualanHarian(Number(e.target.value) || 0)}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
 
@@ -105,6 +128,7 @@ export default function KalkulatorBEP() {
               {marginKontribusi > 0 ? (
                 <p className="mt-1 font-body text-xs text-muted">
                   setara omzet {rupiah(bepRupiah)} per bulan
+                  {penjualanHarian > 0 && `, sekitar ${hariMenujuBep} hari pada ${penjualanHarian} unit/hari`}
                 </p>
               ) : (
                 <p className="mt-1 font-body text-xs text-ledger">
@@ -115,6 +139,10 @@ export default function KalkulatorBEP() {
             </div>
             </div>
             <TombolUnduh elementId="ringkasan-bep" namaFile="Ringkasan-BEP-CuanKit" />
+            <div className="mt-3 flex flex-wrap gap-2 print:hidden">
+              <a href="/target-cuan" className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Tentukan Target Cuan →</a>
+              <a href="/simulasi" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Simulasikan Usaha →</a>
+            </div>
           </div>
         </div>
       </div>

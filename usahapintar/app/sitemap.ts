@@ -12,6 +12,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/kalkulator-bep", priority: 0.7 },
     { path: "/kalkulator-pinjaman", priority: 0.7 },
     { path: "/kalkulator-gaji", priority: 0.7 },
+    { path: "/target-cuan", priority: 0.8 },
+    { path: "/simulasi", priority: 0.8 },
+    { path: "/usaha-saya", priority: 0.7 },
     { path: "/tentang", priority: 0.5 },
     { path: "/privasi", priority: 0.3 },
   ].map((p) => ({

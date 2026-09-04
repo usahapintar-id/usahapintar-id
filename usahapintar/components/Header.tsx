@@ -10,6 +10,8 @@ const navLinks = [
   { href: "/alat", label: "Alat Bisnis" },
   { href: "/peta-musiman", label: "Peta Musiman" },
   { href: "/analisis-usaha", label: "Analisis Usaha" },
+  { href: "/target-cuan", label: "Target Cuan" },
+  { href: "/usaha-saya", label: "Usaha Saya" },
   { href: "/artikel", label: "Artikel" },
 ];
 

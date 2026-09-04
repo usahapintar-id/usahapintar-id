@@ -478,6 +478,11 @@ export default function AnalisisUsahaKuesioner() {
                     <p className="mt-1 font-body text-xs text-muted">
                       {h.ide.rincianModal}
                     </p>
+                    {h.ide.potensiKeuntungan && (
+                      <p className="mt-2 font-body text-xs font-semibold text-forest">
+                        Potensi laba: Rp {h.ide.potensiKeuntungan} per unit
+                      </p>
+                    )}
                   </div>
 
                   {/* POTENSI PENGEMBANGAN */}
@@ -547,10 +552,10 @@ export default function AnalisisUsahaKuesioner() {
                   {/* CTA */}
                   <div className="mt-5 flex flex-wrap gap-2">
                     <Link
-                      href="/#kalkulator"
+                      href={`/?usaha=${encodeURIComponent(h.ide.id)}#kalkulator`}
                       className="inline-block rounded-sm bg-forest px-4 py-2.5 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
                     >
-                      Hitung Modal & HPP →
+                      Simulasikan Usaha Ini →
                     </Link>
                     <Link
                       href="/#kalkulator"

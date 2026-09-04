@@ -1,19 +1,11 @@
 const steps = [
-  {
-    n: "01",
-    title: "Catat bahan baku",
-    desc: "Masukkan setiap bahan dan biayanya — sistem menjumlahkan total modal bahan secara otomatis.",
-  },
-  {
-    n: "02",
-    title: "Tambahkan biaya lain",
-    desc: "Isi tenaga kerja, overhead, dan jumlah unit yang dihasilkan dari satu kali produksi.",
-  },
-  {
-    n: "03",
-    title: "Atur margin, lihat harga jual",
-    desc: "Geser persentase keuntungan yang diinginkan — harga jual per unit muncul seketika.",
-  },
+  ["01", "Hitung HPP", "Catat bahan baku dan biaya produksi."],
+  ["02", "Tentukan harga jual", "Pilih harga minimum, aman, atau rekomendasi."],
+  ["03", "Cek keuntungan", "Pahami untung dan margin per produk."],
+  ["04", "Hitung BEP", "Lihat kapan biaya mulai tertutup."],
+  ["05", "Tentukan target cuan", "Ubah target keuntungan menjadi jumlah produk."],
+  ["06", "Simulasikan risiko", "Coba perubahan bahan, harga, dan penjualan."],
+  ["07", "Analisis usaha", "Tentukan langkah yang paling masuk akal."],
 ];
 
 export default function HowItWorks() {
@@ -28,16 +20,16 @@ export default function HowItWorks() {
         </h2>
 
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {steps.map((s) => (
-            <div key={s.n} className="relative pl-4">
+          {steps.map(([n, title, desc]) => (
+            <div key={n} className="relative pl-4">
               <span className="font-mono text-4xl font-semibold text-ink/10">
-                {s.n}
+                {n}
               </span>
               <h3 className="mt-2 font-display text-lg font-semibold text-ink">
-                {s.title}
+                {title}
               </h3>
               <p className="mt-2 font-body text-sm leading-relaxed text-muted">
-                {s.desc}
+                {desc}
               </p>
             </div>
           ))}
