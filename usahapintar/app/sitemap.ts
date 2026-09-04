@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/kalkulator-gaji", priority: 0.7 },
     { path: "/target-cuan", priority: 0.8 },
     { path: "/simulasi", priority: 0.8 },
+    { path: "/template-usaha", priority: 0.9 },
     { path: "/usaha-saya", priority: 0.7 },
     { path: "/tentang", priority: 0.5 },
     { path: "/privasi", priority: 0.3 },
