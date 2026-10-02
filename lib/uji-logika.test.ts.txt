@@ -1,0 +1,51 @@
+import { hitungRingkasan, hitungPinjaman, formatRupiah } from "/home/claude/fix/lib/hitung";
+import { ringkasanTemplate, databaseUsaha } from "/home/claude/fix/lib/databaseUsaha";
+import { buatStateAwalSimulasi } from "/home/claude/fix/lib/simulasiAwal";
+import { getRekomendasiByJenisUsaha } from "/home/claude/fix/lib/rekomendasi";
+import { ideUsahaList } from "/home/claude/fix/lib/ideUsaha";
+import { getTop3 } from "/home/claude/fix/lib/matchingUsaha";
+let gagal = 0;
+const ok = (nama: string, kondisi: boolean, info?: unknown) => { if (!kondisi) gagal++; console.log(kondisi ? "OK  " : "GAGAL", nama, info ?? ""); };
+
+const e = ringkasanTemplate("es-teh-jumbo")!;
+ok("es teh: laba/cup 3000", e.labaPerUnit === 3000);
+ok("es teh: BEP bulanan 82", e.bepUnitBulanan === 82, e.bepUnitBulanan);
+ok("es teh: laba kotor 1.8jt", e.labaKotorBulanan === 1800000);
+ok("es teh: laba bersih 1.555.000", e.labaBersihBulanan === 1555000, e.labaBersihBulanan);
+ok("es teh: balik modal 234 unit", e.balikModalUnit === 234, e.balikModalUnit);
+ok("format rupiah", formatRupiah(1555000) === "Rp 1.555.000" && formatRupiah(-5000) === "-Rp 5.000", formatRupiah(-5000));
+ok("harga <= HPP -> BEP 0", hitungRingkasan({modalAwal:1e6,biayaTetap:1e5,hpp:5000,harga:5000,penjualanHarian:10}).bepUnitBulanan === 0);
+
+// pinjaman: 20jt, 6%, 24 bln
+const flat = hitungPinjaman(20_000_000, 6, 24, "flat");
+ok("pinjaman flat cicilan 933.333", Math.round(flat.cicilan) === 933333, Math.round(flat.cicilan));
+const ef = hitungPinjaman(20_000_000, 6, 24, "efektif");
+ok("pinjaman efektif cicilan 886.412 (hitung manual PMT)", Math.abs(ef.cicilan - 886412) < 2, Math.round(ef.cicilan));
+ok("pinjaman efektif bunga 0% = pokok/n", Math.round(hitungPinjaman(12e6, 0, 12, "efektif").cicilan) === 1000000);
+ok("efektif total bunga < flat", ef.totalBunga < flat.totalBunga);
+
+// state awal simulasi
+const a = buatStateAwalSimulasi({ usaha: "es-teh-jumbo" });
+ok("simulasi ?usaha=es-teh-jumbo (server)", a.namaUsaha === "Es Teh Jumbo" && a.modalAwal === 700000 && a.hpp === 2000 && a.harga === 5000 && a.biayaTetap === 245000 && a.catatan === null, a);
+const b = buatStateAwalSimulasi({});
+ok("simulasi tanpa param: judul tidak 'Simulasi Simulasi'", b.namaUsaha === null && b.catatan !== null);
+const c = buatStateAwalSimulasi({ hpp: "9000", harga: "15000", biayaTetap: "500000" });
+ok("simulasi dari kalkulator HPP", c.hpp === 9000 && c.harga === 15000 && c.biayaTetap === 500000 && c.catatan === null, c.sumberData);
+const lama = ideUsahaList.find((i) => !databaseUsaha.some((u) => u.id === i.id))!;
+const d = buatStateAwalSimulasi({ usaha: lama.id });
+ok("ide non-template diberi peringatan estimasi kasar", d.catatan !== null && d.sumberData === "Estimasi kasar", d.namaUsaha);
+ok("param array/ngawur aman", buatStateAwalSimulasi({ usaha: ["x", "y"], hpp: "abc" }).hpp === 8000);
+
+// afiliasi
+ok("tautan GANTI-LINK disembunyikan", getRekomendasiByJenisUsaha("kuliner").length === 0);
+
+// template per kategori
+const jasa = ideUsahaList.find((i) => i.id === "jasa-desain")!;
+ok("jasa desain: langkah & tantangan sesuai kategori", !jasa.langkahAwal[0].includes("menu") && !jasa.tantangan.includes("rasa"), jasa.langkahAwal[0]);
+ok("potensiPasar palsu 'Tinggi' dihapus", jasa.potensiPasar === undefined);
+
+// matching: 'belumAda' tidak lagi meloloskan keterampilan wajib
+const top = getTop3({ modal: "kecil", waktu: "sampingan", keterampilan: ["belumAda"], sumberDaya: ["tidakAda"], preferensi: ["kerjaMandiri"], pengalaman: "belumPernah", targetLabaBulanan: 2000000 });
+ok("matching tetap menghasilkan 3 rekomendasi", top.length === 3, top.map((t) => t.ide.nama));
+console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
+process.exit(gagal ? 1 : 0);
