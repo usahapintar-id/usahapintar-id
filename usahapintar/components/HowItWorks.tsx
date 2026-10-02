@@ -11,15 +11,13 @@ export default function HowItWorks() {
   return (
     <section id="cara-kerja" className="border-y border-ink/10 bg-paperDark/60 px-6 py-20">
       <div className="mx-auto max-w-6xl">
-        <span className="font-mono text-xs uppercase tracking-widest text-brass">
-          Cara kerja
-        </span>
+        <span className="font-mono text-xs uppercase tracking-widest text-brass">Cara kerja CuanKit</span>
         <h2 className="mt-3 max-w-lg font-display text-3xl font-semibold text-ink">
-          Satu perjalanan, dari pilihan usaha sampai target keuntungan.
+          Cari → Hitung → Uji → Mulai
         </h2>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {steps.map(([n, title, desc]) => (
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.slice(0, 4).map(([n, title, desc]) => (
             <div key={n} className="relative pl-4">
               <span className="font-mono text-4xl font-semibold text-ink/10">
                 {n}

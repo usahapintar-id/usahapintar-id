@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
 import { artikelList } from "@/lib/artikel";
 
-const baseUrl = "https://cuankit.id";
+const baseUrl = "https://www.cuankit.id";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
     { path: "", priority: 1 },
     { path: "/alat", priority: 0.8 },
+    { path: "/kalkulator-hpp", priority: 0.9 },
     { path: "/artikel", priority: 0.8 },
     { path: "/peta-musiman", priority: 0.7 },
     { path: "/kalkulator-bep", priority: 0.7 },

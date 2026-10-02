@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const alat = [
   {
-    href: "/#kalkulator",
+    href: "/kalkulator-hpp#kalkulator",
     nama: "Kalkulator HPP",
     deskripsi:
       "Hitung biaya produksi dan harga jual yang menguntungkan, sesuai jenis usaha Anda.",

@@ -599,7 +599,7 @@ export default function AnalisisUsahaKuesioner() {
                       Simulasikan Usaha Ini →
                     </Link>
                     <Link
-                      href="/#kalkulator"
+                      href="/kalkulator-hpp#kalkulator"
                       className="inline-block rounded-sm border border-ink/20 px-4 py-2.5 font-body text-sm font-semibold text-ink transition hover:border-forest hover:text-forest"
                     >
                       Hitung Harga Jual →

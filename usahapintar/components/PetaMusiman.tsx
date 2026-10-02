@@ -157,7 +157,7 @@ export default function PetaMusiman() {
             Sudah tahu momentumnya, sekarang hitung untung-nya
           </p>
           <a
-            href="/#kalkulator"
+            href="/kalkulator-hpp#kalkulator"
             className="mt-3 inline-block rounded-sm bg-brass px-5 py-2.5 font-body text-sm font-semibold text-ink transition hover:brightness-95"
           >
             Buka Kalkulator HPP

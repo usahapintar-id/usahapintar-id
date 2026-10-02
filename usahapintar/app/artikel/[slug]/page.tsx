@@ -31,8 +31,8 @@ export default function ArtikelDetailPage({
   const artikel = getArtikelBySlug(params.slug);
   if (!artikel) notFound();
   const hrefKalkulator = artikel.slug === "cara-menghitung-hpp-usaha-kuliner-rumahan"
-    ? "/?usaha=nasi-goreng#kalkulator"
-    : "/#kalkulator";
+    ? "/kalkulator-hpp?usaha=nasi-goreng#kalkulator"
+    : "/kalkulator-hpp#kalkulator";
 
   return (
     <main>

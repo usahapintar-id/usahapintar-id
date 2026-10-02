@@ -48,7 +48,7 @@ export default function Header() {
             href="/analisis-usaha"
             className="hidden rounded-sm bg-forest px-4 py-2 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark sm:inline-block"
           >
-            Mulai Sekarang
+            Cari Usaha
           </a>
 
           <button
@@ -110,7 +110,7 @@ export default function Header() {
               onClick={() => setOpen(false)}
               className="mt-2 rounded-sm bg-forest px-4 py-2.5 text-center font-body text-sm font-semibold text-paper transition hover:bg-forest-dark"
             >
-              Mulai Sekarang
+              Cari Usaha
             </a>
           </div>
         </nav>

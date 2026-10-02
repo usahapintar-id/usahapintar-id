@@ -24,10 +24,10 @@ export default function Testimonials() {
     <section id="testimoni" className="border-y border-ink/10 bg-paperDark/60 px-6 py-20">
       <div className="mx-auto max-w-6xl">
         <span className="font-mono text-xs uppercase tracking-widest text-brass">
-          Testimoni
+          Contoh penggunaan CuanKit
         </span>
         <h2 className="mt-3 max-w-lg font-display text-3xl font-semibold text-ink">
-          Kata mereka yang sudah mulai menghitung.
+          Begini CuanKit membantu merapikan cara berpikir sebelum mulai.
         </h2>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
