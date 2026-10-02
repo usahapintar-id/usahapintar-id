@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { bacaRingkasanHPP } from "@/lib/simulasi";
 import { bacaJSON, simpanJSON } from "@/lib/storage";
+import { formatRupiah as rupiah } from "@/lib/hitung";
 
 type Usaha = { nama: string; namaUsaha?: string; hpp: number; hargaJual: number; targetPenjualan: number; targetLaba: number; bep: number; modalAwal?: number };
 const STORAGE_KEY = "cuankit_usaha_saya";
-function rupiah(value: number) { return "Rp " + Math.round(value).toLocaleString("id-ID"); }
 
 export default function UsahaSaya() {
   const [usaha, setUsaha] = useState<Usaha[]>([]);

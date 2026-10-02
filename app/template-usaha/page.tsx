@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { databaseUsaha } from "@/lib/databaseUsaha";
+import { formatRupiah as rupiah } from "@/lib/hitung";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/template-usaha" },
@@ -10,10 +11,6 @@ export const metadata: Metadata = {
   description:
     "Pilih template usaha, lihat simulasi modal dan laba, lalu ubah angkanya di Kalkulator HPP CuanKit.",
 };
-
-function rupiah(value: number) {
-  return "Rp " + Math.round(value).toLocaleString("id-ID");
-}
 
 export default function TemplateUsahaPage() {
   return (

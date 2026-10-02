@@ -10,10 +10,7 @@ import LatestArticles from "@/components/LatestArticles";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import { databaseUsaha, ringkasanTemplate } from "@/lib/databaseUsaha";
-
-function rupiah(value: number) {
-  return "Rp " + Math.round(value).toLocaleString("id-ID");
-}
+import { formatRupiah as rupiah } from "@/lib/hitung";
 
 const contohEsTeh = ringkasanTemplate("es-teh-jumbo");
 

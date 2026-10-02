@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.cuankit.id"),
+  icons: { icon: "/favicon.png", apple: "/icon-192.png" },
   title: {
     default: "CuanKit | Dari ide usaha sampai angka yang masuk akal",
     template: "%s | CuanKit",

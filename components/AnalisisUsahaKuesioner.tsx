@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import TombolUnduh from "./TombolUnduh";
 import { getUsahaById } from "@/lib/databaseUsaha";
+import { formatRupiah as rupiah } from "@/lib/hitung";
 import {
   hitungKecocokan,
   type JawabanKuesioner,
@@ -17,15 +18,11 @@ import type {
   Pengalaman,
 } from "@/lib/ideUsaha";
 
-function rupiah(n: number) {
-  return "Rp " + Math.round(n).toLocaleString("id-ID");
-}
-
 const modalOptions: { value: ModalRange; label: string }[] = [
   { value: "kecil", label: "Di bawah Rp 500.000" },
   { value: "sedang", label: "Rp 500.000 – Rp 2.000.000" },
   { value: "besar", label: "Rp 2.000.000 – Rp 5.000.000" },
-  { value: "sangatBesar", label: "Di atas Rp 10.000.000" },
+  { value: "sangatBesar", label: "Di atas Rp 5.000.000" },
 ];
 
 const waktuOptions: {
