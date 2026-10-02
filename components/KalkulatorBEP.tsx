@@ -4,12 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { bacaRingkasanHPP } from "@/lib/simulasi";
 import TombolUnduh from "./TombolUnduh";
-import { hitungRingkasan } from "@/lib/hitung";
-
-function rupiah(n: number) {
-  if (!isFinite(n) || isNaN(n)) return "Rp 0";
-  return "Rp " + Math.round(n).toLocaleString("id-ID");
-}
+import { hitungRingkasan, formatRupiah as rupiah } from "@/lib/hitung";
 
 export default function KalkulatorBEP() {
   const [biayaTetap, setBiayaTetap] = useState<number>(2000000);
@@ -21,7 +16,8 @@ export default function KalkulatorBEP() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ringkasan = bacaRingkasanHPP();
-    const hpp = Number(params.get("hpp")) || ringkasan?.hpp;
+    // HPP tanpa overhead (hppVariabel); data lama yang belum punya field itu memakai hpp biasa.
+    const hpp = Number(params.get("hpp")) || (ringkasan?.hppVariabel ?? ringkasan?.hpp);
     const harga = Number(params.get("harga")) || ringkasan?.hargaJual;
     const biayaTetapParam = Number(params.get("biayaTetap"));
     if (hpp !== undefined) setBiayaVariabel(hpp);
@@ -33,11 +29,11 @@ export default function KalkulatorBEP() {
     if (jualParam > 0) setPenjualanHarian(jualParam);
   }, []);
 
-  const marginKontribusi = hargaJual - biayaVariabel;
-  const bepUnit =
-    marginKontribusi > 0 ? biayaTetap / marginKontribusi : 0;
-  const bepRupiah = Math.ceil(bepUnit) * hargaJual;
+  // Semua angka diambil dari hitungRingkasan (satu sumber kebenaran, lihat README).
   const ringkasan = hitungRingkasan({ modalAwal, biayaTetap, hpp: biayaVariabel, harga: hargaJual, penjualanHarian });
+  const marginKontribusi = ringkasan.labaPerUnit;
+  const bepUnit = ringkasan.bepUnitBulanan;
+  const bepRupiah = bepUnit * hargaJual;
   const hariMenujuBep = bepUnit > 0 && penjualanHarian > 0 ? Math.ceil(bepUnit / penjualanHarian) : 0;
 
   return (
@@ -97,8 +93,9 @@ export default function KalkulatorBEP() {
               Biaya variabel per unit
             </label>
             <p className="mt-1 font-body text-xs text-muted">
-              Biasanya sama dengan HPP per unit dari Kalkulator HPP —
-              bahan baku, tenaga kerja langsung, dst.
+              Biaya yang naik-turun mengikuti jumlah produk: bahan baku,
+              tenaga kerja langsung, kemasan. Jangan masukkan sewa, listrik,
+              atau gas di sini; isi di Biaya tetap.
             </p>
             <input
               type="number"
@@ -151,6 +148,12 @@ export default function KalkulatorBEP() {
                 <div className="flex justify-between py-1">
                   <span className="text-muted">Balik modal awal</span>
                   <span>± {ringkasan.balikModalBulan.toFixed(1)} bulan</span>
+                </div>
+              )}
+              {modalAwal > 0 && ringkasan.balikModalBulan === 0 && (
+                <div className="flex justify-between py-1">
+                  <span className="text-muted">Balik modal awal</span>
+                  <span>belum tercapai (laba bersih ≤ 0)</span>
                 </div>
               )}
             </div>

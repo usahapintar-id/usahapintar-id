@@ -6,6 +6,7 @@ export type RingkasanHPP = {
   hargaJual: number;
   labaPerUnit: number;
   biayaProduksi: number;
+  hppVariabel?: number; // HPP per unit tanpa overhead (bahan + tenaga kerja)
   jenisUsahaId: string;
 };
 

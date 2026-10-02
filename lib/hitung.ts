@@ -51,6 +51,47 @@ export function formatRupiah(value: number): string {
   return `${tanda}Rp ${Math.abs(bulat).toLocaleString("id-ID")}`;
 }
 
+// ---- Target laba ----
+// Unit per bulan = (target laba bersih + biaya tetap) / laba per unit.
+// Biaya tetap harus ditutup dulu sebelum ada laba bersih.
+
+export type HasilTargetLaba = {
+  labaPerUnit: number;
+  bisaHitung: boolean;
+  labaKotorDibutuhkan: number; // target laba bersih + biaya tetap
+  unitBulanan: number;
+  unitHarian: number; // dibulatkan ke atas
+  unitMingguan: number;
+  omzetBulanan: number;
+  omzetHarian: number; // rata-rata per hari
+  labaBersihEstimasi: number;
+};
+
+export function hitungTargetLaba(
+  targetLabaBersih: number,
+  biayaTetap: number,
+  harga: number,
+  hpp: number,
+  hari = 30
+): HasilTargetLaba {
+  const labaPerUnit = harga - hpp;
+  const labaKotorDibutuhkan = Math.max(0, targetLabaBersih) + Math.max(0, biayaTetap);
+  const bisaHitung = labaPerUnit > 0;
+  const unitBulanan = bisaHitung ? Math.ceil(labaKotorDibutuhkan / labaPerUnit) : 0;
+  const unitHarian = unitBulanan > 0 ? Math.ceil(unitBulanan / hari) : 0;
+  return {
+    labaPerUnit,
+    bisaHitung,
+    labaKotorDibutuhkan,
+    unitBulanan,
+    unitHarian,
+    unitMingguan: Math.ceil((unitBulanan * 7) / hari),
+    omzetBulanan: unitBulanan * harga,
+    omzetHarian: (unitBulanan * harga) / hari,
+    labaBersihEstimasi: unitBulanan * labaPerUnit - biayaTetap,
+  };
+}
+
 // ---- Pinjaman ----
 
 export type MetodeBunga = "flat" | "efektif";

@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import TombolUnduh from "./TombolUnduh";
-
-function rupiah(n: number) {
-  if (!isFinite(n) || isNaN(n)) return "Rp 0";
-  return "Rp " + Math.round(n).toLocaleString("id-ID");
-}
+import { formatRupiah as rupiah } from "@/lib/hitung";
 
 export default function KalkulatorGaji() {
   const [gajiPokok, setGajiPokok] = useState<number>(2500000);

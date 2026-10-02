@@ -9,6 +9,7 @@ Dibangun dengan Next.js 14 (App Router), TypeScript, dan Tailwind CSS.
 npm install
 npm run dev     # http://localhost:3000
 npm run build   # cek build produksi sebelum deploy
+npm run uji     # uji rumus (scripts/uji-logika.ts)
 ```
 
 ## Struktur
@@ -34,6 +35,8 @@ lib/
 - Balik modal (bulan) = modal awal / laba bersih per bulan
 - Laba bersih bulanan = laba per unit x penjualan/hari x 30 - biaya tetap
 - Markup (slider HPP) = kenaikan di atas HPP; margin = laba / harga jual
+- Target Cuan (unit/bulan) = (target laba bersih + biaya tetap) / laba per unit
+- HPP yang dikirim ke BEP, Target Cuan, dan Simulasi = bahan + tenaga kerja per unit (tanpa overhead). Overhead bulanan (sewa, listrik, gas) dimasukkan sebagai biaya tetap di sana, supaya tidak terhitung dua kali.
 
 ## Catatan
 

@@ -5,6 +5,7 @@ import { jenisUsahaList, type JenisUsaha } from "@/lib/presets";
 import { getUsahaById } from "@/lib/databaseUsaha";
 import { RINGKASAN_HPP_KEY } from "@/lib/simulasi";
 import { bacaJSON, simpanJSON } from "@/lib/storage";
+import { formatRupiah as rupiah } from "@/lib/hitung";
 import Link from "next/link";
 import RekomendasiAlat from "./RekomendasiAlat";
 import TombolUnduh from "./TombolUnduh";
@@ -26,11 +27,6 @@ type DataTersimpan = {
 };
 
 const STORAGE_KEY = "cuankit_hpp_data";
-
-function rupiah(n: number) {
-  if (!isFinite(n) || isNaN(n)) return "Rp 0";
-  return "Rp " + Math.round(n).toLocaleString("id-ID");
-}
 
 function newId() {
   return Math.random().toString(36).slice(2, 9);
@@ -128,6 +124,9 @@ export default function HPPCalculator() {
 
   const totalModal = totalBahan + tenagaKerja + overhead;
   const hppPerUnit = jumlahProduksi > 0 ? totalModal / jumlahProduksi : 0;
+  // HPP tanpa overhead: dikirim ke BEP, Target Cuan, dan Simulasi. Overhead di sana
+  // dimasukkan sebagai biaya tetap bulanan, supaya tidak terhitung dua kali.
+  const hppVariabelPerUnit = jumlahProduksi > 0 ? (totalBahan + tenagaKerja) / jumlahProduksi : 0;
   // Rumus markup: harga jual = HPP + (HPP x margin%)
   const hargaJual = hppPerUnit * (1 + margin / 100);
   const hargaJualDibulatkan = Math.ceil(hargaJual / 100) * 100;
@@ -136,8 +135,8 @@ export default function HPPCalculator() {
   const marginNyata = hargaJualDibulatkan > 0 ? (untungPerUnit / hargaJualDibulatkan) * 100 : 0;
   const hargaMinimum = Math.ceil((hppPerUnit * 1.2) / 100) * 100;
   const hargaAman = Math.ceil((hppPerUnit * 1.5) / 100) * 100;
-  // Catatan: overhead sudah termasuk di HPP, jadi BEP tidak dihitung di sini
-  // (akan terhitung dua kali). BEP bulanan ada di Kalkulator BEP.
+  // Catatan: HPP di halaman ini sudah termasuk overhead (cocok untuk menentukan harga jual).
+  // BEP bulanan ada di Kalkulator BEP, yang memakai HPP tanpa overhead + biaya tetap.
   const statusHarga = marginNyata >= 25 ? "Harga jual cukup sehat." : marginNyata > 0 ? "Harga jual masih menghasilkan untung, tetapi ruang amannya tipis." : "Harga jual belum menutup HPP.";
 
   // Hanya disimpan saat pengguna lanjut ke alat lain, supaya membuka halaman ini
@@ -146,6 +145,7 @@ export default function HPPCalculator() {
     simpanJSON(RINGKASAN_HPP_KEY, {
       nama: jenisUsaha.label,
       hpp: hppPerUnit,
+      hppVariabel: hppVariabelPerUnit,
       hargaJual: hargaJualDibulatkan,
       labaPerUnit: untungPerUnit,
       biayaProduksi: totalModal,
@@ -423,13 +423,13 @@ export default function HPPCalculator() {
 
             <TombolUnduh elementId="ringkasan-hpp" namaFile="Ringkasan-HPP-CuanKit" />
             <div className="mt-3 flex flex-wrap gap-2 print:hidden">
-              <Link onClick={simpanRingkasan} href={`/kalkulator-bep?hpp=${Math.round(hppPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">
+              <Link onClick={simpanRingkasan} href={`/kalkulator-bep?hpp=${Math.round(hppVariabelPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">
                 Lanjut ke BEP →
               </Link>
-              <Link onClick={simpanRingkasan} href={`/target-cuan?hpp=${Math.round(hppPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
+              <Link onClick={simpanRingkasan} href={`/target-cuan?hpp=${Math.round(hppVariabelPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
                 Hitung Target Cuan →
               </Link>
-              <Link onClick={simpanRingkasan} href={`/simulasi?hpp=${Math.round(hppPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-brass bg-brass/10 px-3 py-2 font-body text-xs font-semibold text-ink hover:bg-brass/20">
+              <Link onClick={simpanRingkasan} href={`/simulasi?hpp=${Math.round(hppVariabelPerUnit)}&harga=${hargaJualDibulatkan}`} className="rounded-sm border border-brass bg-brass/10 px-3 py-2 font-body text-xs font-semibold text-ink hover:bg-brass/20">
                 Simulasikan Usaha →
               </Link>
               <Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
@@ -439,6 +439,9 @@ export default function HPPCalculator() {
                 Simpan ke Usaha Saya →
               </Link>
             </div>
+            <p className="mt-2 font-body text-xs text-muted print:hidden">
+              BEP, Target Cuan, dan Simulasi memakai HPP tanpa overhead. Isi overhead bulananmu (sewa, listrik, gas) sebagai biaya tetap di sana.
+            </p>
           </div>
         </div>
 

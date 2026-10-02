@@ -1,9 +1,9 @@
-import { hitungRingkasan, hitungPinjaman, formatRupiah } from "/home/claude/fix/lib/hitung";
-import { ringkasanTemplate, databaseUsaha } from "/home/claude/fix/lib/databaseUsaha";
-import { buatStateAwalSimulasi } from "/home/claude/fix/lib/simulasiAwal";
-import { getRekomendasiByJenisUsaha } from "/home/claude/fix/lib/rekomendasi";
-import { ideUsahaList } from "/home/claude/fix/lib/ideUsaha";
-import { getTop3 } from "/home/claude/fix/lib/matchingUsaha";
+import { hitungRingkasan, hitungPinjaman, hitungTargetLaba, formatRupiah } from "../lib/hitung";
+import { ringkasanTemplate, databaseUsaha } from "../lib/databaseUsaha";
+import { buatStateAwalSimulasi } from "../lib/simulasiAwal";
+import { getRekomendasiByJenisUsaha } from "../lib/rekomendasi";
+import { ideUsahaList } from "../lib/ideUsaha";
+import { getTop3 } from "../lib/matchingUsaha";
 let gagal = 0;
 const ok = (nama: string, kondisi: boolean, info?: unknown) => { if (!kondisi) gagal++; console.log(kondisi ? "OK  " : "GAGAL", nama, info ?? ""); };
 
@@ -30,7 +30,7 @@ ok("simulasi ?usaha=es-teh-jumbo (server)", a.namaUsaha === "Es Teh Jumbo" && a.
 const b = buatStateAwalSimulasi({});
 ok("simulasi tanpa param: judul tidak 'Simulasi Simulasi'", b.namaUsaha === null && b.catatan !== null);
 const c = buatStateAwalSimulasi({ hpp: "9000", harga: "15000", biayaTetap: "500000" });
-ok("simulasi dari kalkulator HPP", c.hpp === 9000 && c.harga === 15000 && c.biayaTetap === 500000 && c.catatan === null, c.sumberData);
+ok("simulasi dari kalkulator HPP", c.hpp === 9000 && c.harga === 15000 && c.biayaTetap === 500000 && c.catatan !== null && c.catatan.includes("overhead"), c.sumberData);
 const lama = ideUsahaList.find((i) => !databaseUsaha.some((u) => u.id === i.id))!;
 const d = buatStateAwalSimulasi({ usaha: lama.id });
 ok("ide non-template diberi peringatan estimasi kasar", d.catatan !== null && d.sumberData === "Estimasi kasar", d.namaUsaha);
@@ -47,5 +47,17 @@ ok("potensiPasar palsu 'Tinggi' dihapus", jasa.potensiPasar === undefined);
 // matching: 'belumAda' tidak lagi meloloskan keterampilan wajib
 const top = getTop3({ modal: "kecil", waktu: "sampingan", keterampilan: ["belumAda"], sumberDaya: ["tidakAda"], preferensi: ["kerjaMandiri"], pengalaman: "belumPernah", targetLabaBulanan: 2000000 });
 ok("matching tetap menghasilkan 3 rekomendasi", top.length === 3, top.map((t) => t.ide.nama));
+
+// target cuan: biaya tetap ikut dihitung, angka bulanan dan harian konsisten
+const t0 = hitungTargetLaba(3000000, 0, 15000, 9000);
+ok("target cuan tanpa biaya tetap: 500 unit/bulan, 17/hari", t0.unitBulanan === 500 && t0.unitHarian === 17, t0);
+ok("target cuan: omzet bulanan = unit bulanan x harga (7.500.000)", t0.omzetBulanan === 7500000 && t0.omzetHarian === 250000, t0);
+const t1 = hitungTargetLaba(3000000, 2000000, 15000, 9000);
+ok("target cuan dengan biaya tetap 2jt: 834 unit/bulan", t1.unitBulanan === 834 && t1.labaBersihEstimasi >= 3000000, t1);
+ok("target cuan: harga <= HPP tidak bisa dihitung", !hitungTargetLaba(3000000, 0, 9000, 9000).bisaHitung && hitungTargetLaba(3000000, 0, 9000, 9000).unitBulanan === 0);
+
+// BEP contoh README: harga 20.000, HPP 12.000, biaya tetap 4.000.000 -> 500 unit
+const bep = hitungRingkasan({ modalAwal: 0, biayaTetap: 4000000, hpp: 12000, harga: 20000, penjualanHarian: 20 });
+ok("BEP contoh: 500 unit/bulan", bep.bepUnitBulanan === 500, bep.bepUnitBulanan);
 console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
 process.exit(gagal ? 1 : 0);

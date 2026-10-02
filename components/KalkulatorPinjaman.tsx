@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import TombolUnduh from "./TombolUnduh";
-import { hitungPinjaman, type MetodeBunga } from "@/lib/hitung";
-
-function rupiah(n: number) {
-  if (!isFinite(n) || isNaN(n)) return "Rp 0";
-  return "Rp " + Math.round(n).toLocaleString("id-ID");
-}
+import { hitungPinjaman, formatRupiah as rupiah, type MetodeBunga } from "@/lib/hitung";
 
 export default function KalkulatorPinjaman() {
   const [pokok, setPokok] = useState<number>(20000000);

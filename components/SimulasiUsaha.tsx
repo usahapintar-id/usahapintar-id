@@ -234,7 +234,7 @@ export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
           >
             Lihat BEP →
           </Link>
-          <Link href={`/target-cuan?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Hitung Target Cuan →</Link>
+          <Link href={`/target-cuan?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}&biayaTetap=${Math.round(biayaTetap)}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Hitung Target Cuan →</Link>
           <button onClick={simpanSimulasi} className="rounded-sm border border-brass bg-brass/10 px-3 py-2 font-body text-xs font-semibold text-ink hover:bg-brass/20">Simpan Simulasi</button>
           <Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Analisis Usaha Saya →</Link>
         </div>

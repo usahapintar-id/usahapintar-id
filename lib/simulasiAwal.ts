@@ -69,7 +69,7 @@ export function buatStateAwalSimulasi(searchParams: Record<string, Param>): Stat
     sumberData: dariKalkulator ? "Dari Kalkulator HPP" : "Simulasi bebas",
     namaUsaha: null,
     catatan: dariKalkulator
-      ? null
+      ? "HPP dari Kalkulator HPP belum termasuk overhead. Isi overhead bulananmu (sewa, listrik, gas) di biaya tetap supaya tidak terhitung dua kali."
       : "Belum ada usaha yang dipilih, jadi angka di bawah hanya contoh. Isi modal, biaya tetap, HPP, dan harga jual sesuai usahamu.",
     modalAwal: angka(searchParams.modalAwal) ?? 0,
     biayaTetap: angka(searchParams.biayaTetap) ?? 0,
