@@ -1,9 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import PasangAplikasi from "@/components/PasangAplikasi";
+
+export const viewport: Viewport = {
+  themeColor: "#F1F4EC",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.cuankit.id"),
-  icons: { icon: "/favicon.png", apple: "/icon-192.png" },
+  icons: { icon: "/favicon.png" },
+  appleWebApp: { capable: true, title: "CuanKit", statusBarStyle: "default" },
   title: {
     default: "CuanKit | Dari ide usaha sampai angka yang masuk akal",
     template: "%s | CuanKit",
@@ -20,5 +27,7 @@ export const metadata: Metadata = {
   },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (<html lang="id"><body className="font-body paper-texture">{children}<Analytics /></body></html>);
+  // Manifest dan ikon layar utama memakai alamat relatif (bukan lewat metadataBase) supaya tetap
+  // satu origin, baik situs dibuka dari cuankit.id maupun www.cuankit.id.
+  return (<html lang="id"><head><link rel="manifest" href="/manifest.webmanifest" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" /></head><body className="font-body paper-texture">{children}<PasangAplikasi /><Analytics /></body></html>);
 }

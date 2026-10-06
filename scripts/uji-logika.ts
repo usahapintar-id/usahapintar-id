@@ -4,6 +4,7 @@ import { buatStateAwalSimulasi } from "../lib/simulasiAwal";
 import { getRekomendasiByJenisUsaha } from "../lib/rekomendasi";
 import { ideUsahaList } from "../lib/ideUsaha";
 import { getTop3 } from "../lib/matchingUsaha";
+import { readFileSync, existsSync } from "fs";
 import { bacaUsahaSaya, buatEntriUsaha, simpanUsahaSaya, hrefSimulasi, hrefBEP, hrefTarget, hrefHPP } from "../lib/usahaSaya";
 
 // localStorage tiruan supaya lib/usahaSaya bisa diuji di Node
@@ -93,5 +94,21 @@ const dariBep = buatStateAwalSimulasi({ dari: "bep", nama: "Kedai Z", hpp: "7000
 ok("Simulasi dari BEP: angka, nama, tanpa catatan overhead", dariBep.sumberData === "Dari Kalkulator BEP" && dariBep.namaUsaha === "Kedai Z" && dariBep.catatan === null && dariBep.biayaTetap === 1000000 && dariBep.hpp === 7000 && dariBep.penjualan === 15, dariBep);
 ok("Simulasi dari Usaha Saya & Target Cuan dikenali", buatStateAwalSimulasi({ dari: "usaha-saya", hpp: "1", harga: "2" }).sumberData === "Dari Usaha Saya" && buatStateAwalSimulasi({ dari: "target", hpp: "1", harga: "2" }).sumberData === "Dari Target Cuan");
 ok("Simulasi dari HPP (tanpa 'dari') tetap memberi catatan overhead", (buatStateAwalSimulasi({ hpp: "7000", harga: "12000" }).catatan ?? "").includes("overhead"));
+
+// ---- PWA: manifest, ikon, service worker ----
+function ukuranPNG(path: string): [number, number] | null {
+  if (!existsSync(path)) return null;
+  const b = readFileSync(path);
+  return b.readUInt32BE(1) === 0x504e47 || b.slice(1, 4).toString() === "PNG" ? [b.readUInt32BE(16), b.readUInt32BE(20)] : null;
+}
+const manifest = JSON.parse(readFileSync("public/manifest.webmanifest", "utf-8"));
+ok("manifest: nama, start_url, display standalone", !!manifest.name && !!manifest.short_name && manifest.start_url.startsWith("/") && manifest.display === "standalone", manifest.display);
+const ikon: { src: string; sizes: string; purpose: string }[] = manifest.icons;
+const semuaIkonSesuai = ikon.every((i) => { const u = ukuranPNG("public" + i.src); return !!u && i.sizes === `${u[0]}x${u[1]}`; });
+ok("manifest: semua ikon ada dan ukurannya sama dengan yang ditulis", semuaIkonSesuai, ikon.map((i) => i.src));
+ok("manifest: ada ikon 192, 512, dan maskable", ikon.some((i) => i.sizes === "192x192") && ikon.some((i) => i.sizes === "512x512" && i.purpose === "any") && ikon.some((i) => i.purpose === "maskable"));
+ok("ikon layar utama iOS 180x180", JSON.stringify(ukuranPNG("public/apple-touch-icon.png")) === "[180,180]");
+ok("service worker punya handler fetch + halaman offline ada", readFileSync("public/sw.js", "utf-8").includes('addEventListener("fetch"') && existsSync("public/offline.html"));
+ok("shortcut manifest menuju halaman yang ada", manifest.shortcuts.every((x: { url: string }) => existsSync("app" + x.url.split("#")[0].replace(/\/$/, "") + "/page.tsx")), manifest.shortcuts.map((x: { url: string }) => x.url));
 console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
 process.exit(gagal ? 1 : 0);
