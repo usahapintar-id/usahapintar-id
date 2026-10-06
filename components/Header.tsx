@@ -7,6 +7,7 @@ import Image from "next/image";
 const navLinks = [
   { href: "/analisis-usaha", label: "Analisis Usaha" },
   { href: "/template-usaha", label: "Template Usaha" },
+  { href: "/simulasi", label: "Simulasi" },
   { href: "/alat", label: "Alat Bisnis" },
   { href: "/target-cuan", label: "Target Cuan" },
   { href: "/usaha-saya", label: "Usaha Saya" },
@@ -32,7 +33,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 font-body text-sm font-medium text-ink/80 lg:flex">
+        <nav className="hidden items-center gap-6 font-body text-sm font-medium text-ink/80 xl:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -57,7 +58,7 @@ export default function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Tutup menu" : "Buka menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-sm border border-ink/20 text-ink lg:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-sm border border-ink/20 text-ink xl:hidden"
           >
             {open ? (
               <svg
@@ -94,7 +95,7 @@ export default function Header() {
       </div>
 
       {open && (
-        <nav className="border-t border-ink/10 bg-paper px-6 py-4 lg:hidden">
+        <nav className="border-t border-ink/10 bg-paper px-6 py-4 xl:hidden">
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => (
               <Link

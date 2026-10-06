@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { formatRupiah as rupiah, hitungRingkasan } from "@/lib/hitung";
-import { bacaJSON, simpanJSON } from "@/lib/storage";
+import TombolSimpanUsaha from "./TombolSimpanUsaha";
+import { buatEntriUsaha } from "@/lib/usahaSaya";
 import type { StateAwalSimulasi } from "@/lib/simulasiAwal";
 
 type Scenario = {
@@ -12,8 +13,6 @@ type Scenario = {
   harga: number;
   units: number;
 };
-
-const STORAGE_KEY = "cuankit_usaha_saya";
 
 function InputAngka({
   label,
@@ -50,7 +49,6 @@ export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
   const [harga, setHarga] = useState(awal.harga);
   const [penjualan, setPenjualan] = useState(awal.penjualan);
   const [scenario, setScenario] = useState("bahan20");
-  const [status, setStatus] = useState<{ ok: boolean; pesan: string } | null>(null);
 
   const dasar = hitungRingkasan({ modalAwal, biayaTetap, hpp, harga, penjualanHarian: penjualan });
 
@@ -97,31 +95,6 @@ export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
     saran = "Saat penjualan turun, prioritaskan produk dengan margin terbaik dan cek kembali apakah biaya tetap masih tertutup.";
   } else {
     saran = "Perubahan ini masih bisa dipantau. Bandingkan laba bulanan dengan target kamu sebelum menetapkannya.";
-  }
-
-  function simpanSimulasi() {
-    const data = bacaJSON<unknown[]>(STORAGE_KEY, []);
-    const tersimpan = Array.isArray(data) ? (data as { nama?: string }[]) : [];
-    const nama = awal.namaUsaha ?? "Simulasi usaha";
-    const entri = {
-      nama,
-      namaUsaha: nama,
-      hpp: Math.round(hpp),
-      hargaJual: Math.round(harga),
-      targetPenjualan: penjualan,
-      targetLaba: Math.round(dasar.labaBersihBulanan),
-      modalAwal,
-      // Sama dengan definisi di halaman Usaha Saya: unit terjual untuk balik modal awal.
-      bep: dasar.balikModalUnit,
-    };
-    // Simpan ulang dengan nama yang sama menimpa entri lama, bukan menambah duplikat.
-    const berikutnya = [...tersimpan.filter((item) => item.nama !== nama), entri];
-    const ok = simpanJSON(STORAGE_KEY, berikutnya);
-    setStatus(
-      ok
-        ? { ok: true, pesan: "Simulasi tersimpan di Usaha Saya (hanya di perangkat ini)." }
-        : { ok: false, pesan: "Gagal menyimpan. Browser kamu mungkin memblokir penyimpanan lokal." }
-    );
   }
 
   const hrefHPP = awal.usahaId
@@ -235,15 +208,24 @@ export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
             Lihat BEP →
           </Link>
           <Link href={`/target-cuan?hpp=${Math.round(hpp)}&harga=${Math.round(harga)}&biayaTetap=${Math.round(biayaTetap)}`} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Hitung Target Cuan →</Link>
-          <button onClick={simpanSimulasi} className="rounded-sm border border-brass bg-brass/10 px-3 py-2 font-body text-xs font-semibold text-ink hover:bg-brass/20">Simpan Simulasi</button>
           <Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Analisis Usaha Saya →</Link>
         </div>
-        {status && (
-          <p role="status" className={`mt-3 font-body text-sm ${status.ok ? "text-forest" : "text-ledger"}`}>
-            {status.pesan}{" "}
-            {status.ok && <Link href="/usaha-saya" className="font-semibold underline">Buka Usaha Saya</Link>}
-          </p>
-        )}
+        <TombolSimpanUsaha
+          key={awal.namaUsaha ?? "simulasi"}
+          namaAwal={awal.namaUsaha ?? "Simulasi usaha"}
+          buatEntri={(nama) =>
+            buatEntriUsaha({
+              nama,
+              hpp,
+              harga,
+              penjualan,
+              modalAwal,
+              biayaTetap,
+              usahaId: awal.usahaId && !awal.catatan ? awal.usahaId : undefined,
+              jenis: awal.kategoriId,
+            })
+          }
+        />
       </div>
     </section>
   );

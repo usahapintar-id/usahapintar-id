@@ -436,7 +436,7 @@ export default function HPPCalculator() {
                 Analisis Usaha Saya →
               </Link>
               <Link onClick={simpanRingkasan} href="/usaha-saya" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
-                Simpan ke Usaha Saya →
+                Lanjut simpan di Usaha Saya →
               </Link>
             </div>
             <p className="mt-2 font-body text-xs text-muted print:hidden">

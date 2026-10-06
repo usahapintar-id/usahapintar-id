@@ -16,8 +16,8 @@ export default function HowItWorks() {
           Cari → Hitung → Uji → Mulai
         </h2>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.slice(0, 4).map(([n, title, desc]) => (
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {steps.map(([n, title, desc]) => (
             <div key={n} className="relative pl-4">
               <span className="font-mono text-4xl font-semibold text-ink/10">
                 {n}

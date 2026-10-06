@@ -12,6 +12,12 @@ export const metadata: Metadata = {
 
 const alat = [
   {
+    href: "/simulasi",
+    nama: "Simulasi Usaha",
+    deskripsi:
+      "Coba angka modal, HPP, harga jual, dan penjualan, lalu lihat laba, BEP, dan skenario risikonya.",
+  },
+  {
     href: "/kalkulator-hpp#kalkulator",
     nama: "Kalkulator HPP",
     deskripsi:

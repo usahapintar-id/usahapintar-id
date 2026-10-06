@@ -63,12 +63,19 @@ export function buatStateAwalSimulasi(searchParams: Record<string, Param>): Stat
   const hpp = angka(searchParams.hpp);
   const harga = angka(searchParams.harga);
   const dariKalkulator = hpp !== undefined || harga !== undefined;
+  // Halaman lain (BEP, Target Cuan, Usaha Saya) membawa angkanya lewat parameter ini.
+  const dari = satu(searchParams.dari);
+  const sumberAplikasi =
+    dari === "usaha-saya" ? "Dari Usaha Saya" : dari === "bep" ? "Dari Kalkulator BEP" : dari === "target" ? "Dari Target Cuan" : null;
+  const namaParam = (satu(searchParams.nama) ?? "").trim().slice(0, 80);
   return {
     usahaId: null,
     kategoriId: satu(searchParams.jenis) ?? "kuliner",
-    sumberData: dariKalkulator ? "Dari Kalkulator HPP" : "Simulasi bebas",
-    namaUsaha: null,
-    catatan: dariKalkulator
+    sumberData: sumberAplikasi ?? (dariKalkulator ? "Dari Kalkulator HPP" : "Simulasi bebas"),
+    namaUsaha: namaParam || null,
+    catatan: sumberAplikasi
+      ? null
+      : dariKalkulator
       ? "HPP dari Kalkulator HPP belum termasuk overhead. Isi overhead bulananmu (sewa, listrik, gas) di biaya tetap supaya tidak terhitung dua kali."
       : "Belum ada usaha yang dipilih, jadi angka di bawah hanya contoh. Isi modal, biaya tetap, HPP, dan harga jual sesuai usahamu.",
     modalAwal: angka(searchParams.modalAwal) ?? 0,

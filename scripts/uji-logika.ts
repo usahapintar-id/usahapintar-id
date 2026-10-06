@@ -4,6 +4,16 @@ import { buatStateAwalSimulasi } from "../lib/simulasiAwal";
 import { getRekomendasiByJenisUsaha } from "../lib/rekomendasi";
 import { ideUsahaList } from "../lib/ideUsaha";
 import { getTop3 } from "../lib/matchingUsaha";
+import { bacaUsahaSaya, buatEntriUsaha, simpanUsahaSaya, hrefSimulasi, hrefBEP, hrefTarget, hrefHPP } from "../lib/usahaSaya";
+
+// localStorage tiruan supaya lib/usahaSaya bisa diuji di Node
+const gudang: Record<string, string> = {};
+(globalThis as unknown as { window: unknown }).window = {
+  localStorage: {
+    getItem: (k: string) => (k in gudang ? gudang[k] : null),
+    setItem: (k: string, v: string) => { gudang[k] = v; },
+  },
+};
 let gagal = 0;
 const ok = (nama: string, kondisi: boolean, info?: unknown) => { if (!kondisi) gagal++; console.log(kondisi ? "OK  " : "GAGAL", nama, info ?? ""); };
 
@@ -59,5 +69,29 @@ ok("target cuan: harga <= HPP tidak bisa dihitung", !hitungTargetLaba(3000000, 0
 // BEP contoh README: harga 20.000, HPP 12.000, biaya tetap 4.000.000 -> 500 unit
 const bep = hitungRingkasan({ modalAwal: 0, biayaTetap: 4000000, hpp: 12000, harga: 20000, penjualanHarian: 20 });
 ok("BEP contoh: 500 unit/bulan", bep.bepUnitBulanan === 500, bep.bepUnitBulanan);
+
+// ---- alur antar halaman & Usaha Saya ----
+const sim = buatEntriUsaha({ nama: "Kedai Z", hpp: 7000, harga: 12000, penjualan: 20, modalAwal: 700000, biayaTetap: 245000, usahaId: "es-teh-jumbo", jenis: "kuliner" });
+ok("simpan baru -> 'baru'", simpanUsahaSaya(sim) === "baru" && bacaUsahaSaya().length === 1);
+ok("balik modal tersimpan: 700.000 / 5.000 = 140 unit", bacaUsahaSaya()[0].bep === 140, bacaUsahaSaya()[0].bep);
+// Target Cuan menyimpan dengan nama sama, tidak tahu modal -> modal lama dipertahankan, tidak dobel
+const targetEntri = buatEntriUsaha({ nama: "Kedai Z", hpp: 7000, harga: 12000, penjualan: 25, targetLaba: 3000000 });
+ok("simpan nama sama -> 'diperbarui' tanpa duplikat", simpanUsahaSaya(targetEntri) === "diperbarui" && bacaUsahaSaya().length === 1);
+const gabung = bacaUsahaSaya()[0];
+ok("modal & biaya tetap lama dipertahankan", gabung.modalAwal === 700000 && gabung.biayaTetap === 245000, gabung);
+ok("target baru menimpa, usahaId tetap", gabung.targetPenjualan === 25 && gabung.targetLaba === 3000000 && gabung.usahaId === "es-teh-jumbo", gabung);
+ok("balik modal dihitung ulang dari data gabungan", gabung.bep === 140, gabung.bep);
+ok("nama berbeda -> entri kedua", simpanUsahaSaya(buatEntriUsaha({ nama: "Produk B", hpp: 5000, harga: 9000, penjualan: 10, modalAwal: 0 })) === "baru" && bacaUsahaSaya().length === 2);
+ok("harga <= HPP -> balik modal 0", buatEntriUsaha({ nama: "X", hpp: 9000, harga: 9000, penjualan: 5, modalAwal: 1e6 }).bep === 0);
+
+const link = hrefSimulasi({ nama: "Kedai Z & Co", hpp: 7000, harga: 12000, biayaTetap: 245000, modalAwal: 0, penjualan: 20 }, "bep");
+ok("tautan Simulasi membawa angka, nama di-encode, nol dibuang", link.startsWith("/simulasi?dari=bep") && link.includes("nama=Kedai%20Z%20%26%20Co") && link.includes("hpp=7000") && link.includes("biayaTetap=245000") && !link.includes("modalAwal"), link);
+ok("tautan BEP & Target membawa angka", hrefBEP({ hpp: 7000, harga: 12000, biayaTetap: 245000 }).includes("biayaTetap=245000") && hrefTarget({ hpp: 7000, harga: 12000 }).startsWith("/target-cuan?hpp=7000&harga=12000"));
+ok("tautan HPP: template > jenis > polos", hrefHPP({ usahaId: "es-teh-jumbo" }).includes("usaha=es-teh-jumbo") && hrefHPP({ jenis: "kuliner" }).includes("jenis=kuliner") && hrefHPP({}) === "/kalkulator-hpp#kalkulator");
+
+const dariBep = buatStateAwalSimulasi({ dari: "bep", nama: "Kedai Z", hpp: "7000", harga: "12000", biayaTetap: "1000000", penjualan: "15" });
+ok("Simulasi dari BEP: angka, nama, tanpa catatan overhead", dariBep.sumberData === "Dari Kalkulator BEP" && dariBep.namaUsaha === "Kedai Z" && dariBep.catatan === null && dariBep.biayaTetap === 1000000 && dariBep.hpp === 7000 && dariBep.penjualan === 15, dariBep);
+ok("Simulasi dari Usaha Saya & Target Cuan dikenali", buatStateAwalSimulasi({ dari: "usaha-saya", hpp: "1", harga: "2" }).sumberData === "Dari Usaha Saya" && buatStateAwalSimulasi({ dari: "target", hpp: "1", harga: "2" }).sumberData === "Dari Target Cuan");
+ok("Simulasi dari HPP (tanpa 'dari') tetap memberi catatan overhead", (buatStateAwalSimulasi({ hpp: "7000", harga: "12000" }).catatan ?? "").includes("overhead"));
 console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
 process.exit(gagal ? 1 : 0);
