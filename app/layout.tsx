@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     locale: "id_ID",
     type: "website",
   },
+  twitter: { card: "summary_large_image" },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Manifest dan ikon layar utama memakai alamat relatif (bukan lewat metadataBase) supaya tetap

@@ -1,3 +1,5 @@
+// JANGAN DIPAKAI sebelum isinya diganti dengan testimoni pengguna asli (nama, usaha, dan kutipan nyata).
+// Saat ini disembunyikan dari beranda karena isinya masih contoh.
 const testimonials = [
   {
     quote:

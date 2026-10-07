@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { EMAIL_KONTAK, mailtoKontak } from "@/lib/situs";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/privasi" },
@@ -118,8 +119,11 @@ export default function PrivasiPage() {
               </h2>
               <p className="mt-2">
                 Jika Anda memiliki pertanyaan mengenai kebijakan privasi ini,
-                silakan hubungi kami melalui kontak yang tersedia di halaman
-                Tentang Kami.
+                silakan hubungi kami melalui email{" "}
+                <a href={mailtoKontak("Pertanyaan kebijakan privasi CuanKit")} className="font-semibold text-forest underline">
+                  {EMAIL_KONTAK}
+                </a>
+                .
               </p>
             </div>
           </div>

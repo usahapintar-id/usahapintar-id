@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { EMAIL_KONTAK, mailtoKontak } from "@/lib/situs";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/tentang" },
@@ -48,6 +49,14 @@ export default function TentangPage() {
               CuanKit dikembangkan secara independen dan terus
               disempurnakan berdasarkan masukan dari pengguna. Jika Anda
               punya saran atau pertanyaan, kami senang mendengarnya.
+            </p>
+            <h2 className="pt-2 font-display text-lg font-semibold text-forest">Hubungi kami</h2>
+            <p>
+              Punya saran, menemukan bug, atau butuh bantuan? Kirim email ke{" "}
+              <a href={mailtoKontak("Masukan untuk CuanKit")} className="font-semibold text-forest underline">
+                {EMAIL_KONTAK}
+              </a>
+              . Untuk laporan bug, sertakan halaman yang bermasalah dan tangkapan layarnya agar lebih cepat kami periksa.
             </p>
           </div>
         </div>

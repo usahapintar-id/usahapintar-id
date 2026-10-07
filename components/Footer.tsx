@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { mailtoKontak } from "@/lib/situs";
 
 export default function Footer() {
   return (
@@ -28,6 +29,9 @@ export default function Footer() {
           <Link href="/privasi" className="transition hover:text-forest">
             Kebijakan Privasi
           </Link>
+          <a href={mailtoKontak("Halo CuanKit")} className="transition hover:text-forest">
+            Kontak
+          </a>
         </nav>
 
         <p className="font-body text-xs text-muted">

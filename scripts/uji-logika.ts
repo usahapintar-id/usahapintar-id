@@ -110,5 +110,15 @@ ok("manifest: ada ikon 192, 512, dan maskable", ikon.some((i) => i.sizes === "19
 ok("ikon layar utama iOS 180x180", JSON.stringify(ukuranPNG("public/apple-touch-icon.png")) === "[180,180]");
 ok("service worker punya handler fetch + halaman offline ada", readFileSync("public/sw.js", "utf-8").includes('addEventListener("fetch"') && existsSync("public/offline.html"));
 ok("shortcut manifest menuju halaman yang ada", manifest.shortcuts.every((x: { url: string }) => existsSync("app" + x.url.split("#")[0].replace(/\/$/, "") + "/page.tsx")), manifest.shortcuts.map((x: { url: string }) => x.url));
+
+// ---- kontak, halaman 404/error, gambar pratinjau, testimoni ----
+const baca = (p: string) => readFileSync(p, "utf-8") as string;
+const EMAIL = "cuankitadmin@gmail.com";
+ok("email kontak terpusat di lib/situs.ts", baca("lib/situs.ts").includes(EMAIL));
+ok("Tentang, Privasi, Footer, dan halaman error memakai kontak itu", ["app/tentang/page.tsx", "app/privasi/page.tsx", "components/Footer.tsx", "app/error.tsx"].every((f) => /EMAIL_KONTAK|mailtoKontak/.test(baca(f))));
+ok("Privasi tidak lagi menunjuk ke kontak yang tidak ada", !baca("app/privasi/page.tsx").includes("kontak yang tersedia di halaman"));
+ok("halaman 404 dan error ada", existsSync("app/not-found.tsx") && existsSync("app/error.tsx") && baca("app/error.tsx").startsWith('"use client"'));
+ok("gambar pratinjau 1200x630 + teks alt", JSON.stringify(ukuranPNG("app/opengraph-image.png")) === "[1200,630]" && JSON.stringify(ukuranPNG("app/twitter-image.png")) === "[1200,630]" && existsSync("app/opengraph-image.alt.txt"));
+ok("testimoni contoh tidak tampil di beranda", !baca("app/page.tsx").includes("Testimonials"));
 console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
 process.exit(gagal ? 1 : 0);
