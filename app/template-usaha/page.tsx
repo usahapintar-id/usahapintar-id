@@ -1,16 +1,17 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { databaseUsaha } from "@/lib/databaseUsaha";
 import { formatRupiah as rupiah } from "@/lib/hitung";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   alternates: { canonical: "/template-usaha" },
   title: "Template Usaha",
   description:
     "Pilih template usaha, lihat simulasi modal dan laba, lalu ubah angkanya di Kalkulator HPP CuanKit.",
-};
+});
 
 export default function TemplateUsahaPage() {
   return (

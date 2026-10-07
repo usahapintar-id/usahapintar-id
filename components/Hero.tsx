@@ -30,7 +30,7 @@ export default function Hero() {
               <span aria-hidden="true">🔎 </span>Cari Usaha yang Cocok
             </Link>
             <Link
-              href="/template-usaha"
+              href="/simulasi"
               className="font-body text-sm font-semibold text-ink underline decoration-brass decoration-2 underline-offset-4 transition hover:text-forest"
             >
               Sudah Punya Ide Usaha?

@@ -1,15 +1,16 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { artikelList } from "@/lib/artikel";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   alternates: { canonical: "/artikel" },
   title: "Artikel",
   description:
     "Panduan dan tips seputar HPP, harga jual, dan pengelolaan biaya produksi untuk UMKM Indonesia.",
-};
+});
 
 export default function ArtikelPage() {
   return (

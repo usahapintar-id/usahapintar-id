@@ -14,7 +14,8 @@ export default function KalkulatorBEP() {
   const [biayaVariabel, setBiayaVariabel] = useState<number>(6000);
   const [penjualanHarian, setPenjualanHarian] = useState<number>(20);
   const [modalAwal, setModalAwal] = useState<number>(0);
-  const [namaAwal, setNamaAwal] = useState<string>("Usaha dari BEP");
+  // Nama asli usaha (dari URL atau Kalkulator HPP). Kosong = belum ada, jangan dikirim ke halaman lain.
+  const [namaUsaha, setNamaUsaha] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -31,7 +32,7 @@ export default function KalkulatorBEP() {
     const jualParam = Number(params.get("penjualan"));
     if (jualParam > 0) setPenjualanHarian(jualParam);
     const nama = (params.get("nama") ?? "").trim().slice(0, 80) || ringkasan?.nama;
-    if (nama) setNamaAwal(nama);
+    if (nama) setNamaUsaha(nama);
   }, []);
 
   // Semua angka diambil dari hitungRingkasan (satu sumber kebenaran, lihat README).
@@ -184,12 +185,12 @@ export default function KalkulatorBEP() {
             </div>
             <TombolUnduh elementId="ringkasan-bep" namaFile="Ringkasan-BEP-CuanKit" />
             <div className="mt-3 flex flex-wrap gap-2 print:hidden">
-              <Link href={hrefTarget({ nama: namaAwal, hpp: biayaVariabel, harga: hargaJual, biayaTetap })} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Tentukan Target Cuan →</Link>
-              <Link href={hrefSimulasi({ nama: namaAwal, hpp: biayaVariabel, harga: hargaJual, biayaTetap, modalAwal, penjualan: penjualanHarian }, "bep")} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Simulasikan Usaha →</Link>
+              <Link href={hrefTarget({ nama: namaUsaha, hpp: biayaVariabel, harga: hargaJual, biayaTetap })} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Tentukan Target Cuan →</Link>
+              <Link href={hrefSimulasi({ nama: namaUsaha, hpp: biayaVariabel, harga: hargaJual, biayaTetap, modalAwal, penjualan: penjualanHarian }, "bep")} className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Simulasikan Usaha →</Link>
             </div>
             <TombolSimpanUsaha
-              key={namaAwal}
-              namaAwal={namaAwal}
+              key={namaUsaha ?? "baru"}
+              namaAwal={namaUsaha ?? "Usaha dari BEP"}
               buatEntri={(nama) =>
                 buatEntriUsaha({
                   nama,

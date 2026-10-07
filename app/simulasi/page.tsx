@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SimulasiUsaha from "@/components/SimulasiUsaha";
 import { buatStateAwalSimulasi } from "@/lib/simulasiAwal";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   title: "Simulasi Usaha",
   description: "Coba berbagai perubahan biaya, harga, dan penjualan sebelum mengambil keputusan usaha.",
   alternates: { canonical: "/simulasi" },
-};
+});
 
 export default function Page({
   searchParams,

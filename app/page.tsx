@@ -95,7 +95,7 @@ export default function Home() {
               <p className="mt-2 font-body text-sm leading-relaxed text-muted">Temukan usaha yang sesuai dengan modal dan kondisi kamu.</p>
               <span className="mt-5 inline-block font-body text-sm font-semibold text-forest">Cari Usaha →</span>
             </Link>
-            <Link href="/simulasi?usaha=es-teh-jumbo" className="rounded-md border-2 border-ink bg-forest p-6 shadow-[4px_4px_0_0_#1E2A1F] transition hover:-translate-y-0.5">
+            <Link href="/simulasi" className="rounded-md border-2 border-ink bg-forest p-6 shadow-[4px_4px_0_0_#1E2A1F] transition hover:-translate-y-0.5">
               <p className="font-mono text-xs uppercase tracking-widest text-brass">02 · Uji angkanya</p>
               <h3 className="mt-2 font-display text-2xl font-semibold text-paper">Sudah punya ide usaha?</h3>
               <p className="mt-2 font-body text-sm leading-relaxed text-paper/80">Simulasikan modal, harga jual, laba, dan BEP.</p>

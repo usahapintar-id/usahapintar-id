@@ -300,6 +300,9 @@ export default function HPPCalculator() {
                   onFocus={(e) => e.target.select()}
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
+                <p className="mt-1 font-body text-xs text-muted">
+                  Isi per satu kali produksi, sama seperti tenaga kerja. Kemasan, benang, dan bahan penolong lain masuk ke Bahan baku, karena biayanya ikut bertambah setiap ada produk baru.
+                </p>
               </div>
 
               <div>

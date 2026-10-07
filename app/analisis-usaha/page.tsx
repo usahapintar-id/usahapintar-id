@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AnalisisUsahaKuesioner from "@/components/AnalisisUsahaKuesioner";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   alternates: { canonical: "/analisis-usaha" },
   title: "Analisis Ide Usaha",
   description:
     "Jawab beberapa pertanyaan singkat, dapatkan rekomendasi ide usaha yang cocok dengan modal, waktu, keterampilan, dan sumber daya Anda.",
-};
+});
 
 export default function Page() {
   return (

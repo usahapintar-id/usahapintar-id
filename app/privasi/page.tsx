@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { EMAIL_KONTAK, mailtoKontak } from "@/lib/situs";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   alternates: { canonical: "/privasi" },
   title: "Kebijakan Privasi",
   description: "Kebijakan privasi penggunaan situs CuanKit.",
-};
+});
 
 export default function PrivasiPage() {
   return (

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RekomendasiAlat from "@/components/RekomendasiAlat";
 import { artikelList, getArtikelBySlug } from "@/lib/artikel";
+import { denganOG } from "@/lib/metadata";
 
 export function generateStaticParams() {
   return artikelList.map((a) => ({ slug: a.slug }));
@@ -17,11 +18,14 @@ export function generateMetadata({
 }): Metadata {
   const artikel = getArtikelBySlug(params.slug);
   if (!artikel) return {};
-  return {
-    title: artikel.title,
-    alternates: { canonical: `/artikel/${artikel.slug}` },
-    description: artikel.excerpt,
-  };
+  return denganOG(
+    {
+      title: artikel.title,
+      alternates: { canonical: `/artikel/${artikel.slug}` },
+      description: artikel.excerpt,
+    },
+    "article"
+  );
 }
 
 export default function ArtikelDetailPage({

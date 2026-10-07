@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { EMAIL_KONTAK, mailtoKontak } from "@/lib/situs";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   alternates: { canonical: "/tentang" },
   title: "Tentang Kami",
   description:
     "CuanKit adalah platform gratis untuk membantu UMKM Indonesia menghitung HPP dan menentukan harga jual yang tepat.",
-};
+});
 
 export default function TentangPage() {
   return (

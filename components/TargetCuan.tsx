@@ -15,7 +15,8 @@ export default function TargetCuan() {
   const [biayaTetap, setBiayaTetap] = useState(0);
   const [hargaJual, setHargaJual] = useState(15000);
   const [hpp, setHpp] = useState(9000);
-  const [namaAwal, setNamaAwal] = useState("Usaha dari Target Cuan");
+  // Nama asli usaha (dari URL atau Kalkulator HPP). Kosong = belum ada, jangan dikirim ke halaman lain.
+  const [namaUsaha, setNamaUsaha] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -28,7 +29,7 @@ export default function TargetCuan() {
     if (hargaAwal !== undefined) setHargaJual(Math.round(hargaAwal));
     if (biayaTetapParam > 0) setBiayaTetap(biayaTetapParam);
     const nama = (params.get("nama") ?? "").trim().slice(0, 80) || ringkasan?.nama;
-    if (nama) setNamaAwal(nama);
+    if (nama) setNamaUsaha(nama);
   }, []);
 
   // Semua angka dari satu fungsi (lib/hitung.ts) supaya konsisten dengan BEP dan Simulasi.
@@ -79,11 +80,11 @@ export default function TargetCuan() {
             </div>
           </div>
         </div>
-        <div className="mt-6 flex flex-wrap gap-2"><Link href={hrefSimulasi({ nama: namaAwal, hpp, harga: hargaJual, biayaTetap, penjualan: h.unitHarian }, "target")} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Simulasikan Usaha →</Link><Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Analisis Usaha Saya →</Link></div>
+        <div className="mt-6 flex flex-wrap gap-2"><Link href={hrefSimulasi({ nama: namaUsaha, hpp, harga: hargaJual, biayaTetap, penjualan: h.unitHarian }, "target")} className="rounded-sm border border-forest px-3 py-2 font-body text-xs font-semibold text-forest hover:bg-forest/10">Simulasikan Usaha →</Link><Link href="/analisis-usaha" className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">Analisis Usaha Saya →</Link></div>
         <div className="max-w-xl">
           <TombolSimpanUsaha
-            key={namaAwal}
-            namaAwal={namaAwal}
+            key={namaUsaha ?? "baru"}
+            namaAwal={namaUsaha ?? "Usaha dari Target Cuan"}
             buatEntri={(nama) =>
               buatEntriUsaha({
                 nama,

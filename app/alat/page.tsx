@@ -1,16 +1,23 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { denganOG } from "@/lib/metadata";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = denganOG({
   alternates: { canonical: "/alat" },
   title: "Alat Bisnis",
   description:
     "Kumpulan kalkulator gratis untuk bantu UMKM mengelola usaha: HPP, BEP, simulasi pinjaman, dan gaji karyawan.",
-};
+});
 
 const alat = [
+  {
+    href: "/peta-musiman",
+    nama: "Peta Musiman Usaha",
+    deskripsi:
+      "Lihat pola musiman harga bahan dan permintaan sepanjang tahun, supaya kamu tahu kapan waktu tepat memulai atau menaikkan harga.",
+  },
   {
     href: "/simulasi",
     nama: "Simulasi Usaha",

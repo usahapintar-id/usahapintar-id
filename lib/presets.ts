@@ -21,7 +21,7 @@ export const jenisUsahaList: JenisUsaha[] = [
     id: "kuliner",
     label: "Kuliner",
     bahanLabel: "Bahan baku",
-    overheadLabel: "Overhead (gas, listrik, kemasan)",
+    overheadLabel: "Overhead (gas, listrik, sewa tempat)",
     satuanUnit: "porsi/pcs",
     contohBahan: [
       { nama: "Tepung terigu", jumlah: 2, harga: 12000 },
@@ -35,7 +35,7 @@ export const jenisUsahaList: JenisUsaha[] = [
     id: "konveksi",
     label: "Konveksi",
     bahanLabel: "Bahan & material",
-    overheadLabel: "Overhead (listrik, sewa mesin, benang)",
+    overheadLabel: "Overhead (listrik, sewa mesin, penyusutan alat)",
     satuanUnit: "potong",
     contohBahan: [
       { nama: "Kain (meter)", jumlah: 3, harga: 25000 },

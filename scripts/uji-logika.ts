@@ -5,6 +5,7 @@ import { getRekomendasiByJenisUsaha } from "../lib/rekomendasi";
 import { ideUsahaList } from "../lib/ideUsaha";
 import { getTop3 } from "../lib/matchingUsaha";
 import { readFileSync, existsSync } from "fs";
+import { denganOG } from "../lib/metadata";
 import { bacaUsahaSaya, buatEntriUsaha, simpanUsahaSaya, hrefSimulasi, hrefBEP, hrefTarget, hrefHPP } from "../lib/usahaSaya";
 
 // localStorage tiruan supaya lib/usahaSaya bisa diuji di Node
@@ -120,5 +121,23 @@ ok("Privasi tidak lagi menunjuk ke kontak yang tidak ada", !baca("app/privasi/pa
 ok("halaman 404 dan error ada", existsSync("app/not-found.tsx") && existsSync("app/error.tsx") && baca("app/error.tsx").startsWith('"use client"'));
 ok("gambar pratinjau 1200x630 + teks alt", JSON.stringify(ukuranPNG("app/opengraph-image.png")) === "[1200,630]" && JSON.stringify(ukuranPNG("app/twitter-image.png")) === "[1200,630]" && existsSync("app/opengraph-image.alt.txt"));
 ok("testimoni contoh tidak tampil di beranda", !baca("app/page.tsx").includes("Testimonials"));
+
+// ---- tujuan tautan beranda, metadata per halaman, label overhead, halaman yatim ----
+const berandaSrc = baca("app/page.tsx");
+ok("kartu 02 beranda ('Sudah punya ide usaha?') ke simulasi bebas, bukan template Es Teh", /<Link href="\/simulasi" [^>]*>\s*<p[^>]*>02 · Uji angkanya/.test(berandaSrc));
+ok("Hero 'Sudah Punya Ide Usaha?' ke simulasi bebas", /href="\/simulasi"[^>]*>\s*Sudah Punya Ide Usaha\?/.test(baca("components/Hero.tsx")));
+const og = denganOG({ title: "Tentang Kami", description: "Deskripsi uji.", alternates: { canonical: "/tentang" } });
+const ogx = og.openGraph as unknown as { title: string; description: string; url: string; images: { url: string; width: number }[] };
+ok("denganOG mengisi judul, deskripsi, url, dan gambar", ogx.title === "Tentang Kami | CuanKit" && ogx.description === "Deskripsi uji." && ogx.url === "/tentang" && ogx.images[0].url === "/opengraph-image.png" && ogx.images[0].width === 1200, og);
+ok("denganOG mempertahankan title/description/alternates asli", og.title === "Tentang Kami" && og.description === "Deskripsi uji." && (og.alternates as { canonical: string }).canonical === "/tentang");
+const halaman = ["alat", "analisis-usaha", "artikel", "kalkulator-bep", "kalkulator-gaji", "kalkulator-hpp", "kalkulator-pinjaman", "peta-musiman", "privasi", "simulasi", "target-cuan", "template-usaha", "tentang", "usaha-saya"];
+const belumOG = halaman.filter((h) => !baca(`app/${h}/page.tsx`).includes("denganOG("));
+ok("semua halaman memakai denganOG (judul pratinjau link benar)", belumOG.length === 0, belumOG);
+ok("halaman artikel memakai denganOG tipe article", baca("app/artikel/[slug]/page.tsx").includes('"article"'));
+const presetSrc = baca("lib/presets.ts");
+ok("label overhead tidak lagi memuat kemasan/benang (biaya per produk)", !/overheadLabel: "[^"]*(kemasan|benang)/i.test(presetSrc));
+ok("Peta Musiman tidak yatim: ada di halaman Alat", baca("app/alat/page.tsx").includes('"/peta-musiman"'));
+
+ok("nama bawaan ('Usaha dari ...') tidak ikut terkirim sebagai nama usaha di tautan BEP/Target Cuan", !baca("components/KalkulatorBEP.tsx").includes("nama: namaAwal") && !baca("components/TargetCuan.tsx").includes("nama: namaAwal") && baca("components/TargetCuan.tsx").includes("nama: namaUsaha"));
 console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
 process.exit(gagal ? 1 : 0);
