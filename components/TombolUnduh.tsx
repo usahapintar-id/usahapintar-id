@@ -11,24 +11,23 @@ export default function TombolUnduh({
   namaFile: string;
 }) {
   const [loading, setLoading] = useState<"pdf" | "gambar" | null>(null);
+  const [gagal, setGagal] = useState(false);
 
-  async function handlePDF() {
-    setLoading("pdf");
+  async function jalankan(jenis: "pdf" | "gambar", unduh: (id: string, nama: string) => Promise<void>) {
+    setGagal(false);
+    setLoading(jenis);
     try {
-      await unduhSebagaiPDF(elementId, namaFile);
+      await unduh(elementId, namaFile);
+    } catch (e) {
+      console.error(e);
+      setGagal(true); // sebelumnya gagal diam-diam: tombol kembali normal tanpa file dan tanpa pesan
     } finally {
       setLoading(null);
     }
   }
 
-  async function handleGambar() {
-    setLoading("gambar");
-    try {
-      await unduhSebagaiGambar(elementId, namaFile);
-    } finally {
-      setLoading(null);
-    }
-  }
+  const handlePDF = () => jalankan("pdf", unduhSebagaiPDF);
+  const handleGambar = () => jalankan("gambar", unduhSebagaiGambar);
 
   return (
     <div className="mt-4 flex flex-wrap gap-2 print:hidden">
@@ -74,6 +73,11 @@ export default function TombolUnduh({
         </svg>
         {loading === "gambar" ? "Menyiapkan..." : "Unduh Gambar"}
       </button>
+      {gagal && (
+        <p role="alert" className="w-full font-body text-xs text-ledger">
+          Gagal membuat file. Coba lagi, atau ambil tangkapan layar halaman ini.
+        </p>
+      )}
     </div>
   );
 }

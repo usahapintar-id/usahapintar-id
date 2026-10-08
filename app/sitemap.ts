@@ -4,7 +4,7 @@ import { artikelList } from "@/lib/artikel";
 const baseUrl = "https://www.cuankit.id";
 // Tanggal tetap (bukan new Date()) supaya lastModified tidak berubah di setiap build.
 // Perbarui saat konten benar-benar berubah.
-const TERAKHIR_DIPERBARUI = new Date("2026-08-01");
+const TERAKHIR_DIPERBARUI = new Date("2026-10-08");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [

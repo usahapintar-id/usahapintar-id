@@ -5,7 +5,7 @@ import { jenisUsahaList, type JenisUsaha } from "@/lib/presets";
 import { getUsahaById } from "@/lib/databaseUsaha";
 import { RINGKASAN_HPP_KEY } from "@/lib/simulasi";
 import { bacaJSON, simpanJSON } from "@/lib/storage";
-import { formatRupiah as rupiah } from "@/lib/hitung";
+import { formatRupiah as rupiah, angkaNonNegatif } from "@/lib/hitung";
 import Link from "next/link";
 import RekomendasiAlat from "./RekomendasiAlat";
 import TombolUnduh from "./TombolUnduh";
@@ -159,7 +159,7 @@ export default function HPPCalculator() {
         b.id === id
           ? {
               ...b,
-              [field]: field === "nama" ? value : Number(value) || 0,
+              [field]: field === "nama" ? value : angkaNonNegatif(value),
             }
           : b
       )
@@ -278,25 +278,25 @@ export default function HPPCalculator() {
                 <h3 className="font-display text-base font-semibold text-ink">
                   2. Biaya lain
                 </h3>
-                <label className="mt-3 block font-body text-xs text-muted">
+                <label htmlFor="hpp-1" className="mt-3 block font-body text-xs text-muted">
                   Tenaga kerja (per produksi)
                 </label>
-                <input
+                <input id="hpp-1"
                   type="number"
                   min={0}
                   value={tenagaKerja === 0 ? "" : tenagaKerja}
-                  onChange={(e) => setTenagaKerja(Number(e.target.value) || 0)}
+                  onChange={(e) => setTenagaKerja(angkaNonNegatif(e.target.value))}
                   onFocus={(e) => e.target.select()}
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
-                <label className="mt-3 block font-body text-xs text-muted">
+                <label htmlFor="hpp-2" className="mt-3 block font-body text-xs text-muted">
                   {jenisUsaha.overheadLabel}
                 </label>
-                <input
+                <input id="hpp-2"
                   type="number"
                   min={0}
                   value={overhead === 0 ? "" : overhead}
-                  onChange={(e) => setOverhead(Number(e.target.value) || 0)}
+                  onChange={(e) => setOverhead(angkaNonNegatif(e.target.value))}
                   onFocus={(e) => e.target.select()}
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
@@ -309,10 +309,10 @@ export default function HPPCalculator() {
                 <h3 className="font-display text-base font-semibold text-ink">
                   3. Produksi &amp; margin
                 </h3>
-                <label className="mt-3 block font-body text-xs text-muted">
+                <label htmlFor="hpp-3" className="mt-3 block font-body text-xs text-muted">
                   Jumlah unit dihasilkan ({jenisUsaha.satuanUnit})
                 </label>
-                <input
+                <input id="hpp-3"
                   type="number"
                   min={1}
                   value={jumlahProduksi}
@@ -322,11 +322,11 @@ export default function HPPCalculator() {
                   onFocus={(e) => e.target.select()}
                   className="mt-1 w-full rounded-sm border border-ink/20 bg-paper px-2 py-1.5 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
-                <label className="mt-3 flex items-center justify-between font-body text-xs text-muted">
+                <label htmlFor="hpp-4" className="mt-3 flex items-center justify-between font-body text-xs text-muted">
                   <span>Markup di atas HPP</span>
                   <span className="font-mono text-forest">{margin}%</span>
                 </label>
-                <input
+                <input id="hpp-4"
                   type="range"
                   min={0}
                   max={200}

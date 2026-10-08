@@ -325,9 +325,28 @@ export function hitungKecocokan(jawaban: JawabanKuesioner): HasilPencocokan[] {
 
   const layak = hasil.filter((item) => item.status === "layak");
   const perluPersiapan = hasil.filter((item) => item.status === "perlu-persiapan");
-  const sisa = [...layak, ...perluPersiapan].sort((a, b) => b.skor - a.skor);
+  const bandingkan = urutanPeringkat(jawaban);
+  const sisa = [...layak, ...perluPersiapan].sort(bandingkan);
 
-  return sisa.length > 0 ? sisa : hasil.sort((a, b) => b.skor - a.skor);
+  return sisa.length > 0 ? sisa : hasil.sort(bandingkan);
+}
+
+// Skor dibulatkan per komponen, sehingga banyak ide usaha kuliner berskor persis sama.
+// Tanpa pemisah yang jelas, urutan jatuh ke urutan daftar data: ide yang ditulis lebih awal
+// (mis. Nasi Goreng) selalu menang, dan ide lain (Es Teh, Gorengan, Soto, dst.) tidak pernah tampil.
+// Pemisah berurutan saat skor sama: 1) kelayakan, 2) kedekatan potensi laba dengan target
+// pengguna, 3) modal minimal lebih kecil (risiko lebih rendah), 4) id (agar hasil stabil).
+const URUTAN_STATUS: Record<KelayakanUsaha, number> = { layak: 0, "perlu-persiapan": 1, "tidak-layak": 2 };
+
+function urutanPeringkat(jawaban: JawabanKuesioner) {
+  const jarakTarget = (h: HasilPencocokan) =>
+    Math.abs(Math.log((h.ide.targetLabaBulanan ?? 1000000) / Math.max(1, jawaban.targetLabaBulanan)));
+  return (a: HasilPencocokan, b: HasilPencocokan) =>
+    b.skor - a.skor ||
+    URUTAN_STATUS[a.status] - URUTAN_STATUS[b.status] ||
+    jarakTarget(a) - jarakTarget(b) ||
+    a.ide.modalMin - b.ide.modalMin ||
+    a.ide.id.localeCompare(b.ide.id);
 }
 
 export function getTop3(jawaban: JawabanKuesioner): HasilPencocokan[] {

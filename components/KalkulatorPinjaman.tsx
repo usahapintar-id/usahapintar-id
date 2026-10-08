@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import TombolUnduh from "./TombolUnduh";
-import { hitungPinjaman, formatRupiah as rupiah, type MetodeBunga } from "@/lib/hitung";
+import { hitungPinjaman, formatRupiah as rupiah, angkaNonNegatif, type MetodeBunga } from "@/lib/hitung";
 
 export default function KalkulatorPinjaman() {
   const [pokok, setPokok] = useState<number>(20000000);
@@ -29,35 +29,35 @@ export default function KalkulatorPinjaman() {
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
           {/* Input side */}
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
-            <label className="block font-body text-sm font-semibold text-ink">
+            <label htmlFor="pinjaman-1" className="block font-body text-sm font-semibold text-ink">
               Jumlah pinjaman
             </label>
-            <input
+            <input id="pinjaman-1"
               type="number"
               min={0}
               value={pokok}
-              onChange={(e) => setPokok(Number(e.target.value) || 0)}
+              onChange={(e) => setPokok(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
 
-            <label className="mt-6 flex items-center justify-between font-body text-sm font-semibold text-ink">
+            <label htmlFor="pinjaman-2" className="mt-6 flex items-center justify-between font-body text-sm font-semibold text-ink">
               <span>Suku bunga per tahun</span>
               <span className="font-mono text-forest">{bunga}%</span>
             </label>
-            <input
+            <input id="pinjaman-2"
               type="range"
               min={0}
               max={30}
               step={0.5}
               value={bunga}
-              onChange={(e) => setBunga(Number(e.target.value))}
+              onChange={(e) => setBunga(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full accent-forest"
             />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+            <label htmlFor="pinjaman-3" className="mt-6 block font-body text-sm font-semibold text-ink">
               Tenor (lama pinjaman, dalam bulan)
             </label>
-            <input
+            <input id="pinjaman-3"
               type="number"
               min={1}
               value={tenor}

@@ -1,9 +1,9 @@
-import { hitungRingkasan, hitungPinjaman, hitungTargetLaba, formatRupiah } from "../lib/hitung";
+import { hitungRingkasan, hitungPinjaman, hitungTargetLaba, formatRupiah, angkaNonNegatif } from "../lib/hitung";
 import { ringkasanTemplate, databaseUsaha } from "../lib/databaseUsaha";
 import { buatStateAwalSimulasi } from "../lib/simulasiAwal";
 import { getRekomendasiByJenisUsaha } from "../lib/rekomendasi";
 import { ideUsahaList } from "../lib/ideUsaha";
-import { getTop3 } from "../lib/matchingUsaha";
+import { getTop3, hitungKecocokan } from "../lib/matchingUsaha";
 import { readFileSync, existsSync } from "fs";
 import { denganOG } from "../lib/metadata";
 import { bacaUsahaSaya, buatEntriUsaha, simpanUsahaSaya, hrefSimulasi, hrefBEP, hrefTarget, hrefHPP } from "../lib/usahaSaya";
@@ -139,5 +139,44 @@ ok("label overhead tidak lagi memuat kemasan/benang (biaya per produk)", !/overh
 ok("Peta Musiman tidak yatim: ada di halaman Alat", baca("app/alat/page.tsx").includes('"/peta-musiman"'));
 
 ok("nama bawaan ('Usaha dari ...') tidak ikut terkirim sebagai nama usaha di tautan BEP/Target Cuan", !baca("components/KalkulatorBEP.tsx").includes("nama: namaAwal") && !baca("components/TargetCuan.tsx").includes("nama: namaAwal") && baca("components/TargetCuan.tsx").includes("nama: namaUsaha"));
+
+// ---- rekomendasi: skor sama tidak boleh selalu dimenangkan ide yang ditulis paling awal ----
+const modalSapuan = ["kecil", "sedang", "besar", "sangatBesar"] as const;
+const waktuSapuan = ["sampingan", "paruhWaktu", "penuhWaktu"] as const;
+const pengSapuan = ["belumPernah", "pernahSedikit", "sudahBerpengalaman"] as const;
+const targetSapuan = [1000000, 3000000, 5000000, 10000000];
+const ketSapuan = [["memasak"], ["memasak", "jualan"], ["jualan"], ["desain"], ["menjahit"], ["belumAda"]] as const;
+const sdSapuan = [["alatMasak"], ["lokasiStrategis", "alatMasak"], ["tidakAda"], ["medsosBesar"]] as const;
+const prefSapuan = [["buatSendiri"], ["interaksiLangsung"], ["jualBarangOrang"]] as const;
+const muncul: Record<string, number> = {}; let kombinasi = 0; let rusak = 0;
+for (const m of modalSapuan) for (const w of waktuSapuan) for (const p of pengSapuan) for (const t of targetSapuan) for (const k of ketSapuan) for (const sd of sdSapuan) for (const f of prefSapuan) {
+  kombinasi++;
+  const top = hitungKecocokan({ modal: m, waktu: w, keterampilan: [...k], sumberDaya: [...sd], preferensi: [...f], pengalaman: p, targetLabaBulanan: t }).slice(0, 3);
+  if (top.length < 3 || top.some((x) => !isFinite(x.skor))) rusak++;
+  for (const x of top) muncul[x.ide.id] = (muncul[x.ide.id] ?? 0) + 1;
+}
+const jumlahBerbeda = Object.keys(muncul).length;
+const terbanyak = Math.max(...Object.values(muncul)) / kombinasi;
+ok(`rekomendasi: ${kombinasi} kombinasi jawaban, selalu 3 hasil dan skor valid`, rusak === 0, rusak);
+ok(`rekomendasi: minimal 26 ide berbeda pernah tampil di 3 teratas (sekarang ${jumlahBerbeda}; sebelum perbaikan 24 pada sapuan yang sama)`, jumlahBerbeda >= 26, jumlahBerbeda);
+ok("rekomendasi: Es Teh Jumbo, Es Jeruk, Kopi, dan Bakso kini bisa tampil", ["es-teh-jumbo", "es-jeruk", "kopi-minuman-sederhana", "bakso"].every((id) => (muncul[id] ?? 0) > 0), muncul);
+ok(`rekomendasi: dominasi satu ide berkurang (maks ${(terbanyak * 100).toFixed(0)}% dari semua hasil; sebelum perbaikan Nasi Goreng 62% pada sapuan yang sama)`, terbanyak < 0.55, terbanyak);
+const dua = JSON.stringify(hitungKecocokan({ modal: "sedang", waktu: "sampingan", keterampilan: ["memasak"], sumberDaya: ["alatMasak"], preferensi: ["buatSendiri"], pengalaman: "belumPernah", targetLabaBulanan: 1000000 }).slice(0, 5).map((x) => x.ide.id));
+ok("rekomendasi: hasil stabil (jawaban sama = urutan sama)", dua === JSON.stringify(hitungKecocokan({ modal: "sedang", waktu: "sampingan", keterampilan: ["memasak"], sumberDaya: ["alatMasak"], preferensi: ["buatSendiri"], pengalaman: "belumPernah", targetLabaBulanan: 1000000 }).slice(0, 5).map((x) => x.ide.id)));
+
+// ---- isian angka tidak boleh negatif, label terhubung ke kolom, unduhan gagal ada pesan ----
+ok("angkaNonNegatif: negatif, teks, kosong -> 0; desimal dan notasi tetap", angkaNonNegatif("-5000") === 0 && angkaNonNegatif("abc") === 0 && angkaNonNegatif("") === 0 && angkaNonNegatif("12.5") === 12.5 && angkaNonNegatif("1e3") === 1000 && angkaNonNegatif("0") === 0);
+const komponen = ["HPPCalculator", "KalkulatorBEP", "KalkulatorGaji", "KalkulatorPinjaman", "TargetCuan"];
+ok("tidak ada lagi isian yang menerima angka negatif", komponen.every((c) => !/Number\(e\.target\.value\) \|\| 0/.test(baca(`components/${c}.tsx`))), komponen);
+const berLabel = ["HPPCalculator", "KalkulatorBEP", "KalkulatorGaji", "KalkulatorPinjaman", "TargetCuan", "UsahaSaya", "SimulasiUsaha", "TombolSimpanUsaha"];
+const labelTanpaHtmlFor = berLabel.filter((c) => { const src = baca(`components/${c}.tsx`); return (src.match(/<label\b/g) ?? []).length > (src.match(/htmlFor=/g) ?? []).length; });
+ok("semua label terhubung ke kolom isian (htmlFor)", labelTanpaHtmlFor.length === 0, labelTanpaHtmlFor);
+ok("tombol unduh menampilkan pesan bila gagal", baca("components/TombolUnduh.tsx").includes("catch") && baca("components/TombolUnduh.tsx").includes('role="alert"'));
+ok("gaji bersih tidak negatif", baca("components/KalkulatorGaji.tsx").includes("Math.max(0, gajiKotor - potongan)"));
+ok("sitemap: tanggal pembaruan sudah Oktober 2026", baca("app/sitemap.ts").includes("2026-10"));
+
+const simSrc = baca("components/SimulasiUsaha.tsx");
+ok("Simulasi: skenario penjualan tidak dibulatkan ke angka asli untuk usaha 1 unit/hari", simSrc.includes("bulatSatuDesimal(penjualan * 0.8)") && simSrc.includes("bulatSatuDesimal(penjualan * 1.2)") && Math.round(1 * 0.8 * 10) / 10 === 0.8 && Math.round(1 * 1.2 * 10) / 10 === 1.2);
+ok("Simulasi: 'Hitung HPP Saya' memakai data template untuk semua kategori", !/kategoriId === "kuliner" && !awal\.catatan/.test(simSrc));
 console.log(gagal === 0 ? "\nSEMUA TES LULUS" : `\n${gagal} TES GAGAL`);
 process.exit(gagal ? 1 : 0);

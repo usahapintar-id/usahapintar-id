@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import Link from "next/link";
 import { simpanUsahaSaya, type UsahaTersimpan } from "@/lib/usahaSaya";
 
@@ -12,6 +12,7 @@ export default function TombolSimpanUsaha({
   namaAwal: string;
   buatEntri: (nama: string) => UsahaTersimpan;
 }) {
+  const idNama = useId();
   const [nama, setNama] = useState(namaAwal);
   const [status, setStatus] = useState<{ ok: boolean; pesan: string } | null>(null);
 
@@ -30,9 +31,10 @@ export default function TombolSimpanUsaha({
 
   return (
     <div className="mt-6 rounded-md border-2 border-dashed border-ink/20 p-4 print:hidden">
-      <label className="block font-body text-sm font-semibold text-ink">Simpan ke Usaha Saya</label>
+      <label htmlFor={idNama} className="block font-body text-sm font-semibold text-ink">Simpan ke Usaha Saya</label>
       <div className="mt-2 flex flex-wrap gap-2">
         <input
+          id={idNama}
           value={nama}
           onChange={(e) => setNama(e.target.value)}
           placeholder="Nama usaha atau produk"

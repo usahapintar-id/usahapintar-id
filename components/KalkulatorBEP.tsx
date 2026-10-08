@@ -6,7 +6,7 @@ import { bacaRingkasanHPP } from "@/lib/simulasi";
 import TombolUnduh from "./TombolUnduh";
 import TombolSimpanUsaha from "./TombolSimpanUsaha";
 import { buatEntriUsaha, hrefSimulasi, hrefTarget } from "@/lib/usahaSaya";
-import { hitungRingkasan, formatRupiah as rupiah } from "@/lib/hitung";
+import { hitungRingkasan, formatRupiah as rupiah, angkaNonNegatif } from "@/lib/hitung";
 
 export default function KalkulatorBEP() {
   const [biayaTetap, setBiayaTetap] = useState<number>(2000000);
@@ -59,43 +59,43 @@ export default function KalkulatorBEP() {
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
           {/* Input side */}
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
-            <label className="block font-body text-sm font-semibold text-ink">
+            <label htmlFor="bep-1" className="block font-body text-sm font-semibold text-ink">
               Biaya tetap (per bulan)
             </label>
             <p className="mt-1 font-body text-xs text-muted">
               Sewa tempat, gaji tetap, cicilan alat — biaya yang tetap keluar
               meski tidak ada penjualan.
             </p>
-            <input
+            <input id="bep-1"
               type="number"
               min={0}
               value={biayaTetap}
-              onChange={(e) => setBiayaTetap(Number(e.target.value) || 0)}
+              onChange={(e) => setBiayaTetap(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+            <label htmlFor="bep-2" className="mt-6 block font-body text-sm font-semibold text-ink">
               Estimasi penjualan per hari
             </label>
-            <input
+            <input id="bep-2"
               type="number"
               min={0}
               value={penjualanHarian}
-              onChange={(e) => setPenjualanHarian(Number(e.target.value) || 0)}
+              onChange={(e) => setPenjualanHarian(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+            <label htmlFor="bep-3" className="mt-6 block font-body text-sm font-semibold text-ink">
               Harga jual per unit
             </label>
-            <input
+            <input id="bep-3"
               type="number"
               min={0}
               value={hargaJual}
-              onChange={(e) => setHargaJual(Number(e.target.value) || 0)}
+              onChange={(e) => setHargaJual(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+            <label htmlFor="bep-4" className="mt-6 block font-body text-sm font-semibold text-ink">
               Biaya variabel per unit
             </label>
             <p className="mt-1 font-body text-xs text-muted">
@@ -103,26 +103,26 @@ export default function KalkulatorBEP() {
               tenaga kerja langsung, kemasan. Jangan masukkan sewa, listrik,
               atau gas di sini; isi di Biaya tetap.
             </p>
-            <input
+            <input id="bep-4"
               type="number"
               min={0}
               value={biayaVariabel}
-              onChange={(e) => setBiayaVariabel(Number(e.target.value) || 0)}
+              onChange={(e) => setBiayaVariabel(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+            <label htmlFor="bep-5" className="mt-6 block font-body text-sm font-semibold text-ink">
               Modal awal (opsional)
             </label>
             <p className="mt-1 font-body text-xs text-muted">
               Isi untuk melihat perkiraan lama balik modal.
             </p>
-            <input
+            <input id="bep-5"
               type="number"
               min={0}
               value={modalAwal === 0 ? "" : modalAwal}
               placeholder="0"
-              onChange={(e) => setModalAwal(Number(e.target.value) || 0)}
+              onChange={(e) => setModalAwal(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
           </div>

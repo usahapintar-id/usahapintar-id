@@ -25,11 +25,13 @@ function InputAngka({
   onChange: (n: number) => void;
   bantuan?: string;
 }) {
+  const id = "sim-" + label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   return (
     <div className="mt-5 first:mt-0">
-      <label className="block font-body text-sm font-semibold text-ink">{label}</label>
+      <label htmlFor={id} className="block font-body text-sm font-semibold text-ink">{label}</label>
       {bantuan && <p className="mt-1 font-body text-xs text-muted">{bantuan}</p>}
       <input
+        id={id}
         type="number"
         min={0}
         value={value === 0 ? "" : value}
@@ -41,6 +43,10 @@ function InputAngka({
     </div>
   );
 }
+
+// Satu desimal supaya usaha dengan penjualan 1-3 unit/hari tetap melihat perubahan skenario
+// (1 x 0,8 dan 1 x 1,2 sebelumnya sama-sama dibulatkan kembali ke 1, jadi skenarionya tidak berubah).
+const bulatSatuDesimal = (n: number) => Math.round(n * 10) / 10;
 
 export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
   const [modalAwal, setModalAwal] = useState(awal.modalAwal);
@@ -57,8 +63,8 @@ export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
     bahan20: { label: "Harga bahan naik 20%", hpp: hpp * 1.2, harga, units: penjualan },
     hargaTurun: { label: "Harga jual diturunkan 10%", hpp, harga: harga * 0.9, units: penjualan },
     hargaNaik: { label: "Harga jual dinaikkan 10%", hpp, harga: harga * 1.1, units: penjualan },
-    jualTurun: { label: "Penjualan turun 20%", hpp, harga, units: Math.round(penjualan * 0.8) },
-    jualNaik: { label: "Penjualan naik 20%", hpp, harga, units: Math.round(penjualan * 1.2) },
+    jualTurun: { label: "Penjualan turun 20%", hpp, harga, units: bulatSatuDesimal(penjualan * 0.8) },
+    jualNaik: { label: "Penjualan naik 20%", hpp, harga, units: bulatSatuDesimal(penjualan * 1.2) },
   };
   const hasil = scenarios[scenario];
   const skenario = hitungRingkasan({
@@ -97,8 +103,10 @@ export default function SimulasiUsaha({ awal }: { awal: StateAwalSimulasi }) {
     saran = "Perubahan ini masih bisa dipantau. Bandingkan laba bulanan dengan target kamu sebelum menetapkannya.";
   }
 
+  // Template (punya rincian bahan) membuka Kalkulator HPP dengan datanya sendiri, apa pun kategorinya.
+  // Sebelumnya hanya kuliner; Jasa Desain, Konveksi, dan Reseller dilempar ke contoh generik.
   const hrefHPP = awal.usahaId
-    ? awal.kategoriId === "kuliner" && !awal.catatan
+    ? !awal.catatan
       ? `/kalkulator-hpp?usaha=${encodeURIComponent(awal.usahaId)}#kalkulator`
       : `/kalkulator-hpp?jenis=${encodeURIComponent(awal.kategoriId)}#kalkulator`
     : "/kalkulator-hpp#kalkulator";

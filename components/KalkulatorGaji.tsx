@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import TombolUnduh from "./TombolUnduh";
-import { formatRupiah as rupiah } from "@/lib/hitung";
+import { formatRupiah as rupiah, angkaNonNegatif } from "@/lib/hitung";
 
 export default function KalkulatorGaji() {
   const [gajiPokok, setGajiPokok] = useState<number>(2500000);
@@ -12,7 +12,8 @@ export default function KalkulatorGaji() {
 
   const totalLembur = jamLembur * tarifLembur;
   const gajiKotor = gajiPokok + totalLembur;
-  const gajiBersih = gajiKotor - potongan;
+  const potonganMelebihi = potongan > gajiKotor;
+  const gajiBersih = Math.max(0, gajiKotor - potongan);
 
   return (
     <section className="px-6 py-16">
@@ -31,56 +32,56 @@ export default function KalkulatorGaji() {
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
           {/* Input side */}
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
-            <label className="block font-body text-sm font-semibold text-ink">
+            <label htmlFor="gaji-1" className="block font-body text-sm font-semibold text-ink">
               Gaji pokok (per bulan)
             </label>
-            <input
+            <input id="gaji-1"
               type="number"
               min={0}
               value={gajiPokok}
-              onChange={(e) => setGajiPokok(Number(e.target.value) || 0)}
+              onChange={(e) => setGajiPokok(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block font-body text-sm font-semibold text-ink">
+                <label htmlFor="gaji-2" className="block font-body text-sm font-semibold text-ink">
                   Jam lembur
                 </label>
-                <input
+                <input id="gaji-2"
                   type="number"
                   min={0}
                   value={jamLembur}
                   onChange={(e) =>
-                    setJamLembur(Number(e.target.value) || 0)
+                    setJamLembur(angkaNonNegatif(e.target.value))
                   }
                   className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
               </div>
               <div>
-                <label className="block font-body text-sm font-semibold text-ink">
+                <label htmlFor="gaji-3" className="block font-body text-sm font-semibold text-ink">
                   Tarif lembur/jam
                 </label>
-                <input
+                <input id="gaji-3"
                   type="number"
                   min={0}
                   value={tarifLembur}
                   onChange={(e) =>
-                    setTarifLembur(Number(e.target.value) || 0)
+                    setTarifLembur(angkaNonNegatif(e.target.value))
                   }
                   className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
                 />
               </div>
             </div>
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">
+            <label htmlFor="gaji-4" className="mt-6 block font-body text-sm font-semibold text-ink">
               Potongan (BPJS, kasbon, dll)
             </label>
-            <input
+            <input id="gaji-4"
               type="number"
               min={0}
               value={potongan}
-              onChange={(e) => setPotongan(Number(e.target.value) || 0)}
+              onChange={(e) => setPotongan(angkaNonNegatif(e.target.value))}
               className="mt-2 w-full rounded-sm border border-ink/20 bg-paper px-3 py-2 font-mono text-sm text-ink outline-none focus:border-forest"
             />
           </div>
@@ -118,6 +119,11 @@ export default function KalkulatorGaji() {
               <p className="mt-1 font-display text-3xl font-semibold text-forest">
                 {rupiah(gajiBersih)}
               </p>
+              {potonganMelebihi && (
+                <p className="mt-2 font-body text-xs text-ledger" role="note">
+                  Potongan lebih besar dari gaji kotor. Periksa lagi angka potongannya.
+                </p>
+              )}
             </div>
             </div>
             <TombolUnduh elementId="ringkasan-gaji" namaFile="Ringkasan-Gaji-CuanKit" />

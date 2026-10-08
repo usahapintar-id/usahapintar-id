@@ -112,15 +112,16 @@ export default function UsahaSaya() {
         </p>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
-            <label className="block font-body text-sm font-semibold text-ink">Nama usaha</label>
-            <input value={namaUsaha} onChange={(e) => setNamaUsaha(e.target.value)} placeholder="Contoh: Kedai Berkah" className={textClass} />
-            <label className="mt-5 block font-body text-sm font-semibold text-ink">Nama produk</label>
-            <input value={nama} onChange={(e) => setNama(e.target.value)} placeholder="Contoh: Ayam Geprek" className={textClass} />
-            {kolom.map((k) => (
+            <label htmlFor="usaha-1" className="block font-body text-sm font-semibold text-ink">Nama usaha</label>
+            <input id="usaha-1" value={namaUsaha} onChange={(e) => setNamaUsaha(e.target.value)} placeholder="Contoh: Kedai Berkah" className={textClass} />
+            <label htmlFor="usaha-2" className="mt-5 block font-body text-sm font-semibold text-ink">Nama produk</label>
+            <input id="usaha-2" value={nama} onChange={(e) => setNama(e.target.value)} placeholder="Contoh: Ayam Geprek" className={textClass} />
+            {kolom.map((k, i) => (
               <div key={k.label}>
-                <label className="mt-5 block font-body text-sm font-semibold text-ink">{k.label}</label>
+                <label htmlFor={`usaha-kolom-${i}`} className="mt-5 block font-body text-sm font-semibold text-ink">{k.label}</label>
                 {k.bantuan && <p className="mt-1 font-body text-xs text-muted">{k.bantuan}</p>}
                 <input
+                  id={`usaha-kolom-${i}`}
                   type="number"
                   min={0}
                   value={k.value === 0 ? "" : k.value}

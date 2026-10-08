@@ -51,6 +51,13 @@ export function formatRupiah(value: number): string {
   return `${tanda}Rp ${Math.abs(bulat).toLocaleString("id-ID")}`;
 }
 
+// Isian angka dari kolom input: kosong, teks, atau negatif menjadi 0.
+// Atribut min={0} saja tidak menghalangi pengguna mengetik tanda minus.
+export function angkaNonNegatif(nilai: string): number {
+  const n = Number(nilai);
+  return isFinite(n) && n > 0 ? n : 0;
+}
+
 // ---- Target laba ----
 // Unit per bulan = (target laba bersih + biaya tetap) / laba per unit.
 // Biaya tetap harus ditutup dulu sebelum ada laba bersih.

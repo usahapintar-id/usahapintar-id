@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { bacaRingkasanHPP } from "@/lib/simulasi";
-import { formatRupiah as rupiah, hitungTargetLaba } from "@/lib/hitung";
+import { formatRupiah as rupiah, hitungTargetLaba, angkaNonNegatif } from "@/lib/hitung";
 import TombolSimpanUsaha from "./TombolSimpanUsaha";
 import { buatEntriUsaha, hrefSimulasi } from "@/lib/usahaSaya";
 
@@ -44,20 +44,20 @@ export default function TargetCuan() {
         <p className="mt-3 max-w-xl font-body text-sm text-muted">Masukkan target laba dan angka dari HPP Anda. Hasilnya adalah sasaran penjualan harian yang mudah dipantau.</p>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
           <div className="rounded-md border-2 border-ink bg-paper p-6 shadow-[6px_6px_0_0_#1E2A1F]">
-            <label className="block font-body text-sm font-semibold text-ink">Target laba bersih per bulan</label>
+            <label htmlFor="target-1" className="block font-body text-sm font-semibold text-ink">Target laba bersih per bulan</label>
             <p className="mt-1 font-body text-xs text-muted">Uang yang ingin kamu bawa pulang setelah biaya tetap dibayar.</p>
-            <input type="number" min={0} value={targetBulanan} onChange={(e) => setTargetBulanan(Number(e.target.value) || 0)} className={inputClass} />
+            <input id="target-1" type="number" min={0} value={targetBulanan} onChange={(e) => setTargetBulanan(angkaNonNegatif(e.target.value))} className={inputClass} />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">Biaya tetap per bulan (opsional)</label>
+            <label htmlFor="target-2" className="mt-6 block font-body text-sm font-semibold text-ink">Biaya tetap per bulan (opsional)</label>
             <p className="mt-1 font-body text-xs text-muted">Sewa, gaji tetap, listrik, cicilan alat. Kosongkan jika belum ada.</p>
-            <input type="number" min={0} value={biayaTetap === 0 ? "" : biayaTetap} placeholder="0" onChange={(e) => setBiayaTetap(Number(e.target.value) || 0)} className={inputClass} />
+            <input id="target-2" type="number" min={0} value={biayaTetap === 0 ? "" : biayaTetap} placeholder="0" onChange={(e) => setBiayaTetap(angkaNonNegatif(e.target.value))} className={inputClass} />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">Harga jual per unit</label>
-            <input type="number" min={0} value={hargaJual} onChange={(e) => setHargaJual(Number(e.target.value) || 0)} className={inputClass} />
+            <label htmlFor="target-3" className="mt-6 block font-body text-sm font-semibold text-ink">Harga jual per unit</label>
+            <input id="target-3" type="number" min={0} value={hargaJual} onChange={(e) => setHargaJual(angkaNonNegatif(e.target.value))} className={inputClass} />
 
-            <label className="mt-6 block font-body text-sm font-semibold text-ink">HPP per unit</label>
+            <label htmlFor="target-4" className="mt-6 block font-body text-sm font-semibold text-ink">HPP per unit</label>
             <p className="mt-1 font-body text-xs text-muted">Biaya yang naik-turun mengikuti jumlah produk (bahan, tenaga kerja langsung). Sewa, listrik, dan gas masuk ke Biaya tetap.</p>
-            <input type="number" min={0} value={hpp} onChange={(e) => setHpp(Number(e.target.value) || 0)} className={inputClass} />
+            <input id="target-4" type="number" min={0} value={hpp} onChange={(e) => setHpp(angkaNonNegatif(e.target.value))} className={inputClass} />
           </div>
           <div className="rounded-md border-2 border-ink bg-paper shadow-[6px_6px_0_0_#1E2A1F]">
             <div className="border-b-2 border-ink px-6 py-3"><span className="font-display text-sm italic text-ink">Target harian</span></div>
