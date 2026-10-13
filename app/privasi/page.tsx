@@ -23,7 +23,7 @@ export default function PrivasiPage() {
             Kebijakan Privasi
           </h1>
           <p className="mt-2 font-body text-sm text-muted">
-            Terakhir diperbarui: Agustus 2026
+            Terakhir diperbarui: Oktober 2026
           </p>
 
           <div className="mt-8 space-y-6 font-body text-base leading-relaxed text-ink/90">
@@ -51,6 +51,18 @@ export default function PrivasiPage() {
                 browser yang sama, dan tidak terkirim ke kami. Anda bisa
                 menghapusnya lewat tombol Hapus di Usaha Saya atau dengan
                 membersihkan data situs di pengaturan browser.
+              </p>
+            </div>
+
+            <div>
+              <h2 className="font-display text-lg font-semibold text-forest">
+                Pasang di layar utama (PWA)
+              </h2>
+              <p className="mt-2">
+                CuanKit dapat dipasang sebagai aplikasi di layar utama. Untuk
+                itu situs memakai service worker yang hanya menyimpan satu
+                halaman offline. Pilihan Anda menunda ajakan pasang disimpan di
+                perangkat Anda saja. Tidak ada data usaha yang dikirim ke kami.
               </p>
             </div>
 

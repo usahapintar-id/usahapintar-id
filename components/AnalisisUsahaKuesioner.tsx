@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import TombolUnduh from "./TombolUnduh";
 import { getUsahaById } from "@/lib/databaseUsaha";
@@ -221,6 +221,17 @@ export default function AnalisisUsahaKuesioner() {
     );
   }
 
+  useEffect(() => {
+    if (!selesai) return;
+    try {
+      document
+        .getElementById("hasil-analisis-usaha")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch {
+      /* abaikan */
+    }
+  }, [selesai]);
+
   function bisaLanjut() {
     if (step === 1) return modal !== null;
     if (step === 2) return waktu !== null;
@@ -375,7 +386,7 @@ export default function AnalisisUsahaKuesioner() {
                     <span
                       className={`rounded-full px-3 py-1 font-mono text-xs font-semibold ${badgeStyle}`}
                     >
-                      {h.skor}%
+                      {h.skor}/100
                     </span>
 
                     <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
@@ -509,10 +520,17 @@ export default function AnalisisUsahaKuesioner() {
                     </div>
                   </div>
 
-                  {h.alasanFilter.length > 0 && (
+                  {h.status === "layak" && (
+                    <p className="mt-4 rounded-sm border border-forest/20 bg-forest/5 px-4 py-3 font-body text-xs leading-relaxed text-ink/80">
+                      <span className="font-semibold text-forest">✓ </span>
+                      Semua syarat dasar usaha ini sudah sesuai dengan kondisi Anda.
+                    </p>
+                  )}
+
+                  {h.status !== "layak" && h.alasanFilter.length > 0 && (
                     <div className="mt-4 rounded-sm border border-amber-200 bg-amber-50 px-4 py-3">
                       <p className="font-mono text-[10px] uppercase tracking-widest text-amber-700">
-                        Peringatan bahaya
+                        Perlu diperhatikan
                       </p>
                       <ul className="mt-2 space-y-1.5 font-body text-xs leading-relaxed text-ink/80">
                         {h.alasanFilter.map((item, idx) => (
