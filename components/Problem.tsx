@@ -15,23 +15,31 @@ const pains = [
 
 export default function Problem() {
   return (
-    <section className="border-y border-ink/10 bg-paperDark/60 px-6 py-16">
+    <section className="border-y border-ink/10 bg-paperDark/60 px-6 py-20">
       <div className="mx-auto max-w-6xl">
-        <h2 className="max-w-xl font-display text-2xl font-semibold text-ink sm:text-3xl">
-          Kedengaran familiar?
+        <div className="inline-flex items-center gap-2 rounded-full border border-brass/40 bg-brass/10 px-3 py-0.5 font-mono text-xs font-semibold uppercase tracking-widest text-brass">
+          Masalah Klasik UMKM
+        </div>
+        <h2 className="mt-3 max-w-xl font-display text-3xl font-bold text-ink sm:text-4xl text-balance">
+          Pernah mengalami hal seperti ini?
         </h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {pains.map((p) => (
+          {pains.map((p, idx) => (
             <div
               key={p.q}
-              className="rounded-md border border-ink/10 bg-paper p-6"
+              className="relative flex flex-col justify-between rounded-lg border-2 border-ink/15 bg-paper p-7 shadow-stamp transition-all duration-200 hover:-translate-y-1 hover:border-ink hover:shadow-stamp-md"
             >
-              <p className="font-display text-lg italic leading-snug text-ink">
+              <div className="absolute -top-3.5 left-6 rounded border border-ink/20 bg-paperDark px-2 py-0.5 font-mono text-[10px] font-bold text-muted">
+                Kasus #{idx + 1}
+              </div>
+              <p className="font-display text-lg font-semibold italic leading-snug text-ink text-balance">
                 {p.q}
               </p>
-              <p className="mt-3 font-body text-sm leading-relaxed text-muted">
-                {p.a}
-              </p>
+              <div className="mt-5 border-t border-ink/10 pt-4">
+                <p className="font-body text-sm leading-relaxed text-muted font-medium">
+                  <span className="font-bold text-ledger">Solusi: </span>{p.a}
+                </p>
+              </div>
             </div>
           ))}
         </div>

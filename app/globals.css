@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=JetBrains+Mono:wght@400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,21 +24,47 @@ body {
 /* subtle paper grain */
 .paper-texture {
   background-image:
-    radial-gradient(rgba(30, 42, 31, 0.035) 1px, transparent 1px);
-  background-size: 3px 3px;
+    radial-gradient(rgba(30, 42, 31, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 85% 0%, rgba(184, 134, 11, 0.08), transparent 28rem),
+    radial-gradient(circle at 10% 30%, rgba(47, 82, 51, 0.04), transparent 22rem);
+  background-size: 3px 3px, 100% 100%, 100% 100%;
 }
 
 .stamp {
-  transform: rotate(-6deg);
+  transform: rotate(-4deg);
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #E6EBDD;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E2A1F;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2F5233;
 }
 
 @layer components {
   .section-kicker {
-    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-brass;
+    @apply font-mono text-[11px] uppercase tracking-[0.2em] font-semibold text-brass;
   }
 
   .premium-panel {
-    @apply rounded-lg border border-ink/10 bg-paper/80 shadow-[0_18px_45px_rgba(30,42,31,0.08)] backdrop-blur-sm;
+    @apply rounded-md border-2 border-ink bg-paper shadow-stamp-md transition-all duration-200;
+  }
+
+  .tactile-card {
+    @apply rounded-md border-2 border-ink bg-paper shadow-stamp transition-all duration-200 hover:-translate-y-1 hover:shadow-stamp-md;
+  }
+
+  .tactile-btn {
+    @apply inline-flex items-center justify-center rounded-sm border-2 border-ink font-body font-semibold transition-all duration-150 active:translate-x-0.5 active:translate-y-0.5;
   }
 }
 
@@ -51,5 +79,5 @@ body {
 
 :focus-visible {
   outline: 2px solid #b8860b;
-  outline-offset: 2px;
+  outline-offset: 3px;
 }

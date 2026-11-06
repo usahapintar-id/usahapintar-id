@@ -1,0 +1,8 @@
+{
+  "name": "CuanKit",
+  "description": "Kalkulator dan analisis ide usaha, HPP, BEP, simulasi laba, dan target cuan untuk UMKM.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

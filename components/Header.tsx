@@ -18,29 +18,37 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/10 bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/logo-mark.png"
-            alt="CuanKit"
-            width={36}
-            height={36}
-            className="h-9 w-9"
-          />
-          <span className="font-display text-lg font-semibold tracking-tight text-ink">
-            Cuan<span className="text-brass">Kit</span>
-          </span>
+    <header className="sticky top-0 z-50 border-b-2 border-ink/10 bg-paper/95 backdrop-blur-md transition-all">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+        <Link href="/" className="group flex items-center gap-2.5 transition">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-md border-2 border-ink bg-paperDark/60 shadow-[2px_2px_0_0_#1E2A1F] transition group-hover:-translate-y-0.5 group-hover:shadow-[3px_3px_0_0_#1E2A1F]">
+            <Image
+              src="/logo-mark.png"
+              alt="CuanKit"
+              width={32}
+              height={32}
+              className="h-8 w-8 object-contain"
+            />
+          </div>
+          <div>
+            <span className="font-display text-xl font-bold tracking-tight text-ink">
+              Cuan<span className="text-brass">Kit</span>
+            </span>
+            <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted sm:block">
+              Hitung Cerdas
+            </span>
+          </div>
         </Link>
 
-        <nav className="hidden items-center gap-6 font-body text-sm font-medium text-ink/80 xl:flex">
+        <nav className="hidden items-center gap-6 font-body text-sm font-medium text-ink/85 xl:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="transition hover:text-forest"
+              className="group relative py-1 text-ink/80 transition-colors hover:text-forest"
             >
-              {link.label}
+              <span>{link.label}</span>
+              <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-brass transition-all duration-200 group-hover:w-full" />
             </Link>
           ))}
         </nav>
@@ -48,9 +56,9 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <Link
             href="/analisis-usaha"
-            className="hidden rounded-sm bg-forest px-4 py-2 font-body text-sm font-semibold text-paper transition hover:bg-forest-dark sm:inline-block"
+            className="hidden rounded-sm border-2 border-ink bg-forest px-4 py-2 font-body text-xs font-bold uppercase tracking-wider text-paper shadow-stamp transition-all hover:-translate-y-0.5 hover:bg-forest-light hover:shadow-stamp-md active:translate-x-0.5 active:translate-y-0.5 sm:inline-block"
           >
-            Cari Usaha
+            Cari Usaha &rarr;
           </Link>
 
           <button
@@ -58,7 +66,7 @@ export default function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Tutup menu" : "Buka menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-sm border border-ink/20 text-ink xl:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-sm border-2 border-ink bg-paper text-ink shadow-[2px_2px_0_0_#1E2A1F] transition hover:bg-paperDark active:translate-x-0.5 active:translate-y-0.5 xl:hidden"
           >
             {open ? (
               <svg

@@ -18,9 +18,18 @@ const config: Config = {
         muted: "#5B6358",
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "serif"],
-        body: ["var(--font-inter)", "sans-serif"],
-        mono: ["var(--font-mono)", "monospace"],
+        display: ['"Fraunces"', "Playfair Display", "Georgia", "serif"],
+        body: ['"Plus Jakarta Sans"', "-apple-system", "BlinkMacSystemFont", '"Segoe UI"', "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      },
+      boxShadow: {
+        stamp: "3px 3px 0 0 #1E2A1F",
+        "stamp-md": "5px 5px 0 0 #1E2A1F",
+        "stamp-lg": "8px 8px 0 0 #1E2A1F",
+        "stamp-brass": "4px 4px 0 0 #B8860B",
+        "stamp-forest": "5px 5px 0 0 #213B25",
+        soft: "0 10px 30px -10px rgba(30,42,31,0.08)",
+        card: "0 4px 20px -2px rgba(30,42,31,0.06), 0 2px 6px -1px rgba(30,42,31,0.04)",
       },
       backgroundImage: {
         "ledger-lines":

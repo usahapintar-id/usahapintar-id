@@ -31,59 +31,61 @@ export default function TemplateUsahaPage() {
             semuanya dengan kondisi Anda di Kalkulator HPP.
           </p>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {databaseUsaha.map((usaha) => (
               <article
                 key={usaha.id}
-                className="flex flex-col rounded-md border-2 border-ink bg-paper p-5 shadow-[4px_4px_0_0_#1E2A1F]"
+                className="group flex flex-col justify-between rounded-lg border-2 border-ink bg-paper p-6 shadow-stamp-md transition-all duration-200 hover:-translate-y-1.5 hover:shadow-stamp-lg"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                      {usaha.kategori}
-                    </p>
-                    <h2 className="mt-1 font-display text-xl font-semibold text-ink">
-                      {usaha.nama}
-                    </h2>
+                <div>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted">
+                        {usaha.kategori}
+                      </p>
+                      <h2 className="mt-1 font-display text-xl font-bold text-ink group-hover:text-forest transition-colors">
+                        {usaha.nama}
+                      </h2>
+                    </div>
+                    <span className="rounded border border-forest/30 bg-forest/10 px-2 py-0.5 font-mono text-[10px] font-bold text-forest">
+                      {usaha.tingkatKesulitan}
+                    </span>
                   </div>
-                  <span className="rounded-full bg-forest/10 px-2 py-1 font-mono text-[10px] text-forest">
-                    {usaha.tingkatKesulitan}
-                  </span>
+
+                  <p className="mt-3 font-body text-sm leading-relaxed text-muted line-clamp-3">
+                    {usaha.deskripsi}
+                  </p>
+
+                  <dl className="mt-5 grid grid-cols-2 gap-3 rounded border border-ink/10 bg-paperDark/40 p-3.5 font-mono text-xs">
+                    <div>
+                      <dt className="text-[10px] uppercase text-muted">Modal awal</dt>
+                      <dd className="mt-0.5 font-bold text-ink tabular-nums">{rupiah(usaha.modalAwal)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase text-muted">Laba / unit</dt>
+                      <dd className="mt-0.5 font-bold text-forest tabular-nums">{rupiah(usaha.hargaJual - usaha.hpp)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase text-muted">HPP</dt>
+                      <dd className="mt-0.5 font-bold text-ink tabular-nums">{rupiah(usaha.hpp)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10px] uppercase text-muted">Harga jual</dt>
+                      <dd className="mt-0.5 font-bold text-ink tabular-nums">{rupiah(usaha.hargaJual)}</dd>
+                    </div>
+                  </dl>
                 </div>
 
-                <p className="mt-3 font-body text-sm leading-relaxed text-muted">
-                  {usaha.deskripsi}
-                </p>
-
-                <dl className="mt-4 grid grid-cols-2 gap-3 border-y border-ink/10 py-3 font-mono text-xs">
-                  <div>
-                    <dt className="text-muted">Modal awal</dt>
-                    <dd className="mt-1 font-semibold text-ink">{rupiah(usaha.modalAwal)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">Laba / unit</dt>
-                    <dd className="mt-1 font-semibold text-forest">{rupiah(usaha.hargaJual - usaha.hpp)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">HPP</dt>
-                    <dd className="mt-1 font-semibold text-ink">{rupiah(usaha.hpp)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted">Harga jual</dt>
-                    <dd className="mt-1 font-semibold text-ink">{rupiah(usaha.hargaJual)}</dd>
-                  </div>
-                </dl>
-
-                <div className="mt-auto flex flex-wrap gap-2 pt-5">
+                <div className="mt-6 flex flex-wrap gap-2.5 border-t border-ink/10 pt-4">
                   <Link
                     href={`/simulasi?usaha=${encodeURIComponent(usaha.id)}`}
-                    className="rounded-sm bg-forest px-3 py-2 font-body text-xs font-semibold text-paper hover:bg-forest-dark"
+                    className="inline-flex items-center rounded-sm border-2 border-ink bg-forest px-4 py-2 font-body text-xs font-bold text-paper shadow-stamp transition-all hover:-translate-y-0.5 hover:bg-forest-light hover:shadow-stamp-md active:translate-x-0.5 active:translate-y-0.5"
                   >
-                    Simulasikan
+                    Simulasikan &rarr;
                   </Link>
                   <Link
                     href={`/kalkulator-hpp?usaha=${encodeURIComponent(usaha.id)}#kalkulator`}
-                    className="rounded-sm border border-ink/20 px-3 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest"
+                    className="inline-flex items-center rounded-sm border-2 border-ink/30 bg-paper px-4 py-2 font-body text-xs font-bold text-ink transition-all hover:border-ink hover:bg-paperDark active:translate-x-0.5 active:translate-y-0.5"
                   >
                     Buka HPP
                   </Link>

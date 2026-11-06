@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/next";
+const Analytics = () => null;
 import "./globals.css";
 import PasangAplikasi from "@/components/PasangAplikasi";
 
@@ -30,5 +30,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Manifest dan ikon layar utama memakai alamat relatif (bukan lewat metadataBase) supaya tetap
   // satu origin, baik situs dibuka dari cuankit.id maupun www.cuankit.id.
-  return (<html lang="id"><head><link rel="manifest" href="/manifest.webmanifest" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" /></head><body className="font-body paper-texture">{children}<PasangAplikasi /><Analytics /></body></html>);
+  return (
+    <html lang="id">
+      <head>
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      </head>
+      <body className="font-body paper-texture min-h-screen text-ink antialiased selection:bg-brass selection:text-paper">
+        {children}
+        <PasangAplikasi />
+        <Analytics />
+      </body>
+    </html>
+  );
 }
