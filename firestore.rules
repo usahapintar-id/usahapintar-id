@@ -339,6 +339,363 @@ service cloud.firestore {
       ]);
     }
 
+    // ---- Validation Blueprint: InventoryItem ----
+    function isValidInventoryItem(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'name',
+        'sku',
+        'unit',
+        'category',
+        'costPrice',
+        'sellPrice',
+        'stock',
+        'minStock',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'name',
+        'sku',
+        'unit',
+        'category',
+        'costPrice',
+        'sellPrice',
+        'stock',
+        'minStock',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.name is string
+      && data.name.size() >= 1
+      && data.name.size() <= 120
+      && data.sku is string
+      && data.sku.size() <= 40
+      && data.unit is string
+      && data.unit.size() >= 1
+      && data.unit.size() <= 20
+      && data.category is string
+      && data.category.size() <= 50
+      && data.costPrice is number
+      && data.costPrice >= 0
+      && data.costPrice <= 1000000000
+      && data.sellPrice is number
+      && data.sellPrice >= 0
+      && data.sellPrice <= 1000000000
+      && data.stock is number
+      && data.stock >= 0
+      && data.stock <= 10000000
+      && data.minStock is number
+      && data.minStock >= 0
+      && data.minStock <= 1000000
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isEditInventoryDetailsAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'name',
+        'sku',
+        'unit',
+        'category',
+        'costPrice',
+        'sellPrice',
+        'minStock',
+        'updatedAt'
+      ]);
+    }
+
+    function isAdjustInventoryStockAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'stock',
+        'updatedAt'
+      ]);
+    }
+
+    // ---- Validation Blueprint: StockLog ----
+    function isValidStockLog(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'itemId',
+        'itemName',
+        'type',
+        'delta',
+        'stockBefore',
+        'stockAfter',
+        'unit',
+        'note',
+        'date',
+        'createdAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'itemId',
+        'itemName',
+        'type',
+        'delta',
+        'stockBefore',
+        'stockAfter',
+        'unit',
+        'note',
+        'date',
+        'createdAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.itemId is string
+      && data.itemId.size() >= 1
+      && data.itemId.size() <= 128
+      && data.itemId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.itemName is string
+      && data.itemName.size() >= 1
+      && data.itemName.size() <= 120
+      && data.type in ['masuk', 'keluar', 'koreksi', 'awal']
+      && data.delta is number
+      && data.delta >= -10000000
+      && data.delta <= 10000000
+      && data.stockBefore is number
+      && data.stockBefore >= 0
+      && data.stockAfter is number
+      && data.stockAfter >= 0
+      && data.stockAfter <= 10000000
+      && data.unit is string
+      && data.unit.size() >= 1
+      && data.unit.size() <= 20
+      && data.note is string
+      && data.note.size() <= 200
+      && data.date is string
+      && data.date.size() == 10
+      && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      && data.createdAt is timestamp;
+    }
+
+    // ---- Validation Blueprint: DebtRecord ----
+    function isValidDebtRecord(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'type',
+        'partyName',
+        'partyPhone',
+        'totalAmount',
+        'paidAmount',
+        'remainingAmount',
+        'transactionDate',
+        'dueDate',
+        'status',
+        'note',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'type',
+        'partyName',
+        'partyPhone',
+        'totalAmount',
+        'paidAmount',
+        'remainingAmount',
+        'transactionDate',
+        'dueDate',
+        'status',
+        'note',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.type in ['piutang', 'utang']
+      && data.partyName is string
+      && data.partyName.size() >= 1
+      && data.partyName.size() <= 120
+      && data.partyPhone is string
+      && data.partyPhone.size() <= 32
+      && data.totalAmount is number
+      && data.totalAmount > 0
+      && data.totalAmount <= 10000000000
+      && data.paidAmount is number
+      && data.paidAmount >= 0
+      && data.paidAmount <= data.totalAmount
+      && data.remainingAmount is number
+      && data.remainingAmount >= 0
+      && data.remainingAmount <= data.totalAmount
+      && data.transactionDate is string
+      && data.transactionDate.size() == 10
+      && data.transactionDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      && data.dueDate is string
+      && (data.dueDate.size() == 0 || (data.dueDate.size() == 10 && data.dueDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')))
+      && data.status in ['belum_lunas', 'lunas']
+      && data.note is string
+      && data.note.size() <= 240
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isEditDebtDetailsAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'type',
+        'partyName',
+        'partyPhone',
+        'transactionDate',
+        'dueDate',
+        'note',
+        'updatedAt'
+      ]);
+    }
+
+    function isRecordDebtPaymentAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'paidAmount',
+        'remainingAmount',
+        'status',
+        'updatedAt'
+      ])
+      && incoming().paidAmount >= existing().paidAmount
+      && incoming().remainingAmount == incoming().totalAmount - incoming().paidAmount
+      && (
+        (incoming().remainingAmount == 0 && incoming().status == 'lunas')
+        || (incoming().remainingAmount > 0 && incoming().status == 'belum_lunas')
+      );
+    }
+
+    // ---- Validation Blueprint: DebtPayment ----
+    function isValidDebtPayment(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'debtId',
+        'partyName',
+        'amount',
+        'paymentDate',
+        'method',
+        'note',
+        'createdAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'debtId',
+        'partyName',
+        'amount',
+        'paymentDate',
+        'method',
+        'note',
+        'createdAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.debtId is string
+      && data.debtId.size() >= 1
+      && data.debtId.size() <= 128
+      && data.debtId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.partyName is string
+      && data.partyName.size() >= 1
+      && data.partyName.size() <= 120
+      && data.amount is number
+      && data.amount > 0
+      && data.amount <= 10000000000
+      && data.paymentDate is string
+      && data.paymentDate.size() == 10
+      && data.paymentDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      && data.method in ['tunai', 'transfer', 'qris', 'lainnya']
+      && data.note is string
+      && data.note.size() <= 200
+      && data.createdAt is timestamp;
+    }
+
+    // ---- Validation Blueprint: ProductionRecipe ----
+    function isValidRecipeIngredient(item) {
+      return item is map
+        && item.keys().hasAll(['nama', 'jumlah', 'satuan', 'hargaSatuan'])
+        && item.keys().hasOnly(['nama', 'jumlah', 'satuan', 'hargaSatuan'])
+        && item.nama is string
+        && item.nama.size() >= 1
+        && item.nama.size() <= 100
+        && item.jumlah is number
+        && item.jumlah > 0
+        && item.jumlah <= 1000000
+        && item.satuan is string
+        && item.satuan.size() >= 1
+        && item.satuan.size() <= 20
+        && item.hargaSatuan is number
+        && item.hargaSatuan >= 0
+        && item.hargaSatuan <= 1000000000;
+    }
+
+    function isValidProductionRecipe(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'name',
+        'yieldUnit',
+        'baseYield',
+        'ingredients',
+        'extraCost',
+        'note',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'name',
+        'yieldUnit',
+        'baseYield',
+        'ingredients',
+        'extraCost',
+        'note',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.name is string
+      && data.name.size() >= 1
+      && data.name.size() <= 120
+      && data.yieldUnit is string
+      && data.yieldUnit.size() >= 1
+      && data.yieldUnit.size() <= 30
+      && data.baseYield is number
+      && data.baseYield > 0
+      && data.baseYield <= 1000000
+      && data.ingredients is list
+      && data.ingredients.size() >= 1
+      && data.ingredients.size() <= 40
+      && isValidRecipeIngredient(data.ingredients[0])
+      && data.extraCost is number
+      && data.extraCost >= 0
+      && data.extraCost <= 1000000000
+      && data.note is string
+      && data.note.size() <= 240
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isEditProductionRecipeAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'name',
+        'yieldUnit',
+        'baseYield',
+        'ingredients',
+        'extraCost',
+        'note',
+        'updatedAt'
+      ]);
+    }
+
     // ---- Collection Rules: /users/{userId} ----
     match /users/{userId} {
       allow get: if isValidId(userId) && isOwner(userId);
@@ -451,6 +808,154 @@ service cloud.firestore {
 
       allow delete: if isVerifiedUser()
         && isValidId(transactionId)
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // ---- Collection Rules: /inventory/{itemId} ----
+    match /inventory/{itemId} {
+      allow get: if isValidId(itemId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(itemId)
+        && isValidInventoryItem(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(itemId)
+        && isValidInventoryItem(incoming())
+        && existing().ownerId == request.auth.uid
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isEditInventoryDetailsAction()
+          || isAdjustInventoryStockAction()
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(itemId)
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // ---- Collection Rules: /stockLogs/{logId} ----
+    match /stockLogs/{logId} {
+      allow get: if isValidId(logId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(logId)
+        && isValidStockLog(incoming())
+        && incoming().createdAt == request.time
+        && existsAfter(/databases/$(database)/documents/inventory/$(incoming().itemId))
+        && getAfter(/databases/$(database)/documents/inventory/$(incoming().itemId)).data.ownerId == request.auth.uid
+        && getAfter(/databases/$(database)/documents/inventory/$(incoming().itemId)).data.stock == incoming().stockAfter;
+
+      allow update: if false;
+
+      allow delete: if isVerifiedUser()
+        && isValidId(logId)
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // ---- Collection Rules: /debts/{debtId} ----
+    match /debts/{debtId} {
+      allow get: if isValidId(debtId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(debtId)
+        && isValidDebtRecord(incoming())
+        && incoming().paidAmount == 0
+        && incoming().remainingAmount == incoming().totalAmount
+        && incoming().status == 'belum_lunas'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(debtId)
+        && isValidDebtRecord(incoming())
+        && existing().ownerId == request.auth.uid
+        && existing().status != 'lunas'
+        && incoming().ownerId == existing().ownerId
+        && incoming().totalAmount == existing().totalAmount
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isEditDebtDetailsAction()
+          || isRecordDebtPaymentAction()
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(debtId)
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // ---- Collection Rules: /debtPayments/{paymentId} ----
+    match /debtPayments/{paymentId} {
+      allow get: if isValidId(paymentId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(paymentId)
+        && isValidDebtPayment(incoming())
+        && incoming().createdAt == request.time
+        && exists(/databases/$(database)/documents/debts/$(incoming().debtId))
+        && get(/databases/$(database)/documents/debts/$(incoming().debtId)).data.ownerId == request.auth.uid
+        && get(/databases/$(database)/documents/debts/$(incoming().debtId)).data.status != 'lunas'
+        && getAfter(/databases/$(database)/documents/debts/$(incoming().debtId)).data.paidAmount
+          == get(/databases/$(database)/documents/debts/$(incoming().debtId)).data.paidAmount + incoming().amount;
+
+      allow update: if false;
+
+      allow delete: if isVerifiedUser()
+        && isValidId(paymentId)
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // ---- Collection Rules: /productionRecipes/{recipeId} ----
+    match /productionRecipes/{recipeId} {
+      allow get: if isValidId(recipeId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(recipeId)
+        && isValidProductionRecipe(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(recipeId)
+        && isValidProductionRecipe(incoming())
+        && existing().ownerId == request.auth.uid
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && isEditProductionRecipeAction();
+
+      allow delete: if isVerifiedUser()
+        && isValidId(recipeId)
         && existing().ownerId == request.auth.uid;
     }
   }

@@ -46,6 +46,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/skala-produksi" className="transition hover:text-forest">
+                  Skala Produksi
+                </Link>
+              </li>
+              <li>
                 <Link href="/simulasi" className="transition hover:text-forest">
                   Simulasi Usaha
                 </Link>
@@ -81,6 +86,16 @@ export default function Footer() {
               <li>
                 <Link href="/generator-nota" className="transition hover:text-forest">
                   Generator Nota &amp; Invoice
+                </Link>
+              </li>
+              <li>
+                <Link href="/stok" className="transition hover:text-forest">
+                  Manajemen Stok Barang
+                </Link>
+              </li>
+              <li>
+                <Link href="/utang-piutang" className="transition hover:text-forest">
+                  Utang &amp; Piutang
                 </Link>
               </li>
               <li>

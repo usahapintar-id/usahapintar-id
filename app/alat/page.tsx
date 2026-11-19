@@ -2,15 +2,18 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import {
   ArrowRight,
+  Boxes,
   Briefcase,
   Calculator,
   CalendarRange,
   Compass,
+  HandCoins,
   Landmark,
   LayoutGrid,
   LineChart,
   Receipt,
   Scale,
+  SlidersHorizontal,
   Sparkles,
   Target,
   Users,
@@ -75,6 +78,13 @@ const kelompokAlat: { judul: string; subjudul: string; items: AlatItem[] }[] = [
         icon: Calculator,
       },
       {
+        href: "/skala-produksi",
+        nama: "Kalkulator Skala Produksi",
+        deskripsi:
+          "Atur resep dasar dan target produksi baru untuk menghitung takaran bahan baku dan estimasi biaya otomatis.",
+        icon: SlidersHorizontal,
+      },
+      {
         href: "/simulasi",
         nama: "Simulasi Usaha",
         deskripsi:
@@ -128,6 +138,20 @@ const kelompokAlat: { judul: string; subjudul: string; items: AlatItem[] }[] = [
         deskripsi:
           "Buat nota penjualan dengan logo toko, diskon otomatis, unduh PDF/PNG, dan bagikan ke WhatsApp.",
         icon: Receipt,
+      },
+      {
+        href: "/stok",
+        nama: "Manajemen Stok Barang",
+        deskripsi:
+          "Kelola barang masuk dan keluar, pantau sisa stok, harga modal/jual, peringatan menipis, dan riwayat mutasi.",
+        icon: Boxes,
+      },
+      {
+        href: "/utang-piutang",
+        nama: "Pengelola Utang & Piutang",
+        deskripsi:
+          "Catat piutang pelanggan dan utang supplier, sisa tagihan otomatis, riwayat pembayaran cicilan, dan pengingat WhatsApp.",
+        icon: HandCoins,
       },
       {
         href: "/usaha-saya",

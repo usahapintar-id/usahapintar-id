@@ -59,9 +59,9 @@ export const DAFTAR_FITUR_PAKET: RingkasanFiturPaket[] = [
     id: "manajemen_stok_lengkap",
     nama: "Manajemen Stok & Peringatan Menipis",
     deskripsi: "Kelola stok masuk/keluar, harga modal/jual, dan riwayat mutasi barang.",
-    gratis: "Segera dengan batas item",
-    premium: "Item & riwayat tak terbatas",
-    tersediaGratis: false,
+    gratis: "Maksimal 25 jenis barang",
+    premium: "Barang tak terbatas + ekspor CSV",
+    tersediaGratis: true,
   },
   {
     id: "katalog_digital_ekstra",

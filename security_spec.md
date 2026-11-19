@@ -6,6 +6,9 @@
    - Dokumen `users/{userId}` hanya boleh dibaca (`get`), dibuat (`create`), dan diperbarui (`update`) oleh pemilik akun (`request.auth.uid == userId`). `list` pada `users` dilarang mutlak untuk mencegah kebocoran PII (`email`, `businessPhone`, `businessAddress`).
    - Dokumen `invoices/{invoiceId}` hanya boleh dibaca (`get`, `list`), dibuat (`create`), diperbarui (`update`), dan dihapus (`delete`) oleh pemiliknya (`ownerId == request.auth.uid`).
    - Dokumen `transactions/{transactionId}` (Buku Kas Harian) hanya boleh diakses, dibuat, diubah, dan dihapus oleh pemiliknya (`ownerId == request.auth.uid`) dengan validasi `amount > 0`, format tanggal `YYYY-MM-DD`, kategori dibatasi 1..50 karakter, serta `createdAt`/`updatedAt` berbasis `request.time`.
+   - Dokumen `inventory/{itemId}` dan `stockLogs/{logId}` hanya boleh diakses pemilik (`ownerId == request.auth.uid`), dengan jaminan atomik `existsAfter`/`getAfter` agar setiap pembuatan riwayat mutasi stok selalu cocok dengan `inventory.stock` sesudah perubahan.
+   - Dokumen `debts/{debtId}` dan `debtPayments/{paymentId}` terisolasi per pemilik (`ownerId == request.auth.uid`), mengunci `debts` saat berstatus terminal `lunas`, dan mewajibkan setiap cicilan pada `debtPayments` menaikkan `debts.paidAmount` secara atomik dengan sisa tagihan konsisten.
+   - Dokumen `productionRecipes/{recipeId}` (Kalkulator Skala Produksi) terisolasi per pemilik (`ownerId == request.auth.uid`), membatasi array `ingredients` pada `1..40` item tervalidasi, serta mewajibkan `baseYield > 0` dan `extraCost >= 0`.
 2. **Keamanan Paket & Kuota (Anti-Privilege Escalation)**:
    - Pembuatan profil baru `users/{userId}` wajib memiliki `plan == 'gratis'` dan `invoiceCountThisMonth == 0`.
    - Pengguna tidak boleh mengubah field `plan`, `uid`, `email`, atau `createdAt` miliknya sendiri.

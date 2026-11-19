@@ -297,6 +297,377 @@
         "createdAt",
         "updatedAt"
       ]
+    },
+    "InventoryItem": {
+      "title": "InventoryItem",
+      "description": "Master data barang dan stok tersedia dalam Manajemen Stok UMKM.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik barang."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama barang atau bahan baku."
+        },
+        "sku": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Kode barang atau SKU (opsional)."
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "Satuan barang (pcs, kg, dus, botol, dll)."
+        },
+        "category": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Kategori barang."
+        },
+        "costPrice": {
+          "type": "number",
+          "description": "Harga modal atau beli per satuan (>= 0)."
+        },
+        "sellPrice": {
+          "type": "number",
+          "description": "Harga jual per satuan (>= 0)."
+        },
+        "stock": {
+          "type": "number",
+          "description": "Jumlah stok tersedia saat ini (>= 0)."
+        },
+        "minStock": {
+          "type": "number",
+          "description": "Batas stok minimum untuk peringatan stok menipis (>= 0)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat barang ditambahkan."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat barang diperbarui."
+        }
+      },
+      "required": [
+        "ownerId",
+        "name",
+        "sku",
+        "unit",
+        "category",
+        "costPrice",
+        "sellPrice",
+        "stock",
+        "minStock",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "StockLog": {
+      "title": "StockLog",
+      "description": "Riwayat perubahan stok masuk, keluar, dan koreksi yang terhubung atomik dengan InventoryItem.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik riwayat stok."
+        },
+        "itemId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "ID dokumen InventoryItem terkait."
+        },
+        "itemName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama barang saat mutasi terjadi."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["masuk", "keluar", "koreksi", "awal"],
+          "description": "Jenis mutasi stok."
+        },
+        "delta": {
+          "type": "number",
+          "description": "Selisih perubahan stok (+ untuk masuk, - untuk keluar)."
+        },
+        "stockBefore": {
+          "type": "number",
+          "description": "Stok sebelum perubahan (>= 0)."
+        },
+        "stockAfter": {
+          "type": "number",
+          "description": "Stok sesudah perubahan (>= 0, harus cocok dengan InventoryItem.stock)."
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "Satuan barang."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Catatan penyebab mutasi stok."
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Tanggal mutasi format YYYY-MM-DD."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat riwayat dibuat."
+        }
+      },
+      "required": [
+        "ownerId",
+        "itemId",
+        "itemName",
+        "type",
+        "delta",
+        "stockBefore",
+        "stockAfter",
+        "unit",
+        "note",
+        "date",
+        "createdAt"
+      ]
+    },
+    "DebtRecord": {
+      "title": "DebtRecord",
+      "description": "Catatan utang atau piutang UMKM beserta sisa tagihan dan status pelunasan.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik catatan utang/piutang."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["piutang", "utang"],
+          "description": "piutang (pelanggan berutang ke usaha) atau utang (usaha berutang ke supplier)."
+        },
+        "partyName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama pelanggan atau supplier."
+        },
+        "partyPhone": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Nomor WhatsApp pelanggan atau supplier."
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Nominal utang/piutang awal (> 0)."
+        },
+        "paidAmount": {
+          "type": "number",
+          "description": "Total yang sudah dibayar/dicicil (>= 0)."
+        },
+        "remainingAmount": {
+          "type": "number",
+          "description": "Sisa tagihan yang belum lunas (totalAmount - paidAmount)."
+        },
+        "transactionDate": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Tanggal transaksi format YYYY-MM-DD."
+        },
+        "dueDate": {
+          "type": "string",
+          "maxLength": 10,
+          "description": "Tanggal jatuh tempo YYYY-MM-DD atau kosong."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["belum_lunas", "lunas"],
+          "description": "Status pelunasan tagihan. Saat 'lunas', dokumen terkunci."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Keterangan barang atau nota terkait."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat catatan dibuat."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat catatan diperbarui."
+        }
+      },
+      "required": [
+        "ownerId",
+        "type",
+        "partyName",
+        "partyPhone",
+        "totalAmount",
+        "paidAmount",
+        "remainingAmount",
+        "transactionDate",
+        "dueDate",
+        "status",
+        "note",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "DebtPayment": {
+      "title": "DebtPayment",
+      "description": "Riwayat pembayaran atau cicilan atas catatan utang/piutang terkait.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik pembayaran."
+        },
+        "debtId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "ID dokumen DebtRecord terkait."
+        },
+        "partyName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama pelanggan atau supplier."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Nominal pembayaran yang dicatat (> 0)."
+        },
+        "paymentDate": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Tanggal pembayaran format YYYY-MM-DD."
+        },
+        "method": {
+          "type": "string",
+          "enum": ["tunai", "transfer", "qris", "lainnya"],
+          "description": "Metode pembayaran cicilan."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Catatan cicilan."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat pembayaran dicatat."
+        }
+      },
+      "required": [
+        "ownerId",
+        "debtId",
+        "partyName",
+        "amount",
+        "paymentDate",
+        "method",
+        "note",
+        "createdAt"
+      ]
+    },
+    "ProductionRecipe": {
+      "title": "ProductionRecipe",
+      "description": "Resep komposisi bahan baku untuk Kalkulator Skala Produksi UMKM yang tersimpan lintas perangkat.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik resep produksi."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama produk atau resep produksi."
+        },
+        "yieldUnit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30,
+          "description": "Satuan hasil produksi (porsi, cup, loyang, pcs, botol)."
+        },
+        "baseYield": {
+          "type": "number",
+          "description": "Jumlah hasil produksi awal dari resep dasar (> 0)."
+        },
+        "ingredients": {
+          "type": "array",
+          "description": "Daftar komposisi bahan baku (minimal 1, maksimal 40 bahan)."
+        },
+        "extraCost": {
+          "type": "number",
+          "description": "Estimasi biaya tambahan per batch awal (gas, kemasan, listrik, tenaga) (>= 0)."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Catatan resep atau langkah penting."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat resep dibuat."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat resep diperbarui."
+        }
+      },
+      "required": [
+        "ownerId",
+        "name",
+        "yieldUnit",
+        "baseYield",
+        "ingredients",
+        "extraCost",
+        "note",
+        "createdAt",
+        "updatedAt"
+      ]
     }
   },
   "firestore": {
@@ -317,6 +688,36 @@
         "$ref": "#/entities/CashTransaction"
       },
       "description": "Koleksi transaksi Buku Kas Harian (pemasukan dan pengeluaran) milik masing-masing pengguna terautentikasi."
+    },
+    "/inventory/{itemId}": {
+      "schema": {
+        "$ref": "#/entities/InventoryItem"
+      },
+      "description": "Koleksi barang, harga modal/jual, stok tersedia, dan batas peringatan stok menipis milik masing-masing pengguna."
+    },
+    "/stockLogs/{logId}": {
+      "schema": {
+        "$ref": "#/entities/StockLog"
+      },
+      "description": "Koleksi riwayat mutasi stok (masuk, keluar, koreksi, awal) yang terikat atomik dengan dokumen inventory terkait."
+    },
+    "/debts/{debtId}": {
+      "schema": {
+        "$ref": "#/entities/DebtRecord"
+      },
+      "description": "Koleksi catatan utang dan piutang pelanggan/supplier milik masing-masing pengguna."
+    },
+    "/debtPayments/{paymentId}": {
+      "schema": {
+        "$ref": "#/entities/DebtPayment"
+      },
+      "description": "Koleksi riwayat cicilan/pelunasan yang terikat atomik dengan dokumen debts terkait."
+    },
+    "/productionRecipes/{recipeId}": {
+      "schema": {
+        "$ref": "#/entities/ProductionRecipe"
+      },
+      "description": "Koleksi resep produksi untuk Kalkulator Skala Produksi lintas perangkat."
     }
   }
 }
