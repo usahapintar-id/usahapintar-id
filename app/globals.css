@@ -9,62 +9,54 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(circle at 85% 0%, rgba(184, 134, 11, 0.09), transparent 26rem),
-    linear-gradient(135deg, #f7f8f2 0%, #f1f4ec 48%, #e8eee2 100%);
-  color: #1e2a1f;
+  background-color: #f7f8f5;
+  color: #1a261b;
   min-height: 100vh;
 }
 
 ::selection {
-  background-color: #b8860b;
-  color: #f1f4ec;
+  background-color: #234b2e;
+  color: #f7f8f5;
 }
 
-/* subtle paper grain */
+/* clean subtle ambient canvas */
 .paper-texture {
   background-image:
-    radial-gradient(rgba(30, 42, 31, 0.04) 1px, transparent 1px),
-    radial-gradient(circle at 85% 0%, rgba(184, 134, 11, 0.08), transparent 28rem),
-    radial-gradient(circle at 10% 30%, rgba(47, 82, 51, 0.04), transparent 22rem);
-  background-size: 3px 3px, 100% 100%, 100% 100%;
-}
-
-.stamp {
-  transform: rotate(-4deg);
+    radial-gradient(circle at 82% 0%, rgba(184, 134, 11, 0.055), transparent 34rem),
+    radial-gradient(circle at 12% 18%, rgba(35, 75, 46, 0.045), transparent 28rem);
 }
 
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #E6EBDD;
+  background: #ecefe6;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E2A1F;
-  border-radius: 4px;
+  background: #9aa598;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2F5233;
+  background: #234b2e;
 }
 
 @layer components {
   .section-kicker {
-    @apply font-mono text-[11px] uppercase tracking-[0.2em] font-semibold text-brass;
+    @apply font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-brass;
   }
 
   .premium-panel {
-    @apply rounded-md border-2 border-ink bg-paper shadow-stamp-md transition-all duration-200;
+    @apply rounded-2xl border border-ink/10 bg-surface shadow-card transition-all duration-200;
   }
 
   .tactile-card {
-    @apply rounded-md border-2 border-ink bg-paper shadow-stamp transition-all duration-200 hover:-translate-y-1 hover:shadow-stamp-md;
+    @apply rounded-2xl border border-ink/10 bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-forest/30 hover:shadow-card-hover;
   }
 
   .tactile-btn {
-    @apply inline-flex items-center justify-center rounded-sm border-2 border-ink font-body font-semibold transition-all duration-150 active:translate-x-0.5 active:translate-y-0.5;
+    @apply inline-flex items-center justify-center rounded-xl font-body font-semibold transition-all duration-150 active:scale-[0.98];
   }
 }
 

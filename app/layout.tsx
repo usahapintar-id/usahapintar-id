@@ -2,9 +2,12 @@ import type { Metadata, Viewport } from "next";
 const Analytics = () => null;
 import "./globals.css";
 import PasangAplikasi from "@/components/PasangAplikasi";
+import MobileNav from "@/components/MobileNav";
+import { FirebaseProvider } from "@/components/FirebaseProvider";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export const viewport: Viewport = {
-  themeColor: "#F1F4EC",
+  themeColor: "#F7F8F5",
 };
 
 export const metadata: Metadata = {
@@ -36,9 +39,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="font-body paper-texture min-h-screen text-ink antialiased selection:bg-brass selection:text-paper">
-        {children}
-        <PasangAplikasi />
+      <body className="font-body paper-texture min-h-screen text-ink antialiased selection:bg-forest selection:text-paper">
+        <FirebaseProvider>
+          <ErrorBoundary>
+            {children}
+            <MobileNav />
+            <PasangAplikasi />
+          </ErrorBoundary>
+        </FirebaseProvider>
         <Analytics />
       </body>
     </html>

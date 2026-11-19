@@ -5,17 +5,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#F1F4EC",
-        paperDark: "#E6EBDD",
-        ink: "#1E2A1F",
+        paper: "#F7F8F5",
+        paperDark: "#ECEFE6",
+        surface: "#FFFFFF",
+        ink: "#1A261B",
         forest: {
-          DEFAULT: "#2F5233",
-          light: "#3D6B43",
-          dark: "#213B25",
+          DEFAULT: "#234B2E",
+          light: "#2F623D",
+          dark: "#183520",
+          soft: "#EBF3EC",
         },
         ledger: "#C8443A",
-        brass: "#B8860B",
-        muted: "#5B6358",
+        brass: {
+          DEFAULT: "#B8860B",
+          soft: "#FDF8EB",
+        },
+        muted: "#586357",
       },
       fontFamily: {
         display: ['"Fraunces"', "Playfair Display", "Georgia", "serif"],
@@ -23,13 +28,14 @@ const config: Config = {
         mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       boxShadow: {
-        stamp: "3px 3px 0 0 #1E2A1F",
-        "stamp-md": "5px 5px 0 0 #1E2A1F",
-        "stamp-lg": "8px 8px 0 0 #1E2A1F",
-        "stamp-brass": "4px 4px 0 0 #B8860B",
-        "stamp-forest": "5px 5px 0 0 #213B25",
-        soft: "0 10px 30px -10px rgba(30,42,31,0.08)",
-        card: "0 4px 20px -2px rgba(30,42,31,0.06), 0 2px 6px -1px rgba(30,42,31,0.04)",
+        stamp: "0 1px 3px rgba(26,38,27,0.05), 0 6px 18px -8px rgba(26,38,27,0.08)",
+        "stamp-md": "0 2px 6px rgba(26,38,27,0.05), 0 12px 28px -12px rgba(26,38,27,0.12)",
+        "stamp-lg": "0 4px 10px rgba(26,38,27,0.06), 0 20px 40px -15px rgba(26,38,27,0.14)",
+        "stamp-brass": "0 6px 20px -6px rgba(184,134,11,0.22)",
+        "stamp-forest": "0 10px 26px -8px rgba(35,75,46,0.28)",
+        soft: "0 10px 30px -10px rgba(26,38,27,0.07)",
+        card: "0 1px 2px rgba(26,38,27,0.04), 0 8px 24px -10px rgba(26,38,27,0.08)",
+        "card-hover": "0 4px 12px rgba(26,38,27,0.06), 0 16px 32px -12px rgba(35,75,46,0.14)",
       },
       backgroundImage: {
         "ledger-lines":

@@ -1,0 +1,457 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default-Deny Catch-All)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ---- Global Hardened Primitives ----
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ---- Validation Blueprint: UserProfile ----
+    function isValidUserProfile(data) {
+      return data.keys().hasAll([
+        'uid',
+        'displayName',
+        'email',
+        'businessName',
+        'businessPhone',
+        'businessAddress',
+        'businessLogoData',
+        'plan',
+        'invoiceMonthKey',
+        'invoiceCountThisMonth',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'uid',
+        'displayName',
+        'email',
+        'businessName',
+        'businessPhone',
+        'businessAddress',
+        'businessLogoData',
+        'plan',
+        'invoiceMonthKey',
+        'invoiceCountThisMonth',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.uid is string
+      && data.uid.size() >= 1
+      && data.uid.size() <= 128
+      && data.uid.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.uid == request.auth.uid
+      && data.displayName is string
+      && data.displayName.size() >= 1
+      && data.displayName.size() <= 100
+      && data.email is string
+      && data.email.size() >= 3
+      && data.email.size() <= 160
+      && data.businessName is string
+      && data.businessName.size() <= 120
+      && data.businessPhone is string
+      && data.businessPhone.size() <= 32
+      && data.businessAddress is string
+      && data.businessAddress.size() <= 240
+      && data.businessLogoData is string
+      && data.businessLogoData.size() <= 120000
+      && data.plan in ['gratis', 'premium']
+      && data.invoiceMonthKey is string
+      && data.invoiceMonthKey.size() == 7
+      && data.invoiceMonthKey.matches('^[0-9]{4}-[0-9]{2}$')
+      && data.invoiceCountThisMonth is int
+      && data.invoiceCountThisMonth >= 0
+      && data.invoiceCountThisMonth <= 10000
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isUpdateBusinessProfileAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'displayName',
+        'businessName',
+        'businessPhone',
+        'businessAddress',
+        'businessLogoData',
+        'updatedAt'
+      ]);
+    }
+
+    function isIncrementInvoiceQuotaAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'invoiceMonthKey',
+        'invoiceCountThisMonth',
+        'updatedAt'
+      ])
+      && (
+        (
+          incoming().invoiceMonthKey == existing().invoiceMonthKey
+          && incoming().invoiceCountThisMonth == existing().invoiceCountThisMonth + 1
+          && (existing().plan == 'premium' || incoming().invoiceCountThisMonth <= 15)
+        )
+        || (
+          incoming().invoiceMonthKey > existing().invoiceMonthKey
+          && incoming().invoiceCountThisMonth == 1
+        )
+      );
+    }
+
+    // ---- Validation Blueprint: Invoice ----
+    function isValidInvoiceItem(item) {
+      return item is map
+        && item.keys().hasAll(['nama', 'qty', 'harga'])
+        && item.keys().hasOnly(['nama', 'qty', 'harga'])
+        && item.nama is string
+        && item.nama.size() >= 1
+        && item.nama.size() <= 120
+        && item.qty is number
+        && item.qty > 0
+        && item.qty <= 1000000
+        && item.harga is number
+        && item.harga >= 0
+        && item.harga <= 1000000000;
+    }
+
+    function isValidInvoice(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'invoiceNumber',
+        'issueDate',
+        'monthKey',
+        'storeName',
+        'storePhone',
+        'storeAddress',
+        'storeLogoData',
+        'customerName',
+        'customerPhone',
+        'items',
+        'discountAmount',
+        'shippingFee',
+        'subtotalAmount',
+        'totalAmount',
+        'paidAmount',
+        'paymentMethod',
+        'paymentStatus',
+        'recordStatus',
+        'notes',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'invoiceNumber',
+        'issueDate',
+        'monthKey',
+        'storeName',
+        'storePhone',
+        'storeAddress',
+        'storeLogoData',
+        'customerName',
+        'customerPhone',
+        'items',
+        'discountAmount',
+        'shippingFee',
+        'subtotalAmount',
+        'totalAmount',
+        'paidAmount',
+        'paymentMethod',
+        'paymentStatus',
+        'recordStatus',
+        'notes',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.invoiceNumber is string
+      && data.invoiceNumber.size() >= 1
+      && data.invoiceNumber.size() <= 40
+      && data.issueDate is string
+      && data.issueDate.size() == 10
+      && data.issueDate.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      && data.monthKey is string
+      && data.monthKey.size() == 7
+      && data.monthKey.matches('^[0-9]{4}-[0-9]{2}$')
+      && data.storeName is string
+      && data.storeName.size() >= 1
+      && data.storeName.size() <= 120
+      && data.storePhone is string
+      && data.storePhone.size() <= 32
+      && data.storeAddress is string
+      && data.storeAddress.size() <= 240
+      && data.storeLogoData is string
+      && data.storeLogoData.size() <= 120000
+      && data.customerName is string
+      && data.customerName.size() >= 1
+      && data.customerName.size() <= 120
+      && data.customerPhone is string
+      && data.customerPhone.size() <= 32
+      && data.items is list
+      && data.items.size() >= 1
+      && data.items.size() <= 25
+      && isValidInvoiceItem(data.items[0])
+      && data.discountAmount is number
+      && data.discountAmount >= 0
+      && data.shippingFee is number
+      && data.shippingFee >= 0
+      && data.subtotalAmount is number
+      && data.subtotalAmount >= 0
+      && data.totalAmount is number
+      && data.totalAmount >= 0
+      && data.paidAmount is number
+      && data.paidAmount >= 0
+      && data.paymentMethod in ['tunai', 'transfer', 'qris', 'tempo']
+      && data.paymentStatus in ['lunas', 'dp', 'belum_lunas']
+      && data.recordStatus in ['aktif', 'batal']
+      && data.notes is string
+      && data.notes.size() <= 300
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isEditInvoiceAction() {
+      return incoming().recordStatus == 'aktif'
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'invoiceNumber',
+          'issueDate',
+          'storeName',
+          'storePhone',
+          'storeAddress',
+          'storeLogoData',
+          'customerName',
+          'customerPhone',
+          'items',
+          'discountAmount',
+          'shippingFee',
+          'subtotalAmount',
+          'totalAmount',
+          'paidAmount',
+          'paymentMethod',
+          'paymentStatus',
+          'notes',
+          'updatedAt'
+        ]);
+    }
+
+    function isUpdatePaymentAction() {
+      return incoming().recordStatus == 'aktif'
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'paidAmount',
+          'paymentMethod',
+          'paymentStatus',
+          'updatedAt'
+        ]);
+    }
+
+    function isVoidInvoiceAction() {
+      return incoming().recordStatus == 'batal'
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'recordStatus',
+          'updatedAt'
+        ]);
+    }
+
+    // ---- Validation Blueprint: CashTransaction ----
+    function isValidTransaction(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'type',
+        'amount',
+        'category',
+        'date',
+        'paymentMethod',
+        'description',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'ownerId',
+        'type',
+        'amount',
+        'category',
+        'date',
+        'paymentMethod',
+        'description',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.ownerId is string
+      && data.ownerId.size() >= 1
+      && data.ownerId.size() <= 128
+      && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+      && data.ownerId == request.auth.uid
+      && data.type in ['masuk', 'keluar']
+      && data.amount is number
+      && data.amount > 0
+      && data.amount <= 10000000000
+      && data.category is string
+      && data.category.size() >= 1
+      && data.category.size() <= 50
+      && data.date is string
+      && data.date.size() == 10
+      && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+      && data.paymentMethod in ['tunai', 'transfer', 'qris', 'lainnya']
+      && data.description is string
+      && data.description.size() <= 200
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isEditTransactionAction() {
+      return incoming().diff(existing()).affectedKeys().hasOnly([
+        'type',
+        'amount',
+        'category',
+        'date',
+        'paymentMethod',
+        'description',
+        'updatedAt'
+      ]);
+    }
+
+    // ---- Collection Rules: /users/{userId} ----
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if isVerifiedUser()
+        && isValidId(userId)
+        && userId == request.auth.uid
+        && isValidUserProfile(incoming())
+        && incoming().plan == 'gratis'
+        && incoming().invoiceCountThisMonth == 0
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(userId)
+        && userId == request.auth.uid
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().email == existing().email
+        && incoming().plan == existing().plan
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isUpdateBusinessProfileAction()
+          || isIncrementInvoiceQuotaAction()
+        );
+
+      allow delete: if false;
+    }
+
+    // ---- Collection Rules: /invoices/{invoiceId} ----
+    match /invoices/{invoiceId} {
+      allow get: if isValidId(invoiceId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(invoiceId)
+        && isValidInvoice(incoming())
+        && incoming().recordStatus == 'aktif'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceMonthKey == incoming().monthKey
+        && (
+          (
+            getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceMonthKey
+              == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceMonthKey
+            && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceCountThisMonth
+              == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceCountThisMonth + 1
+          )
+          || (
+            getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceMonthKey
+              > get(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceMonthKey
+            && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceCountThisMonth == 1
+          )
+        )
+        && (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.plan == 'premium'
+          || getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.invoiceCountThisMonth <= 15
+        );
+
+      allow update: if isVerifiedUser()
+        && isValidId(invoiceId)
+        && isValidInvoice(incoming())
+        && existing().ownerId == request.auth.uid
+        && existing().recordStatus != 'batal'
+        && incoming().ownerId == existing().ownerId
+        && incoming().monthKey == existing().monthKey
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isEditInvoiceAction()
+          || isUpdatePaymentAction()
+          || isVoidInvoiceAction()
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(invoiceId)
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // ---- Collection Rules: /transactions/{transactionId} ----
+    match /transactions/{transactionId} {
+      allow get: if isValidId(transactionId)
+        && isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow list: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+
+      allow create: if isVerifiedUser()
+        && isValidId(transactionId)
+        && isValidTransaction(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(transactionId)
+        && isValidTransaction(incoming())
+        && existing().ownerId == request.auth.uid
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && isEditTransactionAction();
+
+      allow delete: if isVerifiedUser()
+        && isValidId(transactionId)
+        && existing().ownerId == request.auth.uid;
+    }
+  }
+}

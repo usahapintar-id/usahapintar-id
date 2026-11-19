@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 import { bacaJSON, simpanJSON } from "@/lib/storage";
 
 // Mendaftarkan service worker dan menampilkan ajakan "Pasang CuanKit":
@@ -99,11 +100,11 @@ export default function PasangAplikasi() {
     <div
       role="region"
       aria-label="Pasang CuanKit"
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-md rounded-md border-2 border-ink bg-paper p-4 shadow-[4px_4px_0_0_#1E2A1F] print:hidden"
+      className="fixed inset-x-4 bottom-20 z-50 mx-auto max-w-md rounded-2xl border border-ink/10 bg-surface p-4 shadow-stamp-lg md:bottom-4 print:hidden"
       style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="flex items-start gap-3">
-        <Image src="/icon-192.png" alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-sm" />
+        <Image src="/icon-192.png" alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-xl" />
         <div className="min-w-0 flex-1">
           <p className="font-display text-base font-semibold text-ink">Pasang CuanKit di perangkatmu</p>
           {mode === "install" ? (
@@ -116,22 +117,35 @@ export default function PasangAplikasi() {
             </p>
           )}
         </div>
-        <button onClick={tutup} aria-label="Tutup" className="shrink-0 px-1 font-body text-lg leading-none text-muted hover:text-ink">
-          ×
+        <button
+          onClick={tutup}
+          aria-label="Tutup"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-paperDark hover:text-ink"
+        >
+          <X className="h-4 w-4" />
         </button>
       </div>
       <div className="mt-3 flex gap-2">
         {mode === "install" ? (
           <>
-            <button onClick={pasang} className="rounded-sm bg-forest px-4 py-2 font-body text-xs font-semibold text-paper hover:bg-forest-dark">
+            <button
+              onClick={pasang}
+              className="rounded-xl bg-forest px-4 py-2 font-body text-xs font-semibold text-white transition hover:bg-forest-light"
+            >
               Pasang
             </button>
-            <button onClick={tutup} className="rounded-sm border border-ink/20 px-4 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
+            <button
+              onClick={tutup}
+              className="rounded-xl border border-ink/15 px-4 py-2 font-body text-xs font-semibold text-ink transition hover:bg-paperDark"
+            >
               Nanti saja
             </button>
           </>
         ) : (
-          <button onClick={tutup} className="rounded-sm border border-ink/20 px-4 py-2 font-body text-xs font-semibold text-ink hover:border-forest hover:text-forest">
+          <button
+            onClick={tutup}
+            className="rounded-xl border border-ink/15 px-4 py-2 font-body text-xs font-semibold text-ink transition hover:bg-paperDark"
+          >
             Mengerti
           </button>
         )}

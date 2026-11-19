@@ -1,52 +1,59 @@
+import { Calculator, FileSpreadsheet, Layers, SlidersHorizontal } from "lucide-react";
+
 const features = [
   {
+    icon: Calculator,
     title: "Kalkulator HPP otomatis",
-    desc: "Masukkan bahan baku, tenaga kerja, dan overhead — HPP per unit dihitung otomatis, tanpa rumus manual.",
+    desc: "Masukkan bahan baku, tenaga kerja, dan biaya overhead — HPP per unit langsung dihitung otomatis tanpa rumus rumit.",
   },
   {
+    icon: SlidersHorizontal,
     title: "Simulasi margin keuntungan",
-    desc: "Coba-coba persentase margin dan lihat langsung dampaknya ke harga jual sebelum diterapkan.",
+    desc: "Uji persentase markup dan lihat langsung dampaknya ke harga jual serta laba bersih sebelum diterapkan ke pelanggan.",
   },
   {
-    title: "Rincian biaya yang jelas",
-    desc: "Setiap komponen biaya tercatat rapi seperti buku kas, gampang dicek ulang kapan saja.",
+    icon: FileSpreadsheet,
+    title: "Rincian biaya yang rapi",
+    desc: "Setiap komponen biaya tercatat terstruktur layaknya buku kas, mudah ditinjau ulang maupun diekspor ke PDF atau gambar.",
   },
   {
-    title: "Bisa dipakai untuk usaha apa saja",
-    desc: "Kuliner, kerajinan, konveksi, sampai jasa — logika HPP-nya sama, tinggal sesuaikan komponennya.",
+    icon: Layers,
+    title: "Cocok untuk berbagai jenis UMKM",
+    desc: "Kuliner rumahan, minuman kekinian, dagang online, konveksi, hingga jasa — tinggal pilih template atau buat dari nol.",
   },
 ];
 
 export default function Features() {
   return (
-    <section id="fitur" className="px-6 py-20">
+    <section id="fitur" className="px-4 py-16 sm:px-6 md:py-20">
       <div className="mx-auto max-w-6xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-brass/40 bg-brass/10 px-3 py-0.5 font-mono text-xs font-semibold uppercase tracking-widest text-brass">
-          Fitur Utama
-        </div>
-        <h2 className="mt-3 max-w-xl font-display text-3xl font-bold text-ink sm:text-4xl text-balance">
+        <p className="section-kicker">Keunggulan Utama</p>
+        <h2 className="mt-2.5 max-w-xl font-display text-3xl font-semibold text-ink sm:text-4xl text-balance">
           Semua yang dibutuhkan untuk menetapkan harga dengan percaya diri.
         </h2>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2">
-          {features.map((f, i) => (
-            <div
-              key={f.title}
-              className="group relative flex flex-col justify-between rounded-lg border-2 border-ink/20 bg-paper p-8 shadow-stamp transition-all duration-200 hover:-translate-y-1 hover:border-ink hover:shadow-stamp-md"
-            >
-              <div>
-                <span className="font-mono text-xs font-bold text-brass border-b-2 border-brass/40 pb-0.5">
-                  0{i + 1}
-                </span>
-                <h3 className="mt-3 font-display text-xl font-bold text-ink group-hover:text-forest transition-colors">
-                  {f.title}
-                </h3>
-                <p className="mt-3 font-body text-sm leading-relaxed text-muted">
-                  {f.desc}
-                </p>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2">
+          {features.map((f) => {
+            const Icon = f.icon;
+            return (
+              <div
+                key={f.title}
+                className="flex gap-4 rounded-2xl border border-ink/10 bg-surface p-6 shadow-card"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-forest-soft text-forest">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-ink">
+                    {f.title}
+                  </h3>
+                  <p className="mt-1.5 font-body text-sm leading-relaxed text-muted">
+                    {f.desc}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

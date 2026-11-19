@@ -1,0 +1,322 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Profil akun UMKM, identitas toko default, paket langganan, dan kuota pemakaian nota bulanan.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pengguna Firebase Auth."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Nama tampilan pemilik usaha."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Alamat email akun (PII, hanya boleh dibaca pemilik)."
+        },
+        "businessName": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "Nama toko atau usaha default untuk kop nota."
+        },
+        "businessPhone": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Nomor WhatsApp atau telepon usaha."
+        },
+        "businessAddress": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Alamat toko atau lokasi usaha."
+        },
+        "businessLogoData": {
+          "type": "string",
+          "maxLength": 120000,
+          "description": "Data URL gambar logo toko terkompresi (kosong jika belum diatur)."
+        },
+        "plan": {
+          "type": "string",
+          "enum": ["gratis", "premium"],
+          "description": "Tingkat paket akun. Wajib 'gratis' saat registrasi awal dan tidak bisa diubah langsung oleh klien."
+        },
+        "invoiceMonthKey": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 7,
+          "pattern": "^[0-9]{4}-[0-9]{2}$",
+          "description": "Kunci bulan aktif pencatatan kuota nota (YYYY-MM)."
+        },
+        "invoiceCountThisMonth": {
+          "type": "integer",
+          "description": "Jumlah nota yang dibuat pada bulan invoiceMonthKey."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembuatan profil dari server (request.time)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu pembaruan profil terakhir dari server (request.time)."
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "email",
+        "businessName",
+        "businessPhone",
+        "businessAddress",
+        "businessLogoData",
+        "plan",
+        "invoiceMonthKey",
+        "invoiceCountThisMonth",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Dokumen nota dan invoice penjualan UMKM yang tersinkronisasi lintas perangkat.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik nota."
+        },
+        "invoiceNumber": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Nomor nota atau invoice."
+        },
+        "issueDate": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Tanggal nota format YYYY-MM-DD."
+        },
+        "monthKey": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 7,
+          "pattern": "^[0-9]{4}-[0-9]{2}$",
+          "description": "Bulan nota format YYYY-MM."
+        },
+        "storeName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama toko penerbit nota."
+        },
+        "storePhone": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Nomor telepon atau WhatsApp toko."
+        },
+        "storeAddress": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Alamat toko penerbit nota."
+        },
+        "storeLogoData": {
+          "type": "string",
+          "maxLength": 120000,
+          "description": "Data URL logo toko terkompresi."
+        },
+        "customerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Nama pelanggan penerima nota."
+        },
+        "customerPhone": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Nomor WhatsApp pelanggan."
+        },
+        "items": {
+          "type": "array",
+          "description": "Daftar barang/jasa dalam nota (minimal 1, maksimal 25 item)."
+        },
+        "discountAmount": {
+          "type": "number",
+          "description": "Nominal diskon keseluruhan (>= 0)."
+        },
+        "shippingFee": {
+          "type": "number",
+          "description": "Biaya ongkir atau tambahan lain (>= 0)."
+        },
+        "subtotalAmount": {
+          "type": "number",
+          "description": "Total harga seluruh item sebelum diskon dan ongkir (>= 0)."
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Total tagihan akhir nota (>= 0)."
+        },
+        "paidAmount": {
+          "type": "number",
+          "description": "Jumlah uang yang telah dibayarkan pelanggan (>= 0)."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["tunai", "transfer", "qris", "tempo"],
+          "description": "Metode pembayaran nota."
+        },
+        "paymentStatus": {
+          "type": "string",
+          "enum": ["lunas", "dp", "belum_lunas"],
+          "description": "Status pembayaran nota."
+        },
+        "recordStatus": {
+          "type": "string",
+          "enum": ["aktif", "batal"],
+          "description": "Status dokumen nota. Jika sudah 'batal', dokumen terkunci dari perubahan berikutnya."
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Catatan tambahan di bagian bawah nota."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat nota dibuat (request.time)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat nota terakhir diperbarui (request.time)."
+        }
+      },
+      "required": [
+        "ownerId",
+        "invoiceNumber",
+        "issueDate",
+        "monthKey",
+        "storeName",
+        "storePhone",
+        "storeAddress",
+        "storeLogoData",
+        "customerName",
+        "customerPhone",
+        "items",
+        "discountAmount",
+        "shippingFee",
+        "subtotalAmount",
+        "totalAmount",
+        "paidAmount",
+        "paymentMethod",
+        "paymentStatus",
+        "recordStatus",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CashTransaction": {
+      "title": "CashTransaction",
+      "description": "Catatan transaksi pemasukan dan pengeluaran Buku Kas Harian UMKM.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID pemilik transaksi."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["masuk", "keluar"],
+          "description": "Jenis transaksi kas: pemasukan ('masuk') atau pengeluaran ('keluar')."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Nominal transaksi dalam rupiah (> 0)."
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "Kategori transaksi (misal Penjualan, Bahan Baku, Operasional)."
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Tanggal transaksi format YYYY-MM-DD."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["tunai", "transfer", "qris", "lainnya"],
+          "description": "Metode aliran kas."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Catatan singkat transaksi."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat transaksi dibuat (request.time)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp server saat transaksi diperbarui (request.time)."
+        }
+      },
+      "required": [
+        "ownerId",
+        "type",
+        "amount",
+        "category",
+        "date",
+        "paymentMethod",
+        "description",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Dokumen profil akun, identitas toko default, paket langganan, dan kuota bulanan masing-masing pengguna (PII terisolasi hanya untuk pemilik)."
+    },
+    "/invoices/{invoiceId}": {
+      "schema": {
+        "$ref": "#/entities/Invoice"
+      },
+      "description": "Koleksi nota & invoice UMKM milik masing-masing pengguna terautentikasi."
+    },
+    "/transactions/{transactionId}": {
+      "schema": {
+        "$ref": "#/entities/CashTransaction"
+      },
+      "description": "Koleksi transaksi Buku Kas Harian (pemasukan dan pengeluaran) milik masing-masing pengguna terautentikasi."
+    }
+  }
+}
